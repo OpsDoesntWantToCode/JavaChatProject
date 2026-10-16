@@ -1,15 +1,15 @@
-# PROJECT CONTEXT — JAVA CHAT SYSTEM
+# PROJECT CONTEXT — JAVA CHAT SYSTEM (DÙNG CHUNG CHO A VÀ B)
 
-> **Đọc trước khi Codex bắt đầu làm việc.**  
-> **Tổng hợp từ cuộc trao đổi dài giữa thành viên A, thành viên B và phản hồi về đề `Final Project.pdf`, tính đến 16/10/2026.**  
-> Tài liệu này ghi lại **yêu cầu đề bài**, **quyết định A/B**, **review kỹ thuật chưa được duyệt hoàn toàn**, và **công việc tiếp theo**. Không trộn lẫn các mức độ xác nhận.
+> **Phiên bản tài liệu:** 2.0, 16/10/2026. **Dành chung cho cả hai thành viên và mọi trợ lý AI**, không chỉ Codex.  
+> **Nguồn:** Yêu cầu gốc `Final Project.pdf`, trao đổi/chốt quyết định A–B, các phiên bản `Feedback 2 ben`.  
+> **Mục tiêu:** Lưu yêu cầu đề bài, quyết định chung, trách nhiệm từng người, các đề xuất chưa duyệt và tình trạng dự án. Không trộn lẫn các mức xác nhận.
 
 ## 0. Thông tin cốt lõi
 
 - **Dự án:** Java Chat System — đồ án cuối kỳ môn Lập trình ứng dụng Java.
 - **Quy mô:** nhóm 2 người; 2 phân hệ **Admin** và **User**; một hệ thống database/chức năng liên thông.
-- **Người dùng phiên Codex này:** **Thành viên A** — phụ trách **Admin UI + Database**.
-- **Thành viên B:** **User UI + khởi tạo Git repository/Maven + khung và tổng hợp báo cáo**.
+- **Thành viên A:** **Admin UI + thiết kế/triển khai Database**; có thể dùng Codex CLI trong VS Code như công cụ cá nhân.
+- **Thành viên B:** **User UI + khởi tạo Git repository/Maven + khung và tổng hợp báo cáo**; dùng trợ lý AI riêng, không bắt buộc sử dụng Codex.
 - **Công việc làm chung:** duyệt ERD, thiết kế giao thức Server/DTO, phần `server/` và `shared/`, tích hợp và kiểm thử.
 - **Mốc 20%:** giao diện 2 phân hệ + DB SQL script + Git evidence + báo cáo; giao diện **chưa cần lập trình sự kiện**.
 - **Mốc 80%:** toàn bộ hệ thống chạy được; ít nhất 2 JAR Admin/User + cấu hình DB, mã nguồn, script, Git evidence, báo cáo, hướng dẫn có hình, video demo, link GitHub, tự đánh giá.
@@ -121,14 +121,14 @@ WHERE status = 'PENDING';
 - **Truy vấn nhóm/bạn bè phải nhất quán** vì hai phân hệ sử dụng chung một schema.
 - **Phiên bản 1**: giao diện chỉ cần hiển thị đúng chức năng với dữ liệu mẫu; database script phải tạo các bảng/ràng buộc có thể dùng ở phiên bản 2.
 
-## 5. Công việc cụ thể của thành viên A — triển khai ngay
+## 5. Phạm vi công việc của thành viên A — triển khai song song với B
 
 1. Nhận từ B repository và xác nhận branch mới nhất `feat/admin` (không tự thay tên branch khi repo đã tồn tại).
 2. Cùng B review ERD cuối: tất cả 13 bảng, kiểu PostgreSQL, NULL/NOT NULL, PK/FK/UNIQUE/CHECK, chỉ mục và chính sách ON DELETE.
 3. Viết `script/database.sql` sao cho có thể chạy lại từ database rỗng; kiểm thử trường hợp sai (username trùng, trạng thái sai, FK vô hiệu, lời mời PENDING trùng/đảo chiều, cặp bạn bè đảo ID...); xuất ERD.
 4. Xây dựng khung Admin Swing + FlatLaf, 9 nhóm màn hình Admin; màn hình có thể dùng dummy data ở mốc 20%.
 5. Chụp minh chứng GUI và commit của A; gửi B phần giải thích DB/ERD + màn hình Admin để tổng hợp báo cáo.
-6. Không sửa `com.chatapp.user` nếu không được yêu cầu; thay đổi `server`, `shared`, `pom.xml` phải phối hợp với B để không làm vỡ phần B đang triển khai.
+6. A tránh tự ý sửa `com.chatapp.user`; B tránh tự ý sửa `com.chatapp.admin` và `script/database.sql`. Thay đổi `server`, `shared`, `pom.xml` hoặc API/DTO dùng chung phải phối hợp và review chéo.
 
 ## 6. Các điểm chưa được quyết định hoàn toàn
 
@@ -140,17 +140,39 @@ WHERE status = 'PENDING';
 
 ## 7. Các điều không nên làm
 
-- Không thay đổi tech stack đã thống nhất vì thói quen của AI (không JavaFX/Spring Boot/Supabase/Jackson khi chưa được duyệt).
+- Không thay đổi tech stack đã thống nhất chỉ vì thói quen hoặc đề xuất mặc định của bất kỳ AI assistant nào (không JavaFX/Spring Boot/Supabase/Jackson khi chưa được hai bên duyệt).
 - Không viết lại kiến trúc hoặc sinh toàn bộ dự án chỉ từ một prompt khổng lồ mà không có review và test.
 - Không khẳng định 13 bảng đã hoàn chỉnh chỉ vì đã có tên/cột.
 - Không lưu plaintext password, khóa AES gốc, database credentials hoặc LLM API keys trong source/client.
-- Không tự ý sửa code User do B phụ trách, không tự push/merge/commit trừ khi A trực tiếp yêu cầu.
+- Không tự ý sửa phần code do thành viên còn lại sở hữu. Không để AI tự push/merge/commit, ghi đè thay đổi chưa commit hoặc sửa cấu hình chung nếu chưa có yêu cầu/phê duyệt của người đang thực hiện và quy ước nhóm.
 
 ## 8. Danh mục tài liệu nguồn cần giữ trong project
 
 - `Final Project.pdf` — yêu cầu đề bài gốc. Đây là nguồn có ưu tiên cao nhất khi xác định tiêu chí cần nộp.
 - `Feedback 2 ben` — các vòng phản hồi A/B và bản 13 bảng của B, cần đối chiếu phiên bản hiện hành.
 - `Tech_Stack.md` — bảng công nghệ quyết định, ưu tiên dùng để ngăn tự ý đổi stack.
-- `AGENTS.md` — quy tắc cho Codex trong repository.
+- `AGENTS.md` (nếu sử dụng) — quy tắc hướng dẫn cho AI coding assistants; Codex có thể tự đọc, AI khác cần được nhắc đọc nếu công cụ không tự nhận diện.
 
 **Quy tắc ưu tiên khi có xung đột:** yêu cầu thầy trong đề gốc → quyết định A/B mới nhất được xác nhận → `Tech_Stack.md`/tài liệu context được cập nhật → đề xuất kỹ thuật chưa được duyệt. Nếu phát hiện xung đột, báo rõ thay vì âm thầm thay đổi.
+
+
+## 9. Quy trình dùng NHIỀU trợ lý AI trong cùng một repository
+
+- **Nguồn sự thật chung:** `Final Project.pdf` (yêu cầu chính thức) → quyết định A–B mới nhất đã được xác nhận → `docs/Tech_Stack.md` + `docs/Project_Context.md` được cập nhật → đề xuất chưa duyệt. Nếu tài liệu mâu thuẫn, báo lại để hai người chốt.
+- **Không có AI độc quyền sở hữu tài liệu:** A có thể dùng Codex CLI, B có thể dùng Gemini, ChatGPT hoặc công cụ khác. Hai tài liệu này không được chứa hướng dẫn chỉ áp dụng cho một AI.
+- **Phạm vi code:** A xử lý Admin/SQL; B xử lý User/repo/report; sửa `server`, `shared`, `pom.xml`, DTO/protocol phải được review vì ảnh hưởng cả hai.
+- **Trước khi giao việc cho AI:** nêu vai trò A hay B, mục tiêu hiện tại là bản 20% hay 80%, chỉ rõ file/phạm vi được phép sửa, yêu cầu đọc các tài liệu chung.
+- **Sau khi AI thay đổi code:** người thực hiện xem `git diff`, chạy test/build có thể chạy, kiểm tra dữ liệu nhạy cảm, rồi chủ động commit. Không coi AI nói "đã test" là bằng chứng nếu không có kết quả thực tế.
+- **Đồng bộ quyết định mới:** khi cả hai chốt thay đổi kiến trúc/schema/tech stack, cập nhật các file chung trong một commit/PR và thông báo người còn lại trước khi tiếp tục code.
+
+## 10. Prompt khởi đầu trung lập cho bất kỳ AI nào (thay vai trò khi dùng)
+
+```text
+Tôi là thành viên [A/B] của nhóm Java Chat System.
+Hãy đọc Final Project.pdf (nếu có), docs/Tech_Stack.md và docs/Project_Context.md;
+nếu có AGENTS.md và công cụ hỗ trợ thì đọc thêm.
+Dự án đang ở mốc [20%/80%]. Phần tôi phụ trách là [ghi cụ thể].
+Hãy phân biệt yêu cầu đề bài, quyết định A/B đã chốt và đề xuất chưa duyệt.
+Trước mắt chỉ kiểm tra hiện trạng và tóm tắt phạm vi; chưa sửa code khi tôi chưa yêu cầu.
+Không thay đổi tech stack hoặc các file dùng chung khi chưa thống nhất với thành viên còn lại.
+```

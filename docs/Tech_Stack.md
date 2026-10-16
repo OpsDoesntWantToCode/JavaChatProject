@@ -1,9 +1,9 @@
-# TECH STACK — JAVA CHAT SYSTEM
+# TECH STACK — JAVA CHAT SYSTEM (TÀI LIỆU DÙNG CHUNG)
 
-> **Phiên bản:** 1.0 — tổng hợp các quyết định A/B đến ngày 16/10/2026  
+> **Phiên bản tài liệu:** 2.0 — chỉnh cách diễn đạt để dùng chung cho hai thành viên và mọi trợ lý AI, 16/10/2026. **Không thay đổi stack đã thống nhất.**  
 > **Phạm vi:** Đồ án cuối kỳ môn Lập trình ứng dụng Java, nhóm 2 người  
 > **Trạng thái:** **Tech stack đã thống nhất.** Các lựa chọn kiến trúc/bảo mật còn mở được đánh dấu riêng bên dưới.  
-> **Nguồn quyết định:** Thảo luận A–B trong ChatGPT; tài liệu `Final Project.pdf` và Google Docs `Feedback 2 ben`.
+> **Nguồn quyết định:** Thảo luận và xác nhận giữa thành viên A và B; yêu cầu chính thức `Final Project.pdf`; bản thiết kế/feedback `Feedback 2 ben`. Việc nhóm dùng các trợ lý AI khác nhau **không ảnh hưởng các quyết định kỹ thuật**.
 
 ## 1. Công nghệ chính thức
 
@@ -26,7 +26,7 @@
 
 ### Công cụ hỗ trợ (không phải quyết định bắt buộc)
 
-- **VS Code + Codex CLI**: môi trường phù hợp cho thành viên A khi code và chạy SQL/Java trên máy local.
+- **VS Code hoặc IDE phù hợp**: mỗi thành viên tự chọn môi trường lập trình. A sử dụng Codex CLI trong VS Code; B có thể sử dụng một trợ lý AI khác. **Công cụ AI không phải một thành phần của tech stack sản phẩm.**
 - **DBeaver hoặc pgAdmin**: quản lý PostgreSQL, kiểm tra schema và xuất ERD.
 - **JUnit**: có thể bổ sung khi viết unit tests ở phiên bản 80%; chưa được hai bên chốt làm thư viện bắt buộc.
 
@@ -34,7 +34,7 @@
 
 - **Không dùng Supabase**: PostgreSQL chạy local là phương án của nhóm. Việc nộp SQL script vốn cũng có thể thực hiện trên Supabase, nhưng nhóm chủ động loại dịch vụ Cloud để giảm phụ thuộc.
 - **Không chọn JavaFX**, **không chọn Jackson** (chọn Swing + FlatLaf và Gson).
-- **Không chọn Spring Boot** hay ORM làm stack chính. Nếu muốn thêm framework về sau, hai thành viên phải thống nhất trước; không để Codex tự áp dụng.
+- **Không chọn Spring Boot** hay ORM làm stack chính. Nếu muốn thêm framework về sau, hai thành viên phải thống nhất trước; không để bất kỳ trợ lý AI nào tự áp dụng.
 
 ## 2. Kiến trúc triển khai dự kiến
 
@@ -119,9 +119,15 @@ JavaChatProject/
 - **LLM:** nhà cung cấp và endpoint cụ thể chưa chọn; gọi API qua HttpClient là hướng đã thống nhất.
 - **Build nhiều JAR / chạy Server:** cần cấu hình Maven và kiểm chứng trên máy khác.
 
-## 7. Hướng dẫn cho Codex khi đọc tài liệu này
+## 7. Quy tắc sử dụng tài liệu đối với CẢ HAI thành viên và mọi AI assistant
 
-- Xem **bảng công nghệ ở Mục 1 là baseline bất biến** trừ khi người dùng và thành viên B đồng ý thay đổi.
-- **Không tự thay Swing bằng JavaFX, Gson bằng Jackson, PostgreSQL bằng Supabase, hay thêm Spring Boot/ORM**.
-- Với những mục ở **Mục 6**, hãy nêu giả định/đề xuất và yêu cầu duyệt khi việc triển khai đòi hỏi một quyết định mới; không ghi nhầm là quyết định hai bên đã chốt.
-- Khi sửa database, đối chiếu `PROJECT_CONTEXT.md` và PDF đề bài trước; không xem tên 13 bảng là bằng chứng đã có đầy đủ ràng buộc.
+- Đây là **tài liệu quyết định kỹ thuật dùng chung**, không phải prompt dành riêng cho Codex, ChatGPT, Gemini hay công cụ nào khác.
+- Thành viên A và B đều dùng cùng một baseline ở Mục 1. Chỉ thay đổi stack sau khi **cả hai thành viên đồng ý** và cập nhật tài liệu này; các gợi ý của AI không tự có hiệu lực.
+- **Không tự thay Swing bằng JavaFX, Gson bằng Jackson, PostgreSQL bằng Supabase, hay tự thêm Spring Boot/ORM**.
+- Các mục trong **Mục 6 là quyết định còn mở**. AI chỉ được đưa ra đề xuất và nêu tác động, không trình bày chúng thành yêu cầu đã chốt.
+- Đối chiếu `docs/Project_Context.md` và `Final Project.pdf` khi thiết kế database/chức năng. Không xem baseline 13 bảng là schema SQL hoàn chỉnh.
+- Mọi thay đổi ảnh hưởng `server/`, `shared/`, giao thức JSON/Socket hoặc `pom.xml` cần được hai thành viên review, dù AI nào đề xuất thay đổi.
+
+## 8. Phân biệt công nghệ sản phẩm với công cụ hỗ trợ lập trình
+
+**Công nghệ sản phẩm (bắt buộc theo quyết định nhóm)**: Java/Maven/Swing/PostgreSQL/Socket/Gson/... ở Mục 1. **Công cụ cá nhân (không bắt buộc đồng nhất)**: IDE, AI coding assistant, cách viết prompt, extension. A có thể dùng Codex CLI; B dùng AI khác mà vẫn tuân thủ cùng source of truth. Không đưa quy định "chỉ người A được sửa code" vào tài liệu tech stack; việc chia trách nhiệm nằm trong `Project_Context.md` và phân quyền Git của nhóm.
