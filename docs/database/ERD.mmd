@@ -1,0 +1,134 @@
+%%{init: {"theme":"base","fontFamily":"Arial","htmlLabels":false,"themeVariables":{"background":"#ffffff","primaryColor":"#edf4fc","primaryTextColor":"#172b45","primaryBorderColor":"#50749a","lineColor":"#62758b","fontFamily":"Arial","fontSize":"16px"},"er":{"diagramPadding":30,"entityPadding":14,"minEntityWidth":180,"minEntityHeight":70,"nodeSpacing":70,"rankSpacing":240,"useMaxWidth":false}}}%%
+erDiagram
+    direction LR
+    %% Draft of B: exactly 13 tables; constraints and indexes in Database_Schema_Draft.md.
+    %% NN = NOT NULL; IDENTITY = GENERATED ALWAYS AS IDENTITY.
+    %% PK on several fields means one composite PK, never separate unique fields.
+    %% UK is used only for single-column UNIQUE. uq_pending_friend_pair is a partial expression index.
+    %% Solid relationship: FK in child PK. Dashed relationship: FK outside child PK.
+    %% Every FK is mandatory; every parent may have zero or more child rows. No 1-to-1 FK exists.
+
+    users {
+        BIGINT id PK "NN; IDENTITY"
+        VARCHAR(50) username UK "NN"
+        VARCHAR(255) password_hash "NN"
+        VARCHAR(100) full_name "NN"
+        TEXT address "NULL"
+        DATE dob "NULL"
+        VARCHAR(10) gender "NULL"
+        VARCHAR(100) email UK "NN"
+        VARCHAR(20) status "NN; default 'ACTIVE'"
+        TIMESTAMPTZ last_seen_at "NULL"
+        TIMESTAMPTZ created_at "NN; default NOW()"
+    }
+
+    login_history {
+        BIGINT id PK "NN; IDENTITY"
+        BIGINT user_id FK "NN"
+        TIMESTAMPTZ login_time "NN; default NOW()"
+    }
+
+    activity_logs {
+        BIGINT id PK "NN; IDENTITY"
+        BIGINT user_id FK "NN"
+        VARCHAR(30) action_type "NN; default 'OPEN_APP'"
+        VARCHAR(64) session_id "NULL"
+        TIMESTAMPTZ created_at "NN; default NOW()"
+    }
+
+    friend_requests {
+        BIGINT id PK "NN; IDENTITY"
+        BIGINT sender_id FK "NN"
+        BIGINT receiver_id FK "NN"
+        VARCHAR(20) status "NN; default 'PENDING'"
+        TIMESTAMPTZ created_at "NN; default NOW()"
+    }
+
+    friendships {
+        BIGINT user_id_1 PK, FK "NN"
+        BIGINT user_id_2 PK, FK "NN"
+        TIMESTAMPTZ created_at "NN; default NOW()"
+    }
+
+    user_blocks {
+        BIGINT blocker_id PK, FK "NN"
+        BIGINT blocked_id PK, FK "NN"
+        TIMESTAMPTZ created_at "NN; default NOW()"
+    }
+
+    direct_messages {
+        BIGINT id PK "NN; IDENTITY"
+        BIGINT sender_id FK "NN"
+        BIGINT receiver_id FK "NN"
+        TEXT content "NN"
+        BOOLEAN is_read "NN; default FALSE"
+        TIMESTAMPTZ created_at "NN; default NOW()"
+    }
+
+    message_hidden {
+        BIGINT message_id PK, FK "NN"
+        BIGINT user_id PK, FK "NN"
+        TIMESTAMPTZ hidden_at "NN; default NOW()"
+    }
+
+    conversation_clears {
+        BIGINT user_id PK, FK "NN"
+        BIGINT partner_id PK, FK "NN"
+        TIMESTAMPTZ cleared_at "NN"
+    }
+
+    chat_groups {
+        BIGINT id PK "NN; IDENTITY"
+        VARCHAR(100) group_name "NN"
+        BIGINT created_by FK "NN"
+        BOOLEAN is_encrypted "NN; default FALSE"
+        TEXT wrapped_encryption_key "NULL"
+        TIMESTAMPTZ created_at "NN; default NOW()"
+    }
+
+    group_members {
+        BIGINT group_id PK, FK "NN"
+        BIGINT user_id PK, FK "NN"
+        BOOLEAN is_admin "NN; default FALSE"
+        TEXT encrypted_group_key "NULL"
+        TIMESTAMPTZ joined_at "NN; default NOW()"
+    }
+
+    group_messages {
+        BIGINT id PK "NN; IDENTITY"
+        BIGINT group_id FK "NN"
+        BIGINT sender_id FK "NN"
+        TEXT content "NN"
+        VARCHAR(64) iv "NULL"
+        TIMESTAMPTZ created_at "NN; default NOW()"
+    }
+
+    spam_reports {
+        BIGINT id PK "NN; IDENTITY"
+        BIGINT reporter_id FK "NN"
+        BIGINT reported_id FK "NN"
+        TEXT reason "NULL"
+        TIMESTAMPTZ created_at "NN; default NOW()"
+    }
+
+    users ||..o{ login_history : "user_id / RESTRICT"
+    users ||..o{ activity_logs : "user_id / RESTRICT"
+    users ||..o{ friend_requests : "sender_id / CASCADE"
+    users ||..o{ friend_requests : "receiver_id / CASCADE"
+    users ||--o{ friendships : "user_id_1 / CASCADE"
+    users ||--o{ friendships : "user_id_2 / CASCADE"
+    users ||--o{ user_blocks : "blocker_id / CASCADE"
+    users ||--o{ user_blocks : "blocked_id / CASCADE"
+    users ||..o{ direct_messages : "sender_id / RESTRICT"
+    users ||..o{ direct_messages : "receiver_id / RESTRICT"
+    direct_messages ||--o{ message_hidden : "message_id / CASCADE"
+    users ||--o{ message_hidden : "user_id / CASCADE"
+    users ||--o{ conversation_clears : "user_id / CASCADE"
+    users ||--o{ conversation_clears : "partner_id / CASCADE"
+    users ||..o{ chat_groups : "created_by / RESTRICT"
+    chat_groups ||--o{ group_members : "group_id / CASCADE"
+    users ||--o{ group_members : "user_id / RESTRICT"
+    chat_groups ||..o{ group_messages : "group_id / CASCADE"
+    users ||..o{ group_messages : "sender_id / RESTRICT"
+    users ||..o{ spam_reports : "reporter_id / RESTRICT"
+    users ||..o{ spam_reports : "reported_id / RESTRICT"
