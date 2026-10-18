@@ -7,17 +7,17 @@ Dự án Java Chat Application phục vụ bài tập nhóm.
 ```
 JavaChatProject/
 ├── src/
-│   ├── admin/       # Bạn A chỉ code trong thư mục này
-│   └── user/        # Bạn B chỉ code trong thư mục này
+│   ├── admin/       # A phụ trách Admin UI
+│   └── user/        # B phụ trách User UI
 ├── script/          # Bạn A lưu trữ các file cơ sở dữ liệu (.sql) vào đây
 └── git/             # Nơi lưu ảnh chụp commit / git log của 2 người lúc nộp bài
 ```
 
 ## Phân công & Nhánh làm việc (Branches)
 
-- `main`: Nhánh chính tích hợp sản phẩm hoàn chỉnh.
-- `feat/admin-db`: Nhánh dành cho **Bạn A** (phát triển phần Admin và cơ sở dữ liệu).
-- `feat/user-ui`: Nhánh dành cho **Bạn B** (phát triển giao diện và phần User).
+- `main`: Branch tích hợp chung.
+- `feat/admin-db`: Branch dành cho **thành viên A**, phụ trách Admin UI, ERD, PostgreSQL và `script/database.sql`.
+- `feat/user-ui`: Branch dành cho **thành viên B**, phụ trách User UI, Maven/repository và báo cáo.
 
 ## Hướng dẫn nộp bài
 

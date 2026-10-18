@@ -8,7 +8,7 @@
 
 - **Dự án:** Java Chat System — đồ án cuối kỳ môn Lập trình ứng dụng Java.
 - **Quy mô:** nhóm 2 người; 2 phân hệ **Admin** và **User**; một hệ thống database/chức năng liên thông.
-- **Thành viên A:** **Admin UI + thiết kế/triển khai Database**; có thể dùng Codex CLI trong VS Code như công cụ cá nhân.
+- **Thành viên A:** **Admin UI + ERD + PostgreSQL + `script/database.sql`**; có thể dùng Codex CLI trong VS Code như công cụ cá nhân.
 - **Thành viên B:** **User UI + khởi tạo Git repository/Maven + khung và tổng hợp báo cáo**; dùng trợ lý AI riêng, không bắt buộc sử dụng Codex.
 - **Công việc làm chung:** duyệt ERD, thiết kế giao thức Server/DTO, phần `server/` và `shared/`, tích hợp và kiểm thử.
 - **Mốc 20%:** giao diện 2 phân hệ + DB SQL script + Git evidence + báo cáo; giao diện **chưa cần lập trình sự kiện**.
@@ -48,8 +48,8 @@
 
 ## 2. Quyết định A/B về kiến trúc và cách làm
 
-- **Phân công theo phân hệ (Cách 1)**: A làm toàn bộ Admin UI và SQL; B làm toàn bộ User UI, repo, Maven và báo cáo tổng hợp. ERD cùng duyệt.
-- **Một GitHub repository**; nhánh được chốt gần nhất `main`, `feat/admin`, `feat/user`.
+- **Phân công theo phân hệ (Cách 1)**: A phụ trách Admin UI, ERD, PostgreSQL và `script/database.sql`; B phụ trách User UI, Maven/repository và báo cáo. ERD cùng duyệt.
+- **Một GitHub repository**; quy ước branch: `main` tích hợp chung; `feat/admin-db` dành cho A (Admin UI, ERD, PostgreSQL và `script/database.sql`); `feat/user-ui` dành cho B (User UI, Maven/repository và báo cáo).
 - **Maven gốc `pom.xml`**; Java package `com.chatapp.admin`, `com.chatapp.user`, `com.chatapp.server`, `com.chatapp.shared` tương ứng.
 - **`shared` và `server`** là phần cùng sở hữu; không tự sửa phá giao thức mà không phối hợp.
 - **Server trung gian** kết nối PostgreSQL, xử lý nghiệp vụ, phân quyền, phiên online, Socket; không đặt credential DB có quyền cao hoặc API key trên client.
@@ -123,7 +123,7 @@ WHERE status = 'PENDING';
 
 ## 5. Phạm vi công việc của thành viên A — triển khai song song với B
 
-1. Nhận từ B repository và xác nhận branch mới nhất `feat/admin` (không tự thay tên branch khi repo đã tồn tại).
+1. Nhận từ B repository và xác nhận branch làm việc `feat/admin-db` (không tự thay tên branch khi repo đã tồn tại).
 2. Cùng B review ERD cuối: tất cả 13 bảng, kiểu PostgreSQL, NULL/NOT NULL, PK/FK/UNIQUE/CHECK, chỉ mục và chính sách ON DELETE.
 3. Viết `script/database.sql` sao cho có thể chạy lại từ database rỗng; kiểm thử trường hợp sai (username trùng, trạng thái sai, FK vô hiệu, lời mời PENDING trùng/đảo chiều, cặp bạn bè đảo ID...); xuất ERD.
 4. Xây dựng khung Admin Swing + FlatLaf, 9 nhóm màn hình Admin; màn hình có thể dùng dummy data ở mốc 20%.
@@ -160,7 +160,7 @@ WHERE status = 'PENDING';
 
 - **Nguồn sự thật chung:** `Final Project.pdf` (yêu cầu chính thức) → quyết định A–B mới nhất đã được xác nhận → `docs/Tech_Stack.md` + `docs/Project_Context.md` được cập nhật → đề xuất chưa duyệt. Nếu tài liệu mâu thuẫn, báo lại để hai người chốt.
 - **Không có AI độc quyền sở hữu tài liệu:** A có thể dùng Codex CLI, B có thể dùng Gemini, ChatGPT hoặc công cụ khác. Hai tài liệu này không được chứa hướng dẫn chỉ áp dụng cho một AI.
-- **Phạm vi code:** A xử lý Admin/SQL; B xử lý User/repo/report; sửa `server`, `shared`, `pom.xml`, DTO/protocol phải được review vì ảnh hưởng cả hai.
+- **Phạm vi code:** A xử lý Admin UI/ERD/PostgreSQL/`script/database.sql`; B xử lý User UI/Maven/repository/báo cáo; sửa `server`, `shared`, `pom.xml`, DTO/protocol phải được review vì ảnh hưởng cả hai.
 - **Trước khi giao việc cho AI:** nêu vai trò A hay B, mục tiêu hiện tại là bản 20% hay 80%, chỉ rõ file/phạm vi được phép sửa, yêu cầu đọc các tài liệu chung.
 - **Sau khi AI thay đổi code:** người thực hiện xem `git diff`, chạy test/build có thể chạy, kiểm tra dữ liệu nhạy cảm, rồi chủ động commit. Không coi AI nói "đã test" là bằng chứng nếu không có kết quả thực tế.
 - **Đồng bộ quyết định mới:** khi cả hai chốt thay đổi kiến trúc/schema/tech stack, cập nhật các file chung trong một commit/PR và thông báo người còn lại trước khi tiếp tục code.

@@ -80,7 +80,11 @@ JavaChatProject/
 └── docs/                            # tài liệu kỹ thuật, thiết kế và báo cáo
 ```
 
-**Branch đang thống nhất gần nhất:** `main`, `feat/admin` (A), `feat/user` (B). Tên branch cũ `feat/admin-db` / `feat/user-ui` xuất hiện ở bản thảo đầu, **không phải lựa chọn mới nhất**.
+**Quy ước branch đã thống nhất:**
+
+- `main`: branch tích hợp chung.
+- `feat/admin-db`: thành viên A, phụ trách Admin UI, ERD, PostgreSQL và `script/database.sql`.
+- `feat/user-ui`: thành viên B, phụ trách User UI, Maven/repository và báo cáo.
 
 ### Sản phẩm cuối kỳ (phiên bản 80%)
 

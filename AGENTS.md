@@ -8,8 +8,9 @@
 - Nếu có `Final Project.pdf`, ưu tiên yêu cầu chính thức của giảng viên. Phân biệt rõ yêu cầu bắt buộc, quyết định A/B đã chốt và đề xuất còn chờ duyệt.
 
 ## Phạm vi công việc
-- Thành viên A phụ trách Admin UI (`src/main/java/com/chatapp/admin/`) và SQL (`script/`).
-- Thành viên B phụ trách User UI (`src/main/java/com/chatapp/user/`), khởi tạo repository/Maven và tổng hợp báo cáo.
+- Branch `main` là branch tích hợp chung.
+- Thành viên A làm việc trên `feat/admin-db`, phụ trách Admin UI (`src/main/java/com/chatapp/admin/`), ERD, PostgreSQL và `script/database.sql`.
+- Thành viên B làm việc trên `feat/user-ui`, phụ trách User UI (`src/main/java/com/chatapp/user/`), Maven/repository và báo cáo.
 - `src/main/java/com/chatapp/server/`, `src/main/java/com/chatapp/shared/`, `pom.xml`, giao thức Socket/JSON và các API dùng chung cần được cả hai review trước khi đổi giao diện công khai hoặc hợp đồng dữ liệu.
 - Đọc vai trò của người yêu cầu trong prompt; không áp dụng giới hạn chỉ dành cho A lên các tác vụ của B hoặc ngược lại.
 
