@@ -1,0 +1,700 @@
+Created isolated test database: java_chat_test_3cfeccfbb97046058ce25fe43e595a98
+Database is kept for inspection; this runner never drops a database.
+DO
+BEGIN
+SET
+DO
+CREATE TABLE
+CREATE TABLE
+CREATE TABLE
+CREATE TABLE
+CREATE TABLE
+CREATE TABLE
+CREATE TABLE
+CREATE TABLE
+CREATE TABLE
+CREATE TABLE
+CREATE TABLE
+CREATE TABLE
+CREATE TABLE
+CREATE INDEX
+CREATE INDEX
+CREATE INDEX
+CREATE INDEX
+CREATE INDEX
+CREATE INDEX
+CREATE INDEX
+CREATE INDEX
+CREATE INDEX
+CREATE INDEX
+CREATE INDEX
+CREATE INDEX
+CREATE INDEX
+CREATE INDEX
+CREATE INDEX
+CREATE INDEX
+CREATE FUNCTION
+CREATE TRIGGER
+CREATE FUNCTION
+CREATE TRIGGER
+COMMENT
+COMMENT
+COMMENT
+COMMENT
+COMMENT
+COMMENT
+COMMENT
+COMMENT
+COMMIT
+BEGIN
+SET
+DO
+CREATE FUNCTION
+CREATE FUNCTION
+ assert_true 
+-------------
+ 
+(1 row)
+
+powershell.exe : psql:C:/Users/PC/OneDrive/Desktop/Visual Studio 
+Code/HCMUS/Java/JavaChatProject/script/tests/constraints.sql:46: NOTICE:  PASS: exactly 13 expected tables
+At line:2 char:1
++ powershell.exe -NoProfile -ExecutionPolicy Bypass -File script/tests/ ...
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (psql:C:/Users/P...expected tables:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+psql:script/tests/constraints.sql:47: 
+NOTICE:  PASS: 65 columns
+ assert_true 
+-------------
+ 
+(1 row)
+
+psql:script/tests/constraints.sql:48: 
+NOTICE:  PASS: 58 required columns
+ assert_true 
+-------------
+ 
+(1 row)
+
+psql:script/tests/constraints.sql:49: 
+NOTICE:  PASS: 13 primary keys
+ assert_true 
+-------------
+ 
+(1 row)
+
+psql:script/tests/constraints.sql:50: 
+NOTICE:  PASS: 21 foreign keys
+ assert_true 
+-------------
+ 
+(1 row)
+
+psql:script/tests/constraints.sql:51: 
+NOTICE:  PASS: 4 unique constraints
+ assert_true 
+-------------
+ 
+(1 row)
+
+psql:script/tests/constraints.sql:52: 
+NOTICE:  PASS: 31 CHECK constraints
+ assert_true 
+-------------
+ 
+(1 row)
+
+psql:script/tests/constraints.sql:53: 
+NOTICE:  PASS: 33 indexes including PK/UNIQUE backing indexes
+ assert_true 
+-------------
+ 
+(1 row)
+
+ assert_true 
+-------------
+ 
+(1 row)
+
+psql:script/tests/constraints.sql:55: 
+NOTICE:  PASS: 2 application triggers
+psql:script/tests/constraints.sql:57: 
+NOTICE:  PASS: session stored as UUID
+ assert_true 
+-------------
+ 
+(1 row)
+
+psql:script/tests/constraints.sql:60: 
+NOTICE:  PASS: watermark deliberately has no FK
+ assert_true 
+-------------
+ 
+(1 row)
+
+psql:script/tests/constraints.sql:62: 
+NOTICE:  PASS: 8 sequences: CACHE 1, INCREMENT 1, START 1, NO CYCLE
+ assert_true 
+-------------
+ 
+(1 row)
+
+psql:script/tests/constraints.sql:65: 
+NOTICE:  PASS: 8 GENERATED ALWAYS identity columns
+ assert_true 
+-------------
+ 
+(1 row)
+
+psql:script/tests/constraints.sql:92: 
+NOTICE:  PASS: FK login_history.user_id -> users.id / r
+psql:script/tests/constraints.sql:92: 
+NOTICE:  PASS: FK activity_logs.user_id -> users.id / r
+psql:script/tests/constraints.sql:92: 
+NOTICE:  PASS: FK friend_requests.sender_id -> users.id / c
+psql:script/tests/constraints.sql:92: 
+NOTICE:  PASS: FK friend_requests.receiver_id -> users.id / c
+psql:script/tests/constraints.sql:92: 
+NOTICE:  PASS: FK friendships.user_id_1 -> users.id / c
+psql:script/tests/constraints.sql:92: 
+NOTICE:  PASS: FK friendships.user_id_2 -> users.id / c
+psql:script/tests/constraints.sql:92: 
+NOTICE:  PASS: FK user_blocks.blocker_id -> users.id / c
+psql:script/tests/constraints.sql:92: 
+NOTICE:  PASS: FK user_blocks.blocked_id -> users.id / c
+psql:script/tests/constraints.sql:92: 
+NOTICE:  PASS: FK direct_messages.sender_id -> users.id / r
+psql:script/tests/constraints.sql:92: 
+NOTICE:  PASS: FK direct_messages.receiver_id -> users.id / r
+psql:script/tests/constraints.sql:92: 
+NOTICE:  PASS: FK message_hidden.message_id -> direct_messages.id / c
+psql:script/tests/constraints.sql:92: 
+NOTICE:  PASS: FK message_hidden.user_id -> users.id / c
+psql:script/tests/constraints.sql:92: 
+NOTICE:  PASS: FK conversation_clears.user_id -> users.id / c
+psql:script/tests/constraints.sql:92: 
+NOTICE:  PASS: FK conversation_clears.partner_id -> users.id / c
+psql:script/tests/constraints.sql:92: 
+NOTICE:  PASS: FK chat_groups.created_by -> users.id / r
+psql:script/tests/constraints.sql:92: 
+NOTICE:  PASS: FK group_members.group_id -> chat_groups.id / c
+psql:script/tests/constraints.sql:92: 
+NOTICE:  PASS: FK group_members.user_id -> users.id / r
+psql:script/tests/constraints.sql:92: 
+NOTICE:  PASS: FK group_messages.group_id -> chat_groups.id / c
+psql:script/tests/constraints.sql:92: 
+NOTICE:  PASS: FK group_messages.sender_id -> users.id / r
+psql:script/tests/constraints.sql:92: 
+NOTICE:  PASS: FK spam_reports.reporter_id -> users.id / r
+psql:script/tests/constraints.sql:92: 
+NOTICE:  PASS: FK spam_reports.reported_id -> users.id / r
+DO
+psql:script/tests/constraints.sql:133: 
+NOTICE:  PASS: index idx_login_history_time
+psql:script/tests/constraints.sql:133: 
+NOTICE:  PASS: index idx_login_history_user_time
+psql:script/tests/constraints.sql:133: 
+NOTICE:  PASS: index idx_activity_time_user
+psql:script/tests/constraints.sql:133: 
+NOTICE:  PASS: index idx_activity_user_time
+psql:script/tests/constraints.sql:133: 
+NOTICE:  PASS: index uq_pending_friend_pair
+psql:script/tests/constraints.sql:133: 
+NOTICE:  PASS: index idx_friend_requests_inbox
+psql:script/tests/constraints.sql:133: 
+NOTICE:  PASS: index idx_friendships_second
+psql:script/tests/constraints.sql:133: 
+NOTICE:  PASS: index idx_dm_pair_id
+psql:script/tests/constraints.sql:133: 
+NOTICE:  PASS: index idx_dm_sender_time
+psql:script/tests/constraints.sql:133: 
+NOTICE:  PASS: index idx_dm_receiver_id
+psql:script/tests/constraints.sql:133: 
+NOTICE:  PASS: index idx_group_members_user
+psql:script/tests/constraints.sql:133: 
+NOTICE:  PASS: index idx_group_messages_time
+psql:script/tests/constraints.sql:133: 
+NOTICE:  PASS: index idx_group_messages_sender_time
+psql:script/tests/constraints.sql:133: 
+NOTICE:  PASS: index idx_spam_reports_time
+psql:script/tests/constraints.sql:133: 
+NOTICE:  PASS: index idx_users_created_at
+psql:script/tests/constraints.sql:133: 
+NOTICE:  PASS: index uq_group_message_iv
+psql:script/tests/constraints.sql:133: 
+NOTICE:  PASS: old DM timestamp index absent
+DO
+INSERT 0 3
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+psql:script/tests/constraints.sql:153: 
+NOTICE:  PASS: user defaults
+ assert_true 
+-------------
+ 
+psql:script/tests/constraints.sql:154: 
+NOTICE:  PASS: OPEN_APP defaults
+psql:script/tests/constraints.sql:155: 
+NOTICE:  PASS: DM defaults
+psql:script/tests/constraints.sql:156: 
+NOTICE:  PASS: zero watermark default
+psql:script/tests/constraints.sql:157: 
+NOTICE:  PASS: plaintext group defaults
+psql:script/tests/constraints.sql:196: 
+NOTICE:  PASS: PK users [23505 / pk_users]
+psql:script/tests/constraints.sql:196: 
+NOTICE:  PASS: PK login_history [23505 / pk_login_history]
+psql:script/tests/constraints.sql:196: 
+NOTICE:  PASS: PK activity_logs [23505 / pk_activity_logs]
+psql:script/tests/constraints.sql:196: 
+NOTICE:  PASS: PK friend_requests [23505 / pk_friend_requests]
+psql:script/tests/constraints.sql:196: 
+NOTICE:  PASS: PK friendships [23505 / pk_friendships]
+psql:script/tests/constraints.sql:196: 
+NOTICE:  PASS: PK user_blocks [23505 / pk_user_blocks]
+psql:script/tests/constraints.sql:196: 
+NOTICE:  PASS: PK direct_messages [23505 / pk_direct_messages]
+psql:script/tests/constraints.sql:196: 
+NOTICE:  PASS: PK message_hidden [23505 / pk_message_hidden]
+psql:script/tests/constraints.sql:196: 
+NOTICE:  PASS: PK conversation_clears [23505 / pk_conversation_clears]
+psql:script/tests/constraints.sql:196: 
+NOTICE:  PASS: PK chat_groups [23505 / pk_chat_groups]
+psql:script/tests/constraints.sql:196: 
+NOTICE:  PASS: PK group_members [23505 / pk_group_members]
+psql:script/tests/constraints.sql:196: 
+NOTICE:  PASS: PK group_messages [23505 / pk_group_messages]
+psql:script/tests/constraints.sql:196: 
+NOTICE:  PASS: PK spam_reports [23505 / pk_spam_reports]
+psql:script/tests/constraints.sql:196: 
+NOTICE:  PASS: NOT NULL users.id [23502 / ]
+psql:script/tests/constraints.sql:196: 
+NOTICE:  PASS: NOT NULL users.username [23502 / ]
+psql:script/tests/constraints.sql:196: 
+NOTICE:  PASS: NOT NULL users.password_hash [23502 / ]
+psql:script/tests/constraints.sql:196: 
+NOTICE:  PASS: NOT NULL users.full_name [23502 / ]
+psql:script/tests/constraints.sql:196: 
+NOTICE:  PASS: NOT NULL users.email [23502 / ]
+psql:script/tests/constraints.sql:196: 
+NOTICE:  PASS: NOT NULL users.status [23502 / ]
+psql:script/tests/constraints.sql:196: 
+NOTICE:  PASS: NOT NULL users.role [23502 / ]
+psql:script/tests/constraints.sql:196: 
+NOTICE:  PASS: NOT NULL users.created_at [23502 / ]
+psql:script/tests/constraints.sql:196: 
+NOTICE:  PASS: NOT NULL login_history.id [23502 / ]
+psql:script/tests/constraints.sql:196: 
+NOTICE:  PASS: NOT NULL login_history.user_id [23502 / ]
+psql:script/tests/constraints.sql:196: 
+NOTICE:  PASS: NOT NULL login_history.login_time [23502 / ]
+psql:script/tests/constraints.sql:196: 
+NOTICE:  PASS: NOT NULL activity_logs.id [23502 / ]
+psql:script/tests/constraints.sql:196: 
+NOTICE:  PASS: NOT NULL activity_logs.user_id [23502 / ]
+psql:script/tests/constraints.sql:196: 
+NOTICE:  PASS: NOT NULL activity_logs.session_id [23502 / ]
+psql:script/tests/constraints.sql:196: 
+NOTICE:  PASS: NOT NULL activity_logs.action_type [23502 / ]
+psql:script/tests/constraints.sql:196: 
+NOTICE:  PASS: NOT NULL activity_logs.created_at [23502 / ]
+psql:script/tests/constraints.sql:196: 
+NOTICE:  PASS: NOT NULL friend_requests.id [23502 / ]
+psql:script/tests/constraints.sql:196: 
+NOTICE:  PASS: NOT NULL friend_requests.sender_id [23502 / ]
+psql:script/tests/constraints.sql:196: 
+NOTICE:  PASS: NOT NULL friend_requests.receiver_id [23502 / ]
+psql:script/tests/constraints.sql:196: 
+NOTICE:  PASS: NOT NULL friend_requests.status [23502 / ]
+psql:script/tests/constraints.sql:196: 
+NOTICE:  PASS: NOT NULL friend_requests.created_at [23502 / ]
+psql:script/tests/constraints.sql:196: 
+NOTICE:  PASS: NOT NULL friendships.user_id_1 [23502 / ]
+psql:script/tests/constraints.sql:196: 
+NOTICE:  PASS: NOT NULL friendships.user_id_2 [23502 / ]
+psql:script/tests/constraints.sql:196: 
+NOTICE:  PASS: NOT NULL friendships.created_at [23502 / ]
+psql:script/tests/constraints.sql:196: 
+NOTICE:  PASS: NOT NULL user_blocks.blocker_id [23502 / ]
+psql:script/tests/constraints.sql:196: 
+NOTICE:  PASS: NOT NULL user_blocks.blocked_id [23502 / ]
+psql:script/tests/constraints.sql:196: 
+NOTICE:  PASS: NOT NULL user_blocks.created_at [23502 / ]
+psql:script/tests/constraints.sql:196: 
+NOTICE:  PASS: NOT NULL direct_messages.id [23502 / ]
+psql:script/tests/constraints.sql:196: 
+NOTICE:  PASS: NOT NULL direct_messages.sender_id [23502 / ]
+psql:script/tests/constraints.sql:196: 
+NOTICE:  PASS: NOT NULL direct_messages.receiver_id [23502 / ]
+psql:script/tests/constraints.sql:196: 
+NOTICE:  PASS: NOT NULL direct_messages.content [23502 / ]
+psql:script/tests/constraints.sql:196: 
+NOTICE:  PASS: NOT NULL direct_messages.is_read [23502 / ]
+psql:script/tests/constraints.sql:196: 
+NOTICE:  PASS: NOT NULL direct_messages.created_at [23502 / ]
+psql:script/tests/constraints.sql:196: 
+NOTICE:  PASS: NOT NULL message_hidden.message_id [23502 / ]
+psql:script/tests/constraints.sql:196: 
+NOTICE:  PASS: NOT NULL message_hidden.user_id [23502 / ]
+psql:script/tests/constraints.sql:196: 
+NOTICE:  PASS: NOT NULL message_hidden.hidden_at [23502 / ]
+psql:script/tests/constraints.sql:196: 
+NOTICE:  PASS: NOT NULL conversation_clears.user_id [23502 / ]
+psql:script/tests/constraints.sql:196: 
+NOTICE:  PASS: NOT NULL conversation_clears.partner_id [23502 / ]
+psql:script/tests/constraints.sql:196: 
+NOTICE:  PASS: NOT NULL conversation_clears.cleared_at [23502 / ]
+psql:script/tests/constraints.sql:196: 
+NOTICE:  PASS: NOT NULL conversation_clears.last_cleared_message_id [23502 / ]
+psql:script/tests/constraints.sql:196: 
+NOTICE:  PASS: NOT NULL chat_groups.id [23502 / ]
+psql:script/tests/constraints.sql:196: 
+NOTICE:  PASS: NOT NULL chat_groups.group_name [23502 / ]
+psql:script/tests/constraints.sql:196: 
+NOTICE:  PASS: NOT NULL chat_groups.created_by [23502 / ]
+psql:script/tests/constraints.sql:196: 
+NOTICE:  PASS: NOT NULL chat_groups.is_encrypted [23502 / ]
+psql:script/tests/constraints.sql:196: 
+NOTICE:  PASS: NOT NULL chat_groups.created_at [23502 / ]
+psql:script/tests/constraints.sql:196: 
+NOTICE:  PASS: NOT NULL group_members.group_id [23502 / ]
+psql:script/tests/constraints.sql:196: 
+NOTICE:  PASS: NOT NULL group_members.user_id [23502 / ]
+psql:script/tests/constraints.sql:196: 
+NOTICE:  PASS: NOT NULL group_members.is_admin [23502 / ]
+psql:script/tests/constraints.sql:196: 
+NOTICE:  PASS: NOT NULL group_members.joined_at [23502 / ]
+psql:script/tests/constraints.sql:196: 
+NOTICE:  PASS: NOT NULL group_messages.id [23502 / ]
+psql:script/tests/constraints.sql:196: 
+NOTICE:  PASS: NOT NULL group_messages.group_id [23502 / ]
+psql:script/tests/constraints.sql:196: 
+NOTICE:  PASS: NOT NULL group_messages.sender_id [23502 / ]
+psql:script/tests/constraints.sql:196: 
+NOTICE:  PASS: NOT NULL group_messages.content [23502 / ]
+psql:script/tests/constraints.sql:196: 
+NOTICE:  PASS: NOT NULL group_messages.created_at [23502 / ]
+psql:script/tests/constraints.sql:196: 
+NOTICE:  PASS: NOT NULL spam_reports.id [23502 / ]
+(1 row)
+
+ assert_true 
+-------------
+ 
+(1 row)
+
+ assert_true 
+-------------
+ 
+(1 row)
+
+ assert_true 
+-------------
+ 
+(1 row)
+
+ assert_true 
+-------------
+ 
+(1 row)
+
+DO
+ expect_error 
+--------------
+ 
+(1 row)
+
+ expect_error 
+--------------
+ 
+(1 row)
+
+ expect_error 
+--------------
+ 
+(1 row)
+
+ expect_error 
+--------------
+ 
+(1 row)
+
+ expect_error 
+--------------
+ 
+(1 row)
+
+psql:script/tests/constraints.sql:196: 
+NOTICE:  PASS: NOT NULL spam_reports.reporter_id [23502 / ]
+psql:script/tests/constraints.sql:196: 
+NOTICE:  PASS: NOT NULL spam_reports.reported_id [23502 / ]
+psql:script/tests/constraints.sql:196: 
+NOTICE:  PASS: NOT NULL spam_reports.created_at [23502 / ]
+psql:script/tests/constraints.sql:196: 
+NOTICE:  PASS: FK rejects missing parent fk_login_history_user [23503 / fk_login_history_user]
+psql:script/tests/constraints.sql:196: 
+NOTICE:  PASS: FK rejects missing parent fk_friendships_second [23503 / fk_friendships_second]
+psql:script/tests/constraints.sql:196: 
+NOTICE:  PASS: FK rejects missing parent fk_activity_logs_user [23503 / fk_activity_logs_user]
+psql:script/tests/constraints.sql:196: 
+NOTICE:  PASS: FK rejects missing parent fk_friend_requests_sender [23503 / fk_friend_requests_sender]
+psql:script/tests/constraints.sql:196: 
+NOTICE:  PASS: FK rejects missing parent fk_friend_requests_receiver [23503 / fk_friend_requests_receiver]
+psql:script/tests/constraints.sql:196: 
+NOTICE:  PASS: FK rejects missing parent fk_friendships_first [23503 / fk_friendships_first]
+psql:script/tests/constraints.sql:196: 
+NOTICE:  PASS: FK rejects missing parent fk_user_blocks_blocker [23503 / fk_user_blocks_blocker]
+psql:script/tests/constraints.sql:196: 
+NOTICE:  PASS: FK rejects missing parent fk_user_blocks_blocked [23503 / fk_user_blocks_blocked]
+psql:script/tests/constraints.sql:196: 
+NOTICE:  PASS: FK rejects missing parent fk_direct_messages_sender [23503 / fk_direct_messages_sender]
+psql:script/tests/constraints.sql:196: 
+NOTICE:  PASS: FK rejects missing parent fk_direct_messages_receiver [23503 / fk_direct_messages_receiver]
+psql:script/tests/constraints.sql:196: 
+NOTICE:  PASS: FK rejects missing parent fk_message_hidden_message [23503 / fk_message_hidden_message]
+psql:script/tests/constraints.sql:196: 
+NOTICE:  PASS: FK rejects missing parent fk_message_hidden_user [23503 / fk_message_hidden_user]
+psql:script/tests/constraints.sql:196: 
+NOTICE:  PASS: FK rejects missing parent fk_conversation_clears_user [23503 / fk_conversation_clears_user]
+psql:script/tests/constraints.sql:196: 
+NOTICE:  PASS: FK rejects missing parent fk_conversation_clears_partner [23503 / fk_conversation_clears_partner]
+psql:script/tests/constraints.sql:196: 
+NOTICE:  PASS: FK rejects missing parent fk_chat_groups_creator [23503 / fk_chat_groups_creator]
+psql:script/tests/constraints.sql:196: 
+NOTICE:  PASS: FK rejects missing parent fk_group_members_group [23503 / fk_group_members_group]
+psql:script/tests/constraints.sql:196: 
+NOTICE:  PASS: FK rejects missing parent fk_group_members_user [23503 / fk_group_members_user]
+psql:script/tests/constraints.sql:196: 
+NOTICE:  PASS: FK rejects missing parent fk_group_messages_group [23503 / ]
+psql:script/tests/constraints.sql:196: 
+NOTICE:  PASS: FK rejects missing parent fk_group_messages_sender [23503 / fk_group_messages_sender]
+psql:script/tests/constraints.sql:196: 
+NOTICE:  PASS: FK rejects missing parent fk_spam_reports_reporter [23503 / fk_spam_reports_reporter]
+psql:script/tests/constraints.sql:196: 
+NOTICE:  PASS: FK rejects missing parent fk_spam_reports_reported [23503 / fk_spam_reports_reported]
+psql:script/tests/constraints.sql:198: 
+NOTICE:  PASS: duplicate username [23505 / uq_users_username]
+psql:script/tests/constraints.sql:199: 
+NOTICE:  PASS: duplicate email [23505 / uq_users_email]
+psql:script/tests/constraints.sql:200: 
+NOTICE:  PASS: UUID unique even across owners [23505 / uq_activity_session]
+psql:script/tests/constraints.sql:201: 
+NOTICE:  PASS: UUID syntax [22P02 / ]
+psql:script/tests/constraints.sql:202: 
+NOTICE:  PASS: PENDING same direction [23505 / uq_pending_friend_pair]
+psql:script/tests/constraints.sql:203: 
+NOTICE:  PASS: PENDING reversed direction [23505 / uq_pending_friend_pair]
+psql:script/tests/constraints.sql:205: 
+NOTICE:  PASS: non-PENDING historical request allowed
+psql:script/tests/constraints.sql:206: 
+NOTICE:  PASS: one lifetime report per directed pair [23505 / uq_spam_report_pair]
+ expect_error 
+--------------
+ 
+(1 row)
+
+INSERT 0 1
+ assert_true 
+-------------
+ 
+(1 row)
+
+ expect_error 
+--------------
+ 
+(1 row)
+
+psql:script/tests/constraints.sql:248: 
+NOTICE:  PASS: CHECK chk_users_username [23514 / chk_users_username]
+psql:script/tests/constraints.sql:248: 
+NOTICE:  PASS: CHECK chk_users_full_name [23514 / chk_users_full_name]
+psql:script/tests/constraints.sql:248: 
+NOTICE:  PASS: CHECK chk_users_gender [23514 / chk_users_gender]
+psql:script/tests/constraints.sql:248: 
+NOTICE:  PASS: CHECK chk_users_email_canonical [23514 / chk_users_email_canonical]
+psql:script/tests/constraints.sql:248: 
+NOTICE:  PASS: CHECK chk_users_email_ascii [23514 / chk_users_email_ascii]
+psql:script/tests/constraints.sql:248: 
+NOTICE:  PASS: CHECK chk_users_status [23514 / chk_users_status]
+psql:script/tests/constraints.sql:248: 
+NOTICE:  PASS: CHECK chk_users_role [23514 / chk_users_role]
+psql:script/tests/constraints.sql:248: 
+NOTICE:  PASS: CHECK chk_activity_action [23514 / chk_activity_action]
+psql:script/tests/constraints.sql:248: 
+NOTICE:  PASS: CHECK chk_fr_status [23514 / chk_fr_status]
+psql:script/tests/constraints.sql:248: 
+NOTICE:  PASS: CHECK chk_fr_no_self [23514 / chk_fr_no_self]
+DO
+ expect_error 
+--------------
+ 
+(1 row)
+
+ expect_error 
+--------------
+ 
+(1 row)
+
+psql:script/tests/constraints.sql:248: 
+NOTICE:  PASS: CHECK chk_friendship_order [23514 / chk_friendship_order]
+psql:script/tests/constraints.sql:248: 
+NOTICE:  PASS: CHECK chk_block_no_self [23514 / chk_block_no_self]
+psql:script/tests/constraints.sql:248: 
+NOTICE:  PASS: CHECK chk_dm_no_self [23514 / chk_dm_no_self]
+psql:script/tests/constraints.sql:248: 
+NOTICE:  PASS: CHECK chk_dm_content [23514 / chk_dm_content]
+psql:script/tests/constraints.sql:248: 
+NOTICE:  PASS: CHECK chk_clear_no_self [23514 / chk_clear_no_self]
+psql:script/tests/constraints.sql:248: 
+NOTICE:  PASS: CHECK chk_clear_watermark_nonnegative [23514 / chk_clear_watermark_nonnegative]
+psql:script/tests/constraints.sql:248: 
+NOTICE:  PASS: CHECK chk_group_name [23514 / chk_group_name]
+psql:script/tests/constraints.sql:248: 
+NOTICE:  PASS: CHECK chk_group_key_mode [23514 / chk_group_key_mode]
+psql:script/tests/constraints.sql:248: 
+NOTICE:  PASS: CHECK chk_group_message_content [23514 / chk_group_message_content]
+psql:script/tests/constraints.sql:248: 
+NOTICE:  PASS: CHECK chk_spam_no_self [23514 / chk_spam_no_self]
+psql:script/tests/constraints.sql:248: 
+NOTICE:  PASS: CHECK chk_spam_reason [23514 / chk_spam_reason]
+psql:script/tests/constraints.sql:248: 
+NOTICE:  PASS: positive identity users [23514 / chk_users_id_positive]
+psql:script/tests/constraints.sql:248: 
+NOTICE:  PASS: positive identity login_history [23514 / chk_login_history_id_positive]
+psql:script/tests/constraints.sql:248: 
+NOTICE:  PASS: positive identity activity_logs [23514 / chk_activity_logs_id_positive]
+psql:script/tests/constraints.sql:248: 
+NOTICE:  PASS: positive identity friend_requests [23514 / chk_friend_requests_id_positive]
+psql:script/tests/constraints.sql:248: 
+NOTICE:  PASS: positive identity direct_messages [23514 / chk_direct_messages_id_positive]
+psql:script/tests/constraints.sql:248: 
+NOTICE:  PASS: positive identity chat_groups [23514 / chk_chat_groups_id_positive]
+psql:script/tests/constraints.sql:248: 
+NOTICE:  PASS: positive identity group_messages [23514 / chk_group_messages_id_positive]
+psql:script/tests/constraints.sql:248: 
+NOTICE:  PASS: positive identity spam_reports [23514 / chk_spam_reports_id_positive]
+psql:script/tests/constraints.sql:249: 
+NOTICE:  PASS: empty email rejected [23514 / chk_users_email_ascii]
+psql:script/tests/constraints.sql:250: 
+NOTICE:  PASS: reversed friendship [23514 / chk_friendship_order]
+psql:script/tests/constraints.sql:251: 
+NOTICE:  PASS: DM size bound [23514 / chk_dm_content]
+psql:script/tests/constraints.sql:252: 
+NOTICE:  PASS: group content size bound [23514 / chk_group_message_content]
+ expect_error 
+--------------
+ 
+(1 row)
+
+ expect_error 
+--------------
+ 
+(1 row)
+
+INSERT 0 1
+INSERT 0 1
+psql:script/tests/constraints.sql:259: 
+NOTICE:  PASS: duplicate IV per group [23505 / uq_group_message_iv]
+ expect_error 
+--------------
+ 
+(1 row)
+
+psql:script/tests/constraints.sql:260: 
+NOTICE:  PASS: IV format [23514 / chk_group_message_iv]
+ expect_error 
+--------------
+ 
+(1 row)
+
+psql:script/tests/constraints.sql:261: 
+NOTICE:  PASS: encrypted group requires IV [23514 / ]
+ expect_error 
+--------------
+ 
+(1 row)
+
+psql:script/tests/constraints.sql:262: 
+NOTICE:  PASS: plain group rejects IV [23514 / ]
+ expect_error 
+--------------
+ 
+(1 row)
+
+psql:script/tests/constraints.sql:263: 
+NOTICE:  PASS: group mode immutable [23514 / ]
+ expect_error 
+--------------
+ 
+(1 row)
+
+psql:script/tests/constraints.sql:264: 
+NOTICE:  PASS: sender immutable [23514 / ]
+ expect_error 
+--------------
+ 
+(1 row)
+
+psql:script/tests/constraints.sql:265: 
+NOTICE:  PASS: message group immutable [23514 / ]
+ expect_error 
+--------------
+ 
+(1 row)
+
+INSERT 0 1
+psql:script/tests/constraints.sql:267: 
+NOTICE:  PASS: multiple plaintext NULL IV allowed
+ assert_true 
+-------------
+ 
+(1 row)
+
+psql:script/tests/constraints.sql:287: 
+NOTICE:  PASS: soft delete preserves history/relationships
+DO
+psql:script/tests/constraints.sql:288: 
+NOTICE:  PASS: DELETED username remains reserved [23505 / uq_users_username]
+ expect_error 
+--------------
+ 
+(1 row)
+
+psql:script/tests/constraints.sql:291: 
+NOTICE:  PASS: hard delete historical user restricted [23001 / fk_login_history_user]
+ expect_error 
+--------------
+ 
+(1 row)
+
+DELETE 1
+psql:script/tests/constraints.sql:295: 
+NOTICE:  PASS: message deletion cascades hidden markers
+ assert_true 
+-------------
+ 
+(1 row)
+
+DELETE 2
+psql:script/tests/constraints.sql:297: 
+NOTICE:  PASS: group deletion cascades dependent rows
+ assert_true 
+-------------
+ 
+(1 row)
+
+ROLLBACK
+Schema and constraint tests completed successfully. No concurrency or AEAD tests were run.
+PASS: schema/constraint suite on java_chat_test_3cfeccfbb97046058ce25fe43e595a98

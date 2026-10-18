@@ -8,8 +8,9 @@
 - Nếu có `Final Project.pdf`, ưu tiên yêu cầu chính thức của giảng viên. Phân biệt rõ yêu cầu bắt buộc, quyết định A/B đã chốt và đề xuất còn chờ duyệt.
 
 ## Phạm vi công việc
-- Thành viên A phụ trách Admin UI (`src/main/java/com/chatapp/admin/`) và SQL (`script/`).
-- Thành viên B phụ trách User UI (`src/main/java/com/chatapp/user/`), khởi tạo repository/Maven và tổng hợp báo cáo.
+- Branch `main` là branch tích hợp chung.
+- Thành viên A làm việc trên `feat/admin-db`, phụ trách Admin UI (`src/main/java/com/chatapp/admin/`), ERD, PostgreSQL và `script/database.sql`.
+- Thành viên B làm việc trên `feat/user-ui`, phụ trách User UI (`src/main/java/com/chatapp/user/`), Maven/repository và báo cáo.
 - `src/main/java/com/chatapp/server/`, `src/main/java/com/chatapp/shared/`, `pom.xml`, giao thức Socket/JSON và các API dùng chung cần được cả hai review trước khi đổi giao diện công khai hoặc hợp đồng dữ liệu.
 - Đọc vai trò của người yêu cầu trong prompt; không áp dụng giới hạn chỉ dành cho A lên các tác vụ của B hoặc ngược lại.
 
@@ -27,4 +28,4 @@ Java 21 LTS, Maven, Java Swing + FlatLaf, PostgreSQL local + pgJDBC, Java Socket
 ## An toàn và dữ liệu
 - Không lưu mật khẩu gốc; sử dụng password hash phù hợp. Không để credential DB đặc quyền, key LLM, email secret hoặc master encryption key trong client/JAR hay repository.
 - Server kiểm tra quyền truy cập cho nhắn tin, xóa lịch sử, quản lý nhóm, block và report spam; các thao tác liên quan nhiều bảng phải được thực hiện nhất quán.
-- Thiết kế 13 bảng là baseline; các điểm P1 chưa duyệt phải được nêu rõ. Không tự mặc định mã hóa phía Server tương đương E2EE, hay xem đề xuất mở rộng là yêu cầu đã chốt.
+- Database chính thức: `docs/database/Database_Schema.md`, `Database_Decisions.md`, `ERD.mmd` và `script/database.sql`; SQL đã PASS PostgreSQL 18.6. Nghiệp vụ Server/concurrency chưa được kiểm chứng. Server-side AES-GCM vẫn PROVISIONAL, không tương đương E2EE; mở rộng ngoài thiết kế vẫn cần review.
