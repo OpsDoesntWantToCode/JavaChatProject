@@ -117,8 +117,8 @@ JavaChatProject/
 
 ## 6. Các quyết định CÒN MỞ — không được tự suy diễn thành đã chốt
 
-- **Mã hóa nhóm:** cần hỏi giảng viên E2EE hay mã hóa phía Server. `wrapped_encryption_key`, `encrypted_group_key`, `iv`, `key_version`/định dạng tin mã hóa mới là hướng thiết kế; quản lý vòng đời khóa chưa hoàn chỉnh.
-- **Schema 13 bảng:** là baseline, chưa phải SQL được nghiệm thu. Đợt review gần nhất yêu cầu bổ sung `NOT NULL`, `CHECK`, các index thực tế, chống lời mời kết bạn `PENDING` trùng hai chiều, quy tắc xóa lịch sử ở thời điểm đồng thời, quyền và transaction.
+- **Mã hóa nhóm:** chọn Server-side AES-GCM PROVISIONAL, mode bất biến, một DEK/nhóm và KEK ngoài DB. Không dùng encrypted_group_key hoặc key_version trong schema hiện hành. Cần giảng viên xác nhận mô hình có đáp ứng yêu cầu; chưa gọi là E2EE.
+- **Tích hợp Database/Server:** SQL 13 bảng/65 cột đã PASS trên PostgreSQL 18.6; quyền service, transaction/concurrency và hiệu năng chưa được kiểm thử ở Java. Nguồn chính thức: [Schema](database/Database_Schema.md), [Decisions](database/Database_Decisions.md), [test results](database/TEST_RESULTS.md).
 - **Giao diện:** kích thước cửa sổ, bảng màu, font chữ chi tiết chưa chốt.
 - **LLM:** nhà cung cấp và endpoint cụ thể chưa chọn; gọi API qua HttpClient là hướng đã thống nhất.
 - **Build nhiều JAR / chạy Server:** cần cấu hình Maven và kiểm chứng trên máy khác.
@@ -129,7 +129,7 @@ JavaChatProject/
 - Thành viên A và B đều dùng cùng một baseline ở Mục 1. Chỉ thay đổi stack sau khi **cả hai thành viên đồng ý** và cập nhật tài liệu này; các gợi ý của AI không tự có hiệu lực.
 - **Không tự thay Swing bằng JavaFX, Gson bằng Jackson, PostgreSQL bằng Supabase, hay tự thêm Spring Boot/ORM**.
 - Các mục trong **Mục 6 là quyết định còn mở**. AI chỉ được đưa ra đề xuất và nêu tác động, không trình bày chúng thành yêu cầu đã chốt.
-- Đối chiếu `docs/Project_Context.md` và `Final Project.pdf` khi thiết kế database/chức năng. Không xem baseline 13 bảng là schema SQL hoàn chỉnh.
+- Đối chiếu `docs/Project_Context.md` và `Final Project.pdf` khi thiết kế database/chức năng. Dùng bộ Database chính thức đã kiểm thử SQL; không suy rộng thành đã hoàn thành nghiệp vụ Server.
 - Mọi thay đổi ảnh hưởng `server/`, `shared/`, giao thức JSON/Socket hoặc `pom.xml` cần được hai thành viên review, dù AI nào đề xuất thay đổi.
 
 ## 8. Phân biệt công nghệ sản phẩm với công cụ hỗ trợ lập trình

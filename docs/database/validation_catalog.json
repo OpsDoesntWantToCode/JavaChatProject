@@ -1,0 +1,1368 @@
+{
+    "tables": [
+        {
+            "name": "activity_logs",
+            "columns": [
+                {
+                    "name": "id",
+                    "type": "bigint",
+                    "default": null,
+                    "identity": "a",
+                    "not_null": true
+                },
+                {
+                    "name": "user_id",
+                    "type": "bigint",
+                    "default": null,
+                    "identity": "",
+                    "not_null": true
+                },
+                {
+                    "name": "action_type",
+                    "type": "character varying(30)",
+                    "default": "'OPEN_APP'::character varying",
+                    "identity": "",
+                    "not_null": true
+                },
+                {
+                    "name": "session_id",
+                    "type": "uuid",
+                    "default": null,
+                    "identity": "",
+                    "not_null": true
+                },
+                {
+                    "name": "created_at",
+                    "type": "timestamp with time zone",
+                    "default": "now()",
+                    "identity": "",
+                    "not_null": true
+                }
+            ],
+            "indexes": [
+                {
+                    "name": "idx_activity_time_user",
+                    "definition": "CREATE INDEX idx_activity_time_user ON public.activity_logs USING btree (created_at, user_id)"
+                },
+                {
+                    "name": "idx_activity_user_time",
+                    "definition": "CREATE INDEX idx_activity_user_time ON public.activity_logs USING btree (user_id, created_at)"
+                },
+                {
+                    "name": "pk_activity_logs",
+                    "definition": "CREATE UNIQUE INDEX pk_activity_logs ON public.activity_logs USING btree (id)"
+                },
+                {
+                    "name": "uq_activity_session",
+                    "definition": "CREATE UNIQUE INDEX uq_activity_session ON public.activity_logs USING btree (session_id)"
+                }
+            ],
+            "triggers": null,
+            "constraints": [
+                {
+                    "kind": "c",
+                    "name": "chk_activity_action",
+                    "definition": "CHECK (action_type::text = 'OPEN_APP'::text)"
+                },
+                {
+                    "kind": "c",
+                    "name": "chk_activity_logs_id_positive",
+                    "definition": "CHECK (id > 0)"
+                },
+                {
+                    "kind": "f",
+                    "name": "fk_activity_logs_user",
+                    "definition": "FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE RESTRICT"
+                },
+                {
+                    "kind": "n",
+                    "name": "activity_logs_action_type_not_null",
+                    "definition": "NOT NULL action_type"
+                },
+                {
+                    "kind": "n",
+                    "name": "activity_logs_created_at_not_null",
+                    "definition": "NOT NULL created_at"
+                },
+                {
+                    "kind": "n",
+                    "name": "activity_logs_id_not_null",
+                    "definition": "NOT NULL id"
+                },
+                {
+                    "kind": "n",
+                    "name": "activity_logs_session_id_not_null",
+                    "definition": "NOT NULL session_id"
+                },
+                {
+                    "kind": "n",
+                    "name": "activity_logs_user_id_not_null",
+                    "definition": "NOT NULL user_id"
+                },
+                {
+                    "kind": "p",
+                    "name": "pk_activity_logs",
+                    "definition": "PRIMARY KEY (id)"
+                },
+                {
+                    "kind": "u",
+                    "name": "uq_activity_session",
+                    "definition": "UNIQUE (session_id)"
+                }
+            ]
+        },
+        {
+            "name": "chat_groups",
+            "columns": [
+                {
+                    "name": "id",
+                    "type": "bigint",
+                    "default": null,
+                    "identity": "a",
+                    "not_null": true
+                },
+                {
+                    "name": "group_name",
+                    "type": "character varying(100)",
+                    "default": null,
+                    "identity": "",
+                    "not_null": true
+                },
+                {
+                    "name": "created_by",
+                    "type": "bigint",
+                    "default": null,
+                    "identity": "",
+                    "not_null": true
+                },
+                {
+                    "name": "is_encrypted",
+                    "type": "boolean",
+                    "default": "false",
+                    "identity": "",
+                    "not_null": true
+                },
+                {
+                    "name": "wrapped_encryption_key",
+                    "type": "text",
+                    "default": null,
+                    "identity": "",
+                    "not_null": false
+                },
+                {
+                    "name": "created_at",
+                    "type": "timestamp with time zone",
+                    "default": "now()",
+                    "identity": "",
+                    "not_null": true
+                }
+            ],
+            "indexes": [
+                {
+                    "name": "pk_chat_groups",
+                    "definition": "CREATE UNIQUE INDEX pk_chat_groups ON public.chat_groups USING btree (id)"
+                }
+            ],
+            "triggers": [
+                {
+                    "name": "trg_group_mode_immutable",
+                    "definition": "CREATE TRIGGER trg_group_mode_immutable BEFORE UPDATE OF is_encrypted ON chat_groups FOR EACH ROW EXECUTE FUNCTION guard_group_encryption_mode()"
+                }
+            ],
+            "constraints": [
+                {
+                    "kind": "c",
+                    "name": "chk_chat_groups_id_positive",
+                    "definition": "CHECK (id > 0)"
+                },
+                {
+                    "kind": "c",
+                    "name": "chk_group_key_mode",
+                    "definition": "CHECK (is_encrypted AND wrapped_encryption_key IS NOT NULL OR NOT is_encrypted AND wrapped_encryption_key IS NULL)"
+                },
+                {
+                    "kind": "c",
+                    "name": "chk_group_name",
+                    "definition": "CHECK (btrim(group_name::text) <> ''::text)"
+                },
+                {
+                    "kind": "f",
+                    "name": "fk_chat_groups_creator",
+                    "definition": "FOREIGN KEY (created_by) REFERENCES users(id) ON DELETE RESTRICT"
+                },
+                {
+                    "kind": "n",
+                    "name": "chat_groups_created_at_not_null",
+                    "definition": "NOT NULL created_at"
+                },
+                {
+                    "kind": "n",
+                    "name": "chat_groups_created_by_not_null",
+                    "definition": "NOT NULL created_by"
+                },
+                {
+                    "kind": "n",
+                    "name": "chat_groups_group_name_not_null",
+                    "definition": "NOT NULL group_name"
+                },
+                {
+                    "kind": "n",
+                    "name": "chat_groups_id_not_null",
+                    "definition": "NOT NULL id"
+                },
+                {
+                    "kind": "n",
+                    "name": "chat_groups_is_encrypted_not_null",
+                    "definition": "NOT NULL is_encrypted"
+                },
+                {
+                    "kind": "p",
+                    "name": "pk_chat_groups",
+                    "definition": "PRIMARY KEY (id)"
+                }
+            ]
+        },
+        {
+            "name": "conversation_clears",
+            "columns": [
+                {
+                    "name": "user_id",
+                    "type": "bigint",
+                    "default": null,
+                    "identity": "",
+                    "not_null": true
+                },
+                {
+                    "name": "partner_id",
+                    "type": "bigint",
+                    "default": null,
+                    "identity": "",
+                    "not_null": true
+                },
+                {
+                    "name": "last_cleared_message_id",
+                    "type": "bigint",
+                    "default": "0",
+                    "identity": "",
+                    "not_null": true
+                },
+                {
+                    "name": "cleared_at",
+                    "type": "timestamp with time zone",
+                    "default": null,
+                    "identity": "",
+                    "not_null": true
+                }
+            ],
+            "indexes": [
+                {
+                    "name": "pk_conversation_clears",
+                    "definition": "CREATE UNIQUE INDEX pk_conversation_clears ON public.conversation_clears USING btree (user_id, partner_id)"
+                }
+            ],
+            "triggers": null,
+            "constraints": [
+                {
+                    "kind": "c",
+                    "name": "chk_clear_no_self",
+                    "definition": "CHECK (user_id <> partner_id)"
+                },
+                {
+                    "kind": "c",
+                    "name": "chk_clear_watermark_nonnegative",
+                    "definition": "CHECK (last_cleared_message_id >= 0)"
+                },
+                {
+                    "kind": "f",
+                    "name": "fk_conversation_clears_partner",
+                    "definition": "FOREIGN KEY (partner_id) REFERENCES users(id) ON DELETE CASCADE"
+                },
+                {
+                    "kind": "f",
+                    "name": "fk_conversation_clears_user",
+                    "definition": "FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE"
+                },
+                {
+                    "kind": "n",
+                    "name": "conversation_clears_cleared_at_not_null",
+                    "definition": "NOT NULL cleared_at"
+                },
+                {
+                    "kind": "n",
+                    "name": "conversation_clears_last_cleared_message_id_not_null",
+                    "definition": "NOT NULL last_cleared_message_id"
+                },
+                {
+                    "kind": "n",
+                    "name": "conversation_clears_partner_id_not_null",
+                    "definition": "NOT NULL partner_id"
+                },
+                {
+                    "kind": "n",
+                    "name": "conversation_clears_user_id_not_null",
+                    "definition": "NOT NULL user_id"
+                },
+                {
+                    "kind": "p",
+                    "name": "pk_conversation_clears",
+                    "definition": "PRIMARY KEY (user_id, partner_id)"
+                }
+            ]
+        },
+        {
+            "name": "direct_messages",
+            "columns": [
+                {
+                    "name": "id",
+                    "type": "bigint",
+                    "default": null,
+                    "identity": "a",
+                    "not_null": true
+                },
+                {
+                    "name": "sender_id",
+                    "type": "bigint",
+                    "default": null,
+                    "identity": "",
+                    "not_null": true
+                },
+                {
+                    "name": "receiver_id",
+                    "type": "bigint",
+                    "default": null,
+                    "identity": "",
+                    "not_null": true
+                },
+                {
+                    "name": "content",
+                    "type": "text",
+                    "default": null,
+                    "identity": "",
+                    "not_null": true
+                },
+                {
+                    "name": "is_read",
+                    "type": "boolean",
+                    "default": "false",
+                    "identity": "",
+                    "not_null": true
+                },
+                {
+                    "name": "created_at",
+                    "type": "timestamp with time zone",
+                    "default": "now()",
+                    "identity": "",
+                    "not_null": true
+                }
+            ],
+            "indexes": [
+                {
+                    "name": "idx_dm_pair_id",
+                    "definition": "CREATE INDEX idx_dm_pair_id ON public.direct_messages USING btree (LEAST(sender_id, receiver_id), GREATEST(sender_id, receiver_id), id)"
+                },
+                {
+                    "name": "idx_dm_receiver_id",
+                    "definition": "CREATE INDEX idx_dm_receiver_id ON public.direct_messages USING btree (receiver_id, id)"
+                },
+                {
+                    "name": "idx_dm_sender_time",
+                    "definition": "CREATE INDEX idx_dm_sender_time ON public.direct_messages USING btree (sender_id, created_at, receiver_id)"
+                },
+                {
+                    "name": "pk_direct_messages",
+                    "definition": "CREATE UNIQUE INDEX pk_direct_messages ON public.direct_messages USING btree (id)"
+                }
+            ],
+            "triggers": null,
+            "constraints": [
+                {
+                    "kind": "c",
+                    "name": "chk_direct_messages_id_positive",
+                    "definition": "CHECK (id > 0)"
+                },
+                {
+                    "kind": "c",
+                    "name": "chk_dm_content",
+                    "definition": "CHECK (content <> ''::text AND octet_length(content) <= 65536)"
+                },
+                {
+                    "kind": "c",
+                    "name": "chk_dm_no_self",
+                    "definition": "CHECK (sender_id <> receiver_id)"
+                },
+                {
+                    "kind": "f",
+                    "name": "fk_direct_messages_receiver",
+                    "definition": "FOREIGN KEY (receiver_id) REFERENCES users(id) ON DELETE RESTRICT"
+                },
+                {
+                    "kind": "f",
+                    "name": "fk_direct_messages_sender",
+                    "definition": "FOREIGN KEY (sender_id) REFERENCES users(id) ON DELETE RESTRICT"
+                },
+                {
+                    "kind": "n",
+                    "name": "direct_messages_content_not_null",
+                    "definition": "NOT NULL content"
+                },
+                {
+                    "kind": "n",
+                    "name": "direct_messages_created_at_not_null",
+                    "definition": "NOT NULL created_at"
+                },
+                {
+                    "kind": "n",
+                    "name": "direct_messages_id_not_null",
+                    "definition": "NOT NULL id"
+                },
+                {
+                    "kind": "n",
+                    "name": "direct_messages_is_read_not_null",
+                    "definition": "NOT NULL is_read"
+                },
+                {
+                    "kind": "n",
+                    "name": "direct_messages_receiver_id_not_null",
+                    "definition": "NOT NULL receiver_id"
+                },
+                {
+                    "kind": "n",
+                    "name": "direct_messages_sender_id_not_null",
+                    "definition": "NOT NULL sender_id"
+                },
+                {
+                    "kind": "p",
+                    "name": "pk_direct_messages",
+                    "definition": "PRIMARY KEY (id)"
+                }
+            ]
+        },
+        {
+            "name": "friend_requests",
+            "columns": [
+                {
+                    "name": "id",
+                    "type": "bigint",
+                    "default": null,
+                    "identity": "a",
+                    "not_null": true
+                },
+                {
+                    "name": "sender_id",
+                    "type": "bigint",
+                    "default": null,
+                    "identity": "",
+                    "not_null": true
+                },
+                {
+                    "name": "receiver_id",
+                    "type": "bigint",
+                    "default": null,
+                    "identity": "",
+                    "not_null": true
+                },
+                {
+                    "name": "status",
+                    "type": "character varying(20)",
+                    "default": "'PENDING'::character varying",
+                    "identity": "",
+                    "not_null": true
+                },
+                {
+                    "name": "created_at",
+                    "type": "timestamp with time zone",
+                    "default": "now()",
+                    "identity": "",
+                    "not_null": true
+                }
+            ],
+            "indexes": [
+                {
+                    "name": "idx_friend_requests_inbox",
+                    "definition": "CREATE INDEX idx_friend_requests_inbox ON public.friend_requests USING btree (receiver_id, created_at DESC) WHERE ((status)::text = 'PENDING'::text)"
+                },
+                {
+                    "name": "pk_friend_requests",
+                    "definition": "CREATE UNIQUE INDEX pk_friend_requests ON public.friend_requests USING btree (id)"
+                },
+                {
+                    "name": "uq_pending_friend_pair",
+                    "definition": "CREATE UNIQUE INDEX uq_pending_friend_pair ON public.friend_requests USING btree (LEAST(sender_id, receiver_id), GREATEST(sender_id, receiver_id)) WHERE ((status)::text = 'PENDING'::text)"
+                }
+            ],
+            "triggers": null,
+            "constraints": [
+                {
+                    "kind": "c",
+                    "name": "chk_fr_no_self",
+                    "definition": "CHECK (sender_id <> receiver_id)"
+                },
+                {
+                    "kind": "c",
+                    "name": "chk_fr_status",
+                    "definition": "CHECK (status::text = ANY (ARRAY['PENDING'::character varying, 'ACCEPTED'::character varying, 'REJECTED'::character varying]::text[]))"
+                },
+                {
+                    "kind": "c",
+                    "name": "chk_friend_requests_id_positive",
+                    "definition": "CHECK (id > 0)"
+                },
+                {
+                    "kind": "f",
+                    "name": "fk_friend_requests_receiver",
+                    "definition": "FOREIGN KEY (receiver_id) REFERENCES users(id) ON DELETE CASCADE"
+                },
+                {
+                    "kind": "f",
+                    "name": "fk_friend_requests_sender",
+                    "definition": "FOREIGN KEY (sender_id) REFERENCES users(id) ON DELETE CASCADE"
+                },
+                {
+                    "kind": "n",
+                    "name": "friend_requests_created_at_not_null",
+                    "definition": "NOT NULL created_at"
+                },
+                {
+                    "kind": "n",
+                    "name": "friend_requests_id_not_null",
+                    "definition": "NOT NULL id"
+                },
+                {
+                    "kind": "n",
+                    "name": "friend_requests_receiver_id_not_null",
+                    "definition": "NOT NULL receiver_id"
+                },
+                {
+                    "kind": "n",
+                    "name": "friend_requests_sender_id_not_null",
+                    "definition": "NOT NULL sender_id"
+                },
+                {
+                    "kind": "n",
+                    "name": "friend_requests_status_not_null",
+                    "definition": "NOT NULL status"
+                },
+                {
+                    "kind": "p",
+                    "name": "pk_friend_requests",
+                    "definition": "PRIMARY KEY (id)"
+                }
+            ]
+        },
+        {
+            "name": "friendships",
+            "columns": [
+                {
+                    "name": "user_id_1",
+                    "type": "bigint",
+                    "default": null,
+                    "identity": "",
+                    "not_null": true
+                },
+                {
+                    "name": "user_id_2",
+                    "type": "bigint",
+                    "default": null,
+                    "identity": "",
+                    "not_null": true
+                },
+                {
+                    "name": "created_at",
+                    "type": "timestamp with time zone",
+                    "default": "now()",
+                    "identity": "",
+                    "not_null": true
+                }
+            ],
+            "indexes": [
+                {
+                    "name": "idx_friendships_second",
+                    "definition": "CREATE INDEX idx_friendships_second ON public.friendships USING btree (user_id_2, user_id_1)"
+                },
+                {
+                    "name": "pk_friendships",
+                    "definition": "CREATE UNIQUE INDEX pk_friendships ON public.friendships USING btree (user_id_1, user_id_2)"
+                }
+            ],
+            "triggers": null,
+            "constraints": [
+                {
+                    "kind": "c",
+                    "name": "chk_friendship_order",
+                    "definition": "CHECK (user_id_1 < user_id_2)"
+                },
+                {
+                    "kind": "f",
+                    "name": "fk_friendships_first",
+                    "definition": "FOREIGN KEY (user_id_1) REFERENCES users(id) ON DELETE CASCADE"
+                },
+                {
+                    "kind": "f",
+                    "name": "fk_friendships_second",
+                    "definition": "FOREIGN KEY (user_id_2) REFERENCES users(id) ON DELETE CASCADE"
+                },
+                {
+                    "kind": "n",
+                    "name": "friendships_created_at_not_null",
+                    "definition": "NOT NULL created_at"
+                },
+                {
+                    "kind": "n",
+                    "name": "friendships_user_id_1_not_null",
+                    "definition": "NOT NULL user_id_1"
+                },
+                {
+                    "kind": "n",
+                    "name": "friendships_user_id_2_not_null",
+                    "definition": "NOT NULL user_id_2"
+                },
+                {
+                    "kind": "p",
+                    "name": "pk_friendships",
+                    "definition": "PRIMARY KEY (user_id_1, user_id_2)"
+                }
+            ]
+        },
+        {
+            "name": "group_members",
+            "columns": [
+                {
+                    "name": "group_id",
+                    "type": "bigint",
+                    "default": null,
+                    "identity": "",
+                    "not_null": true
+                },
+                {
+                    "name": "user_id",
+                    "type": "bigint",
+                    "default": null,
+                    "identity": "",
+                    "not_null": true
+                },
+                {
+                    "name": "is_admin",
+                    "type": "boolean",
+                    "default": "false",
+                    "identity": "",
+                    "not_null": true
+                },
+                {
+                    "name": "joined_at",
+                    "type": "timestamp with time zone",
+                    "default": "now()",
+                    "identity": "",
+                    "not_null": true
+                }
+            ],
+            "indexes": [
+                {
+                    "name": "idx_group_members_user",
+                    "definition": "CREATE INDEX idx_group_members_user ON public.group_members USING btree (user_id, group_id)"
+                },
+                {
+                    "name": "pk_group_members",
+                    "definition": "CREATE UNIQUE INDEX pk_group_members ON public.group_members USING btree (group_id, user_id)"
+                }
+            ],
+            "triggers": null,
+            "constraints": [
+                {
+                    "kind": "f",
+                    "name": "fk_group_members_group",
+                    "definition": "FOREIGN KEY (group_id) REFERENCES chat_groups(id) ON DELETE CASCADE"
+                },
+                {
+                    "kind": "f",
+                    "name": "fk_group_members_user",
+                    "definition": "FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE RESTRICT"
+                },
+                {
+                    "kind": "n",
+                    "name": "group_members_group_id_not_null",
+                    "definition": "NOT NULL group_id"
+                },
+                {
+                    "kind": "n",
+                    "name": "group_members_is_admin_not_null",
+                    "definition": "NOT NULL is_admin"
+                },
+                {
+                    "kind": "n",
+                    "name": "group_members_joined_at_not_null",
+                    "definition": "NOT NULL joined_at"
+                },
+                {
+                    "kind": "n",
+                    "name": "group_members_user_id_not_null",
+                    "definition": "NOT NULL user_id"
+                },
+                {
+                    "kind": "p",
+                    "name": "pk_group_members",
+                    "definition": "PRIMARY KEY (group_id, user_id)"
+                }
+            ]
+        },
+        {
+            "name": "group_messages",
+            "columns": [
+                {
+                    "name": "id",
+                    "type": "bigint",
+                    "default": null,
+                    "identity": "a",
+                    "not_null": true
+                },
+                {
+                    "name": "group_id",
+                    "type": "bigint",
+                    "default": null,
+                    "identity": "",
+                    "not_null": true
+                },
+                {
+                    "name": "sender_id",
+                    "type": "bigint",
+                    "default": null,
+                    "identity": "",
+                    "not_null": true
+                },
+                {
+                    "name": "content",
+                    "type": "text",
+                    "default": null,
+                    "identity": "",
+                    "not_null": true
+                },
+                {
+                    "name": "iv",
+                    "type": "character varying(64)",
+                    "default": null,
+                    "identity": "",
+                    "not_null": false
+                },
+                {
+                    "name": "created_at",
+                    "type": "timestamp with time zone",
+                    "default": "now()",
+                    "identity": "",
+                    "not_null": true
+                }
+            ],
+            "indexes": [
+                {
+                    "name": "idx_group_messages_sender_time",
+                    "definition": "CREATE INDEX idx_group_messages_sender_time ON public.group_messages USING btree (sender_id, created_at, group_id)"
+                },
+                {
+                    "name": "idx_group_messages_time",
+                    "definition": "CREATE INDEX idx_group_messages_time ON public.group_messages USING btree (group_id, created_at, id)"
+                },
+                {
+                    "name": "pk_group_messages",
+                    "definition": "CREATE UNIQUE INDEX pk_group_messages ON public.group_messages USING btree (id)"
+                },
+                {
+                    "name": "uq_group_message_iv",
+                    "definition": "CREATE UNIQUE INDEX uq_group_message_iv ON public.group_messages USING btree (group_id, iv) WHERE (iv IS NOT NULL)"
+                }
+            ],
+            "triggers": [
+                {
+                    "name": "trg_group_message_mode",
+                    "definition": "CREATE TRIGGER trg_group_message_mode BEFORE INSERT OR UPDATE ON group_messages FOR EACH ROW EXECUTE FUNCTION guard_group_message_mode()"
+                }
+            ],
+            "constraints": [
+                {
+                    "kind": "c",
+                    "name": "chk_group_message_content",
+                    "definition": "CHECK (content <> ''::text AND octet_length(content) <= 65536)"
+                },
+                {
+                    "kind": "c",
+                    "name": "chk_group_message_iv",
+                    "definition": "CHECK (iv IS NULL OR iv::text ~ '^[A-Za-z0-9+/]{16}$'::text)"
+                },
+                {
+                    "kind": "c",
+                    "name": "chk_group_messages_id_positive",
+                    "definition": "CHECK (id > 0)"
+                },
+                {
+                    "kind": "f",
+                    "name": "fk_group_messages_group",
+                    "definition": "FOREIGN KEY (group_id) REFERENCES chat_groups(id) ON DELETE CASCADE"
+                },
+                {
+                    "kind": "f",
+                    "name": "fk_group_messages_sender",
+                    "definition": "FOREIGN KEY (sender_id) REFERENCES users(id) ON DELETE RESTRICT"
+                },
+                {
+                    "kind": "n",
+                    "name": "group_messages_content_not_null",
+                    "definition": "NOT NULL content"
+                },
+                {
+                    "kind": "n",
+                    "name": "group_messages_created_at_not_null",
+                    "definition": "NOT NULL created_at"
+                },
+                {
+                    "kind": "n",
+                    "name": "group_messages_group_id_not_null",
+                    "definition": "NOT NULL group_id"
+                },
+                {
+                    "kind": "n",
+                    "name": "group_messages_id_not_null",
+                    "definition": "NOT NULL id"
+                },
+                {
+                    "kind": "n",
+                    "name": "group_messages_sender_id_not_null",
+                    "definition": "NOT NULL sender_id"
+                },
+                {
+                    "kind": "p",
+                    "name": "pk_group_messages",
+                    "definition": "PRIMARY KEY (id)"
+                }
+            ]
+        },
+        {
+            "name": "login_history",
+            "columns": [
+                {
+                    "name": "id",
+                    "type": "bigint",
+                    "default": null,
+                    "identity": "a",
+                    "not_null": true
+                },
+                {
+                    "name": "user_id",
+                    "type": "bigint",
+                    "default": null,
+                    "identity": "",
+                    "not_null": true
+                },
+                {
+                    "name": "login_time",
+                    "type": "timestamp with time zone",
+                    "default": "now()",
+                    "identity": "",
+                    "not_null": true
+                }
+            ],
+            "indexes": [
+                {
+                    "name": "idx_login_history_time",
+                    "definition": "CREATE INDEX idx_login_history_time ON public.login_history USING btree (login_time DESC)"
+                },
+                {
+                    "name": "idx_login_history_user_time",
+                    "definition": "CREATE INDEX idx_login_history_user_time ON public.login_history USING btree (user_id, login_time DESC)"
+                },
+                {
+                    "name": "pk_login_history",
+                    "definition": "CREATE UNIQUE INDEX pk_login_history ON public.login_history USING btree (id)"
+                }
+            ],
+            "triggers": null,
+            "constraints": [
+                {
+                    "kind": "c",
+                    "name": "chk_login_history_id_positive",
+                    "definition": "CHECK (id > 0)"
+                },
+                {
+                    "kind": "f",
+                    "name": "fk_login_history_user",
+                    "definition": "FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE RESTRICT"
+                },
+                {
+                    "kind": "n",
+                    "name": "login_history_id_not_null",
+                    "definition": "NOT NULL id"
+                },
+                {
+                    "kind": "n",
+                    "name": "login_history_login_time_not_null",
+                    "definition": "NOT NULL login_time"
+                },
+                {
+                    "kind": "n",
+                    "name": "login_history_user_id_not_null",
+                    "definition": "NOT NULL user_id"
+                },
+                {
+                    "kind": "p",
+                    "name": "pk_login_history",
+                    "definition": "PRIMARY KEY (id)"
+                }
+            ]
+        },
+        {
+            "name": "message_hidden",
+            "columns": [
+                {
+                    "name": "message_id",
+                    "type": "bigint",
+                    "default": null,
+                    "identity": "",
+                    "not_null": true
+                },
+                {
+                    "name": "user_id",
+                    "type": "bigint",
+                    "default": null,
+                    "identity": "",
+                    "not_null": true
+                },
+                {
+                    "name": "hidden_at",
+                    "type": "timestamp with time zone",
+                    "default": "now()",
+                    "identity": "",
+                    "not_null": true
+                }
+            ],
+            "indexes": [
+                {
+                    "name": "pk_message_hidden",
+                    "definition": "CREATE UNIQUE INDEX pk_message_hidden ON public.message_hidden USING btree (message_id, user_id)"
+                }
+            ],
+            "triggers": null,
+            "constraints": [
+                {
+                    "kind": "f",
+                    "name": "fk_message_hidden_message",
+                    "definition": "FOREIGN KEY (message_id) REFERENCES direct_messages(id) ON DELETE CASCADE"
+                },
+                {
+                    "kind": "f",
+                    "name": "fk_message_hidden_user",
+                    "definition": "FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE"
+                },
+                {
+                    "kind": "n",
+                    "name": "message_hidden_hidden_at_not_null",
+                    "definition": "NOT NULL hidden_at"
+                },
+                {
+                    "kind": "n",
+                    "name": "message_hidden_message_id_not_null",
+                    "definition": "NOT NULL message_id"
+                },
+                {
+                    "kind": "n",
+                    "name": "message_hidden_user_id_not_null",
+                    "definition": "NOT NULL user_id"
+                },
+                {
+                    "kind": "p",
+                    "name": "pk_message_hidden",
+                    "definition": "PRIMARY KEY (message_id, user_id)"
+                }
+            ]
+        },
+        {
+            "name": "spam_reports",
+            "columns": [
+                {
+                    "name": "id",
+                    "type": "bigint",
+                    "default": null,
+                    "identity": "a",
+                    "not_null": true
+                },
+                {
+                    "name": "reporter_id",
+                    "type": "bigint",
+                    "default": null,
+                    "identity": "",
+                    "not_null": true
+                },
+                {
+                    "name": "reported_id",
+                    "type": "bigint",
+                    "default": null,
+                    "identity": "",
+                    "not_null": true
+                },
+                {
+                    "name": "reason",
+                    "type": "text",
+                    "default": null,
+                    "identity": "",
+                    "not_null": false
+                },
+                {
+                    "name": "created_at",
+                    "type": "timestamp with time zone",
+                    "default": "now()",
+                    "identity": "",
+                    "not_null": true
+                }
+            ],
+            "indexes": [
+                {
+                    "name": "idx_spam_reports_time",
+                    "definition": "CREATE INDEX idx_spam_reports_time ON public.spam_reports USING btree (created_at DESC)"
+                },
+                {
+                    "name": "pk_spam_reports",
+                    "definition": "CREATE UNIQUE INDEX pk_spam_reports ON public.spam_reports USING btree (id)"
+                },
+                {
+                    "name": "uq_spam_report_pair",
+                    "definition": "CREATE UNIQUE INDEX uq_spam_report_pair ON public.spam_reports USING btree (reporter_id, reported_id)"
+                }
+            ],
+            "triggers": null,
+            "constraints": [
+                {
+                    "kind": "c",
+                    "name": "chk_spam_no_self",
+                    "definition": "CHECK (reporter_id <> reported_id)"
+                },
+                {
+                    "kind": "c",
+                    "name": "chk_spam_reason",
+                    "definition": "CHECK (reason IS NULL OR char_length(reason) <= 2000)"
+                },
+                {
+                    "kind": "c",
+                    "name": "chk_spam_reports_id_positive",
+                    "definition": "CHECK (id > 0)"
+                },
+                {
+                    "kind": "f",
+                    "name": "fk_spam_reports_reported",
+                    "definition": "FOREIGN KEY (reported_id) REFERENCES users(id) ON DELETE RESTRICT"
+                },
+                {
+                    "kind": "f",
+                    "name": "fk_spam_reports_reporter",
+                    "definition": "FOREIGN KEY (reporter_id) REFERENCES users(id) ON DELETE RESTRICT"
+                },
+                {
+                    "kind": "n",
+                    "name": "spam_reports_created_at_not_null",
+                    "definition": "NOT NULL created_at"
+                },
+                {
+                    "kind": "n",
+                    "name": "spam_reports_id_not_null",
+                    "definition": "NOT NULL id"
+                },
+                {
+                    "kind": "n",
+                    "name": "spam_reports_reported_id_not_null",
+                    "definition": "NOT NULL reported_id"
+                },
+                {
+                    "kind": "n",
+                    "name": "spam_reports_reporter_id_not_null",
+                    "definition": "NOT NULL reporter_id"
+                },
+                {
+                    "kind": "p",
+                    "name": "pk_spam_reports",
+                    "definition": "PRIMARY KEY (id)"
+                },
+                {
+                    "kind": "u",
+                    "name": "uq_spam_report_pair",
+                    "definition": "UNIQUE (reporter_id, reported_id)"
+                }
+            ]
+        },
+        {
+            "name": "user_blocks",
+            "columns": [
+                {
+                    "name": "blocker_id",
+                    "type": "bigint",
+                    "default": null,
+                    "identity": "",
+                    "not_null": true
+                },
+                {
+                    "name": "blocked_id",
+                    "type": "bigint",
+                    "default": null,
+                    "identity": "",
+                    "not_null": true
+                },
+                {
+                    "name": "created_at",
+                    "type": "timestamp with time zone",
+                    "default": "now()",
+                    "identity": "",
+                    "not_null": true
+                }
+            ],
+            "indexes": [
+                {
+                    "name": "pk_user_blocks",
+                    "definition": "CREATE UNIQUE INDEX pk_user_blocks ON public.user_blocks USING btree (blocker_id, blocked_id)"
+                }
+            ],
+            "triggers": null,
+            "constraints": [
+                {
+                    "kind": "c",
+                    "name": "chk_block_no_self",
+                    "definition": "CHECK (blocker_id <> blocked_id)"
+                },
+                {
+                    "kind": "f",
+                    "name": "fk_user_blocks_blocked",
+                    "definition": "FOREIGN KEY (blocked_id) REFERENCES users(id) ON DELETE CASCADE"
+                },
+                {
+                    "kind": "f",
+                    "name": "fk_user_blocks_blocker",
+                    "definition": "FOREIGN KEY (blocker_id) REFERENCES users(id) ON DELETE CASCADE"
+                },
+                {
+                    "kind": "n",
+                    "name": "user_blocks_blocked_id_not_null",
+                    "definition": "NOT NULL blocked_id"
+                },
+                {
+                    "kind": "n",
+                    "name": "user_blocks_blocker_id_not_null",
+                    "definition": "NOT NULL blocker_id"
+                },
+                {
+                    "kind": "n",
+                    "name": "user_blocks_created_at_not_null",
+                    "definition": "NOT NULL created_at"
+                },
+                {
+                    "kind": "p",
+                    "name": "pk_user_blocks",
+                    "definition": "PRIMARY KEY (blocker_id, blocked_id)"
+                }
+            ]
+        },
+        {
+            "name": "users",
+            "columns": [
+                {
+                    "name": "id",
+                    "type": "bigint",
+                    "default": null,
+                    "identity": "a",
+                    "not_null": true
+                },
+                {
+                    "name": "username",
+                    "type": "character varying(50)",
+                    "default": null,
+                    "identity": "",
+                    "not_null": true
+                },
+                {
+                    "name": "password_hash",
+                    "type": "character varying(255)",
+                    "default": null,
+                    "identity": "",
+                    "not_null": true
+                },
+                {
+                    "name": "full_name",
+                    "type": "character varying(100)",
+                    "default": null,
+                    "identity": "",
+                    "not_null": true
+                },
+                {
+                    "name": "address",
+                    "type": "text",
+                    "default": null,
+                    "identity": "",
+                    "not_null": false
+                },
+                {
+                    "name": "dob",
+                    "type": "date",
+                    "default": null,
+                    "identity": "",
+                    "not_null": false
+                },
+                {
+                    "name": "gender",
+                    "type": "character varying(10)",
+                    "default": null,
+                    "identity": "",
+                    "not_null": false
+                },
+                {
+                    "name": "email",
+                    "type": "character varying(100)",
+                    "default": null,
+                    "identity": "",
+                    "not_null": true
+                },
+                {
+                    "name": "status",
+                    "type": "character varying(20)",
+                    "default": "'ACTIVE'::character varying",
+                    "identity": "",
+                    "not_null": true
+                },
+                {
+                    "name": "role",
+                    "type": "character varying(10)",
+                    "default": "'USER'::character varying",
+                    "identity": "",
+                    "not_null": true
+                },
+                {
+                    "name": "last_seen_at",
+                    "type": "timestamp with time zone",
+                    "default": null,
+                    "identity": "",
+                    "not_null": false
+                },
+                {
+                    "name": "created_at",
+                    "type": "timestamp with time zone",
+                    "default": "now()",
+                    "identity": "",
+                    "not_null": true
+                }
+            ],
+            "indexes": [
+                {
+                    "name": "idx_users_created_at",
+                    "definition": "CREATE INDEX idx_users_created_at ON public.users USING btree (created_at)"
+                },
+                {
+                    "name": "pk_users",
+                    "definition": "CREATE UNIQUE INDEX pk_users ON public.users USING btree (id)"
+                },
+                {
+                    "name": "uq_users_email",
+                    "definition": "CREATE UNIQUE INDEX uq_users_email ON public.users USING btree (email)"
+                },
+                {
+                    "name": "uq_users_username",
+                    "definition": "CREATE UNIQUE INDEX uq_users_username ON public.users USING btree (username)"
+                }
+            ],
+            "triggers": null,
+            "constraints": [
+                {
+                    "kind": "c",
+                    "name": "chk_users_email_ascii",
+                    "definition": "CHECK (email::text ~ '^[!-~]+$'::text)"
+                },
+                {
+                    "kind": "c",
+                    "name": "chk_users_email_canonical",
+                    "definition": "CHECK (email::text = lower(btrim(email::text)))"
+                },
+                {
+                    "kind": "c",
+                    "name": "chk_users_email_nonempty",
+                    "definition": "CHECK (email::text <> ''::text)"
+                },
+                {
+                    "kind": "c",
+                    "name": "chk_users_full_name",
+                    "definition": "CHECK (btrim(full_name::text) <> ''::text)"
+                },
+                {
+                    "kind": "c",
+                    "name": "chk_users_gender",
+                    "definition": "CHECK (gender::text = ANY (ARRAY['MALE'::character varying, 'FEMALE'::character varying, 'OTHER'::character varying]::text[]))"
+                },
+                {
+                    "kind": "c",
+                    "name": "chk_users_id_positive",
+                    "definition": "CHECK (id > 0)"
+                },
+                {
+                    "kind": "c",
+                    "name": "chk_users_role",
+                    "definition": "CHECK (role::text = ANY (ARRAY['USER'::character varying, 'ADMIN'::character varying]::text[]))"
+                },
+                {
+                    "kind": "c",
+                    "name": "chk_users_status",
+                    "definition": "CHECK (status::text = ANY (ARRAY['ACTIVE'::character varying, 'LOCKED'::character varying, 'DELETED'::character varying]::text[]))"
+                },
+                {
+                    "kind": "c",
+                    "name": "chk_users_username",
+                    "definition": "CHECK (username::text ~ '^[a-z0-9_.-]{3,50}$'::text)"
+                },
+                {
+                    "kind": "n",
+                    "name": "users_created_at_not_null",
+                    "definition": "NOT NULL created_at"
+                },
+                {
+                    "kind": "n",
+                    "name": "users_email_not_null",
+                    "definition": "NOT NULL email"
+                },
+                {
+                    "kind": "n",
+                    "name": "users_full_name_not_null",
+                    "definition": "NOT NULL full_name"
+                },
+                {
+                    "kind": "n",
+                    "name": "users_id_not_null",
+                    "definition": "NOT NULL id"
+                },
+                {
+                    "kind": "n",
+                    "name": "users_password_hash_not_null",
+                    "definition": "NOT NULL password_hash"
+                },
+                {
+                    "kind": "n",
+                    "name": "users_role_not_null",
+                    "definition": "NOT NULL role"
+                },
+                {
+                    "kind": "n",
+                    "name": "users_status_not_null",
+                    "definition": "NOT NULL status"
+                },
+                {
+                    "kind": "n",
+                    "name": "users_username_not_null",
+                    "definition": "NOT NULL username"
+                },
+                {
+                    "kind": "p",
+                    "name": "pk_users",
+                    "definition": "PRIMARY KEY (id)"
+                },
+                {
+                    "kind": "u",
+                    "name": "uq_users_email",
+                    "definition": "UNIQUE (email)"
+                },
+                {
+                    "kind": "u",
+                    "name": "uq_users_username",
+                    "definition": "UNIQUE (username)"
+                }
+            ]
+        }
+    ],
+    "database": "java_chat_test_3cfeccfbb97046058ce25fe43e595a98",
+    "server_version": "18.6"
+}

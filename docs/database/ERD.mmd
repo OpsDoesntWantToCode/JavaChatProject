@@ -1,7 +1,12 @@
 %%{init: {"theme":"base","fontFamily":"Arial","htmlLabels":false,"themeVariables":{"background":"#ffffff","primaryColor":"#edf4fc","primaryTextColor":"#172b45","primaryBorderColor":"#50749a","lineColor":"#62758b","fontFamily":"Arial","fontSize":"16px"},"er":{"diagramPadding":30,"entityPadding":14,"minEntityWidth":180,"minEntityHeight":70,"nodeSpacing":70,"rankSpacing":240,"useMaxWidth":false}}}%%
 erDiagram
     direction LR
-    %% Draft of B: exactly 13 tables; constraints and indexes in Database_Schema_Draft.md.
+    %% Official A/B database design. SQL verified on PostgreSQL 18.6. See Database_Decisions.md.
+    %% PROVISIONAL crypto: Server-side AES-GCM, never E2EE. Confirm with lecturer.
+    %% 13 tables, 65 columns, 21 unchanged FKs.
+    %% Mode immutable; one DEK per group; no per-message key_version.
+    %% uq_group_message_iv is partial UNIQUE(group_id, iv), not UNIQUE on either column.
+    %% DM: pair transaction lock before ID allocation; identity CACHE 1; pair-ID index.
     %% NN = NOT NULL; IDENTITY = GENERATED ALWAYS AS IDENTITY.
     %% PK on several fields means one composite PK, never separate unique fields.
     %% UK is used only for single-column UNIQUE. uq_pending_friend_pair is a partial expression index.
@@ -18,6 +23,7 @@ erDiagram
         VARCHAR(10) gender "NULL"
         VARCHAR(100) email UK "NN"
         VARCHAR(20) status "NN; default 'ACTIVE'"
+        VARCHAR(10) role "NN; default 'USER'; USER or ADMIN"
         TIMESTAMPTZ last_seen_at "NULL"
         TIMESTAMPTZ created_at "NN; default NOW()"
     }
@@ -32,7 +38,7 @@ erDiagram
         BIGINT id PK "NN; IDENTITY"
         BIGINT user_id FK "NN"
         VARCHAR(30) action_type "NN; default 'OPEN_APP'"
-        VARCHAR(64) session_id "NULL"
+        UUID session_id UK "NN; one OPEN_APP per session"
         TIMESTAMPTZ created_at "NN; default NOW()"
     }
 
@@ -57,7 +63,7 @@ erDiagram
     }
 
     direct_messages {
-        BIGINT id PK "NN; IDENTITY"
+        BIGINT id PK "NN; IDENTITY; CACHE 1"
         BIGINT sender_id FK "NN"
         BIGINT receiver_id FK "NN"
         TEXT content "NN"
@@ -74,15 +80,16 @@ erDiagram
     conversation_clears {
         BIGINT user_id PK, FK "NN"
         BIGINT partner_id PK, FK "NN"
-        TIMESTAMPTZ cleared_at "NN"
+        BIGINT last_cleared_message_id "NN; default 0; watermark, not FK"
+        TIMESTAMPTZ cleared_at "NN; audit only"
     }
 
     chat_groups {
         BIGINT id PK "NN; IDENTITY"
         VARCHAR(100) group_name "NN"
         BIGINT created_by FK "NN"
-        BOOLEAN is_encrypted "NN; default FALSE"
-        TEXT wrapped_encryption_key "NULL"
+        BOOLEAN is_encrypted "NN; default FALSE; immutable"
+        TEXT wrapped_encryption_key "NULL; AES-KW envelope if encrypted"
         TIMESTAMPTZ created_at "NN; default NOW()"
     }
 
@@ -90,7 +97,6 @@ erDiagram
         BIGINT group_id PK, FK "NN"
         BIGINT user_id PK, FK "NN"
         BOOLEAN is_admin "NN; default FALSE"
-        TEXT encrypted_group_key "NULL"
         TIMESTAMPTZ joined_at "NN; default NOW()"
     }
 
@@ -99,7 +105,7 @@ erDiagram
         BIGINT group_id FK "NN"
         BIGINT sender_id FK "NN"
         TEXT content "NN"
-        VARCHAR(64) iv "NULL"
+        VARCHAR(64) iv "NULL; 12-byte nonce if encrypted"
         TIMESTAMPTZ created_at "NN; default NOW()"
     }
 

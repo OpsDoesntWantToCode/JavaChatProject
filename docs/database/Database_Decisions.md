@@ -1,25 +1,31 @@
-# Đề xuất bốn quyết định Database Java Chat System
+# Database Decisions — Java Chat System
 
-Ngày: 16/10/2026. Người đề xuất: Codex, hỗ trợ thành viên A. Trạng thái: **PROPOSED, chưa được A/B phê duyệt**; riêng phạm vi mã hóa là **PROVISIONAL, cần giảng viên xác nhận**. Tài liệu chọn phương án cụ thể để hai thành viên duyệt, không ghi đè thiết kế gốc và không phải script triển khai.
+Thiết kế Database chính thức của cả nhóm A/B. Nhóm đã chấp thuận các quyết định kỹ thuật và cho phép chuẩn hóa sau khi SQL PASS trên PostgreSQL thật.
+
+**Đã PASS trên PostgreSQL 18.6: 202 assertion SQL, 0 FAIL trong lần chạy cuối**, gồm schema/constraint/index/trigger. Xem [TEST_RESULTS](TEST_RESULTS.md), [schema từ catalog](Database_Schema.md) và [database.sql](../../script/database.sql). Không suy rộng kết quả này thành PASS cho Java Server, concurrency, TLS hoặc AES-GCM thực tế.
+
+**PROVISIONAL:** Server-side AES-GCM là lựa chọn khả thi của nhóm, không phải E2EE, chưa được giảng viên xác nhận đáp ứng §12g. Nếu yêu cầu E2EE phải thiết kế lại phần khóa.
+
+Thứ tự nguồn: PDF yêu cầu chính thức → quyết định A/B đã xác nhận → thiết kế chính thức này và SQL đã kiểm thử. Phần phân tích phương án được giữ để giải thích lựa chọn; nguồn B và ERD 64 cột nằm trong [archive](archive/README.md). Các mục 2–8 là đặc tả triển khai; contract Server vẫn cần review tích hợp.
 
 ## 1. Kết luận và nguồn quyết định
 
-| Vấn đề | Phương án khuyến nghị cuối cùng | Thay đổi dữ liệu |
+| Vấn đề | Phương án chính thức của nhóm | Thay đổi dữ liệu |
 |---|---|---|
 | Phiên OPEN_APP | UUID v4 do Client tạo cho mỗi phiên sử dụng mới; Server xác thực và ràng buộc chủ sở hữu; `UUID NOT NULL UNIQUE`; reconnect dùng lại ID. | Sửa kiểu/NULL của `activity_logs.session_id`, thêm UNIQUE đơn. |
 | Xóa hội thoại | Mốc `last_cleared_message_id`; giữ `cleared_at` để tra cứu; mọi gửi/clear cùng cặp lấy cùng advisory transaction lock **trước khi cấp ID**. | Thêm một cột BIGINT không phải FK; đổi index lịch sử cặp sang cặp–ID. |
 | Mã hóa nhóm | **PROVISIONAL**: AES-GCM tại Server; một DEK/nhóm; mode cố định từ lúc tạo; wrapped DEK dưới KEK bên ngoài DB; không E2EE. | Bỏ cột dự phòng E2EE ở membership; thêm CHECK/unique IV và trigger nhất quán; không thêm key_version/flag từng tin. |
 | Admin hệ thống | `users.role = USER/ADMIN`; cùng tài khoản có thể dùng hai UI; Server kiểm tra quyền; bảo vệ Admin ACTIVE cuối bằng khóa transaction toàn cục. | Thêm một cột role và CHECK. Không có bảng admins riêng. |
 
-Kết quả đề xuất vẫn **13 bảng**, từ 64 lên **65 cột**: thêm `users.role`, thêm `conversation_clears.last_cleared_message_id`, bỏ `group_members.encrypted_group_key`. **21 FK và toàn bộ ON DELETE hiện có giữ nguyên.** Các constraint/index ngoài khả năng thể hiện của Mermaid được nêu đầy đủ bên dưới.
+Thiết kế chính thức giữ **13 bảng**, từ 64 lên **65 cột**: thêm `users.role`, thêm `conversation_clears.last_cleared_message_id`, bỏ `group_members.encrypted_group_key`. **21 FK và toàn bộ ON DELETE hiện có giữ nguyên.** Các constraint/index ngoài khả năng thể hiện của Mermaid được nêu đầy đủ bên dưới.
 
-Đã đọc đủ 7 tài liệu được yêu cầu: [AGENTS](../../AGENTS.md), [đề chính thức](../Final%20Project.pdf) (5 trang), [Tech Stack](../Tech_Stack.md), [Project Context](../Project_Context.md), [schema B](Database_Schema_Draft.md), [ERD gốc](ERD.mmd), [review ERD](ERD_Review.md). Không có nguồn yêu cầu nào bị thiếu/không đọc được. PDF đã được trích lại; không suy đoán nội dung DOCX mới ngoài bản Markdown hiện hành.
+Đã đọc đủ 7 tài liệu được yêu cầu: [AGENTS](../../AGENTS.md), [đề chính thức](../Final%20Project.pdf) (5 trang), [Tech Stack](../Tech_Stack.md), [Project Context](../Project_Context.md), [schema B](archive/Database_Schema_Draft.md), [ERD gốc](archive/ERD_2026-10-16.mmd), [review ERD](ERD_Review.md). Không có nguồn yêu cầu nào bị thiếu/không đọc được. PDF đã được trích lại; không suy đoán nội dung DOCX mới ngoài bản Markdown hiện hành.
 
-**Phần A/B đã chốt được kế thừa:** danh sách 13 bảng; PostgreSQL local; Java 21/JDBC/Socket/JSON; BCrypt; soft delete; xóa riêng từng phía; OPEN_APP một lần/phiên thật; biểu đồ theo số user mở app; Server giữ bí mật, phân quyền và transaction; hướng AES-GCM. **Mọi chi tiết chọn mới trong tài liệu này vẫn là đề xuất Codex**, kể cả việc bỏ cột, khóa hội thoại và bổ sung role.
+**Phần A/B đã chốt được kế thừa:** danh sách 13 bảng; PostgreSQL local; Java 21/JDBC/Socket/JSON; BCrypt; soft delete; xóa riêng từng phía; OPEN_APP một lần/phiên thật; biểu đồ theo số user mở app; Server giữ bí mật, phân quyền và transaction; hướng AES-GCM. **Các lựa chọn này đã được A/B chấp thuận làm cơ sở chính thức**, gồm role, watermark, UUID và schema khóa nhóm; xác nhận của giảng viên về mô hình mã hóa vẫn còn thiếu.
 
-Đề tr. 2 yêu cầu thống kê hoạt động và hai phân hệ; tr. 3 §11 yêu cầu xóa lịch sử/tin lẻ, §12g yêu cầu mã hóa nhóm nhưng không chỉ định E2EE; tr. 4–5 yêu cầu script và thiết kế DB. Không có yêu cầu chính thức về UUID, số bảng, role hay key_version. Tiêu đề “P1 chuẩn hóa” của dự thảo không thay thế xác nhận A/B. Khác biệt cách đếm bạn cấp hai trong review cũ vẫn còn, không được bốn quyết định này tự giải quyết.
+Đề tr. 2 yêu cầu thống kê hoạt động và hai phân hệ; tr. 3 §11 yêu cầu xóa lịch sử/tin lẻ, §12g yêu cầu mã hóa nhóm nhưng không chỉ định E2EE; tr. 4–5 yêu cầu script và thiết kế DB. Không có yêu cầu chính thức về UUID, số bảng, role hay key_version. Tiêu đề “P1 chuẩn hóa” của dự thảo không thay thế xác nhận A/B. Cách đếm bạn cấp hai được chọn tại mục 7.7, có nêu rõ giới hạn diễn giải đề.
 
-**Quy ước SQL:** DDL dưới đây minh họa thay đổi trên baseline **rỗng**, không phải migration an toàn cho DB đã có dữ liệu. `:name` trong truy vấn là tham số mô tả; khi code pgJDBC phải thay bằng `?` và bind giá trị, không nối chuỗi. Chưa thực thi bất kỳ DDL hay truy vấn nào.
+**Quy ước SQL:** DDL dưới đây minh họa thay đổi trên baseline **rỗng**, không phải migration an toàn cho DB đã có dữ liệu. `:name` trong truy vấn là tham số mô tả; khi code pgJDBC phải thay bằng `?` và bind giá trị, không nối chuỗi. DDL thực thi tại database.sql đã PASS; các thuật toán Server/transaction minh họa bên dưới chưa được kiểm thử tích hợp.
 
 ## 2. Quyết định 1 về activity_logs.session_id
 
@@ -122,7 +128,7 @@ Phiên bắt đầu tháng 1, chỉ reconnect tháng 2 thì không tạo OPEN_AP
 | Hai phiên cùng người trong tháng; tháng không có log; biên giờ Việt Nam | Lượt mở = 2; số người = 1; tháng rỗng = 0; phân tháng đúng. |
 | Server restart rồi Client resume có tái xác thực | UUID cũ không tạo dòng mới; không dùng UUID để vượt xác thực. |
 
-Đáp ứng Admin §8–9 và quyết định OPEN_APP của A/B với định nghĩa phiên trên. Không bắt buộc hỏi thầy về kiểu UUID; A/B cần duyệt semantics phiên và phạm vi tính cả hai Client. Nếu thầy muốn tính mọi ngày/tháng Client còn mở, phải đổi định nghĩa metric, không lặng lẽ ghi OPEN_APP khi reconnect.
+Đáp ứng Admin §8–9 và quyết định OPEN_APP của A/B với định nghĩa phiên trên. Không bắt buộc hỏi thầy về kiểu UUID; Thiết kế A/B đã chọn semantics phiên và phạm vi tính cả hai Client. Nếu thầy muốn tính mọi ngày/tháng Client còn mở, phải đổi định nghĩa metric, không lặng lẽ ghi OPEN_APP khi reconnect.
 
 ## 3. Quyết định 2 về conversation_clears
 
@@ -245,7 +251,7 @@ Advisory lock chỉ có hiệu lực khi mọi writer dùng nó; tài khoản DB
 | Chưa từng chat, chưa có clear, tin đã hidden, tìm kiếm sau clear | Cutoff 0 hợp lệ; lịch sử ban đầu đầy đủ; tin hidden/cleared không xuất hiện lại. |
 | Lỗi transaction, Server crash | Rollback/commit nhất quán; khóa DB tự giải phóng; Client resync DB. |
 
-Đáp ứng User §11d–g và xóa riêng từng phía A/B đã chốt. Không bắt buộc hỏi thầy về loại khóa; A/B phải duyệt điểm phân định “trước/sau xóa” theo thứ tự xử lý Server. Nếu giảng viên yêu cầu “chỉ xóa tập các tin nhắn đã hiển thị tại Client khi bấm”, đó là semantics khác, phải đặc tả riêng.
+Đáp ứng User §11d–g và xóa riêng từng phía A/B đã chốt. Không bắt buộc hỏi thầy về loại khóa; Thiết kế A/B đã chọn điểm phân định “trước/sau xóa” theo thứ tự xử lý Server. Nếu giảng viên yêu cầu “chỉ xóa tập các tin nhắn đã hiển thị tại Client khi bấm”, đó là semantics khác, phải đặc tả riêng.
 
 ## 4. Quyết định 3 về AES-GCM nhóm
 
@@ -259,7 +265,7 @@ PDF tr. 3 §12g ghi yêu cầu mã hóa nhóm và dẫn tham khảo nhóm mã h�
 | E2EE, Client giữ/phân phối khóa | Có thể bảo vệ nội dung khỏi Server khi giao thức làm đúng | Cần khóa định danh thiết bị, xác thực khóa, phân phối/rotate, multi-device, phục hồi khi reset, lịch sử theo membership; 13 bảng hiện chưa đặc tả đủ | Chỉ chuyển nếu giảng viên yêu cầu; phải thiết kế lại luồng khóa, không đổi nhãn từ Server encryption thành E2EE. |
 | Tự động rotate DEK + lưu lịch sử nhiều phiên bản khóa | Quản lý khóa cũ/thu hồi theo thời kỳ rõ hơn | Cần nơi lưu nhiều khóa/metadata và mapping tin–khóa; phức tạp hơn nhu cầu hiện tại | Không chọn mặc định. |
 
-Tính toàn vẹn GCM dựa vào tag và AAD, không chỉ che chuỗi. Xem [NIST SP 800-38D](https://csrc.nist.gov/pubs/sp/800/38/d/final). Bảo vệ lưu trữ không thay bảo vệ đường truyền: với chạy qua mạng ở mốc 80%, khuyến nghị JSSE TLS trong JDK cho Socket và xác thực chứng chỉ; đây là đề xuất cần A/B review, không tự coi TCP hiện tại đã mã hóa.
+Tính toàn vẹn GCM dựa vào tag và AAD, không chỉ che chuỗi. Xem [NIST SP 800-38D](https://csrc.nist.gov/pubs/sp/800/38/d/final). Bảo vệ lưu trữ không thay bảo vệ đường truyền: khi chạy qua mạng ở mốc 80%, thiết kế chọn JSSE TLS trong JDK cho Socket và xác thực chứng chỉ theo mục 7.6; phần tích hợp chưa được triển khai hoặc kiểm thử, không tự coi TCP hiện tại đã mã hóa.
 
 ### 4.2 Khóa, payload và truy cập
 
@@ -270,7 +276,7 @@ Tính toàn vẹn GCM dựa vào tag và AAD, không chỉ che chuỗi. Xem [NIS
 5. Với từng tin mã hóa, dùng `AES/GCM/NoPadding`, IV 12 byte mới từ SecureRandom, tag 128 bit. JCA trả ciphertext kèm tag từ doFinal; lưu Base64 cả hai vào content, Base64 IV vào iv. Không tách/bỏ tag; tag sai phải từ chối, không trả plaintext một phần. Xem [Cipher Java 21](https://docs.oracle.com/en/java/javase/21/docs/api/java.base/javax/crypto/Cipher.html).
 6. AAD UTF-8 cố định `chatapp-gm-v1:<group_id>:<sender_id>`; Server dựng từ ID thật, Client không cung cấp AAD tùy ý. Đổi group/sender của ciphertext phải làm kiểm tra tag thất bại. Không đưa created_at vào AAD để tránh lệch định dạng timestamp.
 7. Nhóm thường: content là văn bản UTF-8, iv NULL, wrapped key NULL. Nhóm mã hóa: content là Base64(ciphertext||tag), iv canonical Base64 16 ký tự cho 12 byte, wrapped key không NULL. Mode bất biến nên không lẫn tin plaintext cũ/mới trong một nhóm.
-8. Mọi đọc/gửi tin kiểm tra user ACTIVE và membership ở Server. Admin hệ thống không tự có quyền đọc mọi tin nhóm. Thành viên mới được đọc toàn bộ lịch sử nhóm; người bị xóa không đọc/tải/push tiếp qua Server. Không thể thu hồi plaintext đã đọc/lưu trước đó. Đây là policy mới cần A/B duyệt, không hứa quyền mật mã theo từng giai đoạn như E2EE.
+8. Mọi đọc/gửi tin kiểm tra user ACTIVE và membership ở Server. Admin hệ thống không tự có quyền đọc mọi tin nhóm. Thành viên mới được đọc toàn bộ lịch sử nhóm; người bị xóa không đọc/tải/push tiếp qua Server. Không thể thu hồi plaintext đã đọc/lưu trước đó. Đây là policy nhóm đã chọn, không hứa quyền mật mã theo từng giai đoạn như E2EE.
 
 ### 4.3 IV duy nhất và schema đề xuất
 
@@ -282,7 +288,7 @@ ALTER TABLE chat_groups ADD CONSTRAINT chk_group_key_mode CHECK (
   OR (NOT is_encrypted AND wrapped_encryption_key IS NULL)
 );
 
--- Chỉ bỏ trong bản đề xuất sau khi A/B duyệt Server-side Encryption.
+-- Đã bỏ theo thiết kế chính thức; phạm vi Server-side Encryption vẫn PROVISIONAL.
 ALTER TABLE group_members DROP COLUMN encrypted_group_key;
 
 ALTER TABLE group_messages ADD CONSTRAINT chk_group_message_iv CHECK (
@@ -298,38 +304,39 @@ CHECK không được truy vấn bảng cha để bảo đảm mode–IV. DDL gu
 
 ```sql
 CREATE FUNCTION guard_group_encryption_mode() RETURNS trigger
-LANGUAGE plpgsql AS $$
+LANGUAGE plpgsql SET search_path = pg_catalog, public AS $$
 BEGIN
-  IF NEW.is_encrypted IS DISTINCT FROM OLD.is_encrypted THEN
-    RAISE EXCEPTION 'Group encryption mode is immutable';
-  END IF;
-  RETURN NEW;
+    IF NEW.is_encrypted IS DISTINCT FROM OLD.is_encrypted THEN
+        RAISE EXCEPTION USING ERRCODE='23514', MESSAGE='Group encryption mode is immutable';
+    END IF;
+    RETURN NEW;
 END;
 $$;
-CREATE TRIGGER trg_group_mode_immutable
-BEFORE UPDATE OF is_encrypted ON chat_groups
+CREATE TRIGGER trg_group_mode_immutable BEFORE UPDATE OF is_encrypted ON chat_groups
 FOR EACH ROW EXECUTE FUNCTION guard_group_encryption_mode();
 
 CREATE FUNCTION guard_group_message_mode() RETURNS trigger
-LANGUAGE plpgsql AS $$
-DECLARE encrypted boolean;
+LANGUAGE plpgsql SET search_path = pg_catalog, public AS $$
+DECLARE encrypted BOOLEAN;
 BEGIN
-  IF TG_OP = 'UPDATE' THEN
-    IF NEW.group_id IS DISTINCT FROM OLD.group_id OR
-       NEW.sender_id IS DISTINCT FROM OLD.sender_id THEN
-      RAISE EXCEPTION 'Message group and sender are immutable';
+    -- Let the declarative NOT NULL constraint report a missing group_id.
+    IF NEW.group_id IS NULL THEN RETURN NEW; END IF;
+    IF TG_OP='UPDATE' THEN
+        IF NEW.group_id IS DISTINCT FROM OLD.group_id OR NEW.sender_id IS DISTINCT FROM OLD.sender_id THEN
+            RAISE EXCEPTION USING ERRCODE='23514', MESSAGE='Message group and sender are immutable';
+        END IF;
     END IF;
-  END IF;
-  SELECT is_encrypted INTO STRICT encrypted
-    FROM chat_groups WHERE id = NEW.group_id FOR UPDATE;
-  IF encrypted <> (NEW.iv IS NOT NULL) THEN
-    RAISE EXCEPTION 'Message IV does not match group mode';
-  END IF;
-  RETURN NEW;
+    SELECT is_encrypted INTO encrypted FROM public.chat_groups WHERE id=NEW.group_id FOR UPDATE;
+    IF NOT FOUND THEN
+        RAISE EXCEPTION USING ERRCODE='23503', MESSAGE='Message group does not exist';
+    END IF;
+    IF encrypted <> (NEW.iv IS NOT NULL) THEN
+        RAISE EXCEPTION USING ERRCODE='23514', MESSAGE='Message IV does not match group mode';
+    END IF;
+    RETURN NEW;
 END;
 $$;
-CREATE TRIGGER trg_group_message_mode
-BEFORE INSERT OR UPDATE ON group_messages
+CREATE TRIGGER trg_group_message_mode BEFORE INSERT OR UPDATE ON group_messages
 FOR EACH ROW EXECUTE FUNCTION guard_group_message_mode();
 ```
 
@@ -364,7 +371,7 @@ Không chỉ thay wrapped DEK bằng khóa ngẫu nhiên mới rồi để nguy�
 | Reader đang chạy trong lúc đổi DEK | Khóa và tin cùng snapshot; không lấy key cũ để giải tin mới. |
 | DB dump không kèm KEK; mất KEK; reset mật khẩu | Dump thiếu KEK không đủ giải tin; mất KEK báo lỗi rõ; reset không làm mất lịch sử. |
 
-**Bắt buộc hỏi thầy để chốt bảo mật:** yêu cầu §12g có bắt buộc Server không đọc được nội dung (E2EE) không? Nếu có, phương án này chưa đáp ứng. Có thể trình bày prototype mã hóa lưu trữ trong lúc chờ, nhưng báo cáo phải ghi đúng tên và hạn chế. A/B cần duyệt mode bất biến, policy lịch sử khi thêm/xóa người, bỏ cột E2EE và không tự động rotate DEK. Không bắt buộc hỏi thầy về kiểu Base64 hay lựa chọn AESWrap cụ thể nếu mô hình đã được chấp thuận.
+**Bắt buộc hỏi thầy để chốt bảo mật:** yêu cầu §12g có bắt buộc Server không đọc được nội dung (E2EE) không? Nếu có, phương án này chưa đáp ứng. Có thể trình bày prototype mã hóa lưu trữ trong lúc chờ, nhưng báo cáo phải ghi đúng tên và hạn chế. Thiết kế A/B đã chọn mode bất biến, policy lịch sử khi thêm/xóa người, bỏ cột E2EE và không tự động rotate DEK. Không bắt buộc hỏi thầy về kiểu Base64 hay lựa chọn AESWrap cụ thể nếu mô hình đã được chấp thuận.
 
 ## 5. Quyết định 4 về Admin hệ thống
 
@@ -392,7 +399,7 @@ Một tài khoản ADMIN vẫn dùng được User UI như user bình thường.
 4. Đổi role/status chỉ qua endpoint quản trị đã xác thực. Không suy luận quyền từ tên file JAR, tab UI, client_type, username “admin” hoặc cờ is_admin nhóm. Truy vấn dùng tham số JDBC.
 5. Sau khóa/soft delete/đổi password: thu hồi session theo chính sách; sau hạ role, mất quyền Admin và buộc xác thực lại là mặc định đơn giản. Mỗi request vẫn tra quyền hiện tại, nên token/Socket cũ không giữ role cũ vĩnh viễn. Request đã được xử lý trước điểm thu hồi có thể đã hoàn tất; mutation Admin dùng khóa ở §5.4 để có ranh giới rõ.
 
-Protocol dự kiến thêm/chuẩn hóa LOGIN, RESUME_SESSION, LOGOUT; phản hồi account_role; lỗi AUTH_REQUIRED/ACCOUNT_LOCKED/FORBIDDEN; thao tác SET_USER_ROLE, SET_USER_STATUS. UI Admin cần màn login, nhãn role, hành động cấp/thu quyền và lỗi Admin cuối; User UI không có điều khiển sửa role. **Đây là hợp đồng đề xuất cho A/B review**, chưa sửa shared/server/pom hay giao thức thực tế.
+Protocol dự kiến thêm/chuẩn hóa LOGIN, RESUME_SESSION, LOGOUT; phản hồi account_role; lỗi AUTH_REQUIRED/ACCOUNT_LOCKED/FORBIDDEN; thao tác SET_USER_ROLE, SET_USER_STATUS. UI Admin cần màn login, nhãn role, hành động cấp/thu quyền và lỗi Admin cuối; User UI không có điều khiển sửa role. **Đây là định hướng hợp đồng cần review tích hợp trước khi viết Server/DTO**, chưa sửa shared/server/pom hay giao thức thực tế.
 
 ### 5.3 Tài khoản Admin đầu tiên
 
@@ -437,7 +444,7 @@ Các sửa đổi phải kiểm tra target tồn tại; role/status chỉ nhận
 
 Đây là invariant liên dòng, không phải CHECK trên một hàng. Bảo đảm nằm ở **Server transaction + khóa DB dùng chung**; UNIQUE/CHECK role không tự bảo vệ Admin cuối. DB runtime credential chỉ ở Server, không là superuser/owner dùng chung với Client; các đường ghi role/status khác phải bị đóng hoặc cùng đi qua service này. SQL quản trị trực tiếp bởi owner có thể phá invariant và thuộc phạm vi vận hành; không tuyên bố DDL role đơn lẻ ngăn được điều đó. Nếu cần cưỡng chế ở DB với nhiều ứng dụng ghi trực tiếp, có thể đóng gói mutation vào function được cấp quyền riêng; chưa chọn thêm hệ thống đó cho đồ án.
 
-Không gọi SMTP/LLM hay chờ người dùng trong khi giữ khóa Admin. Luồng nào thật sự cần nhiều loại khóa phải lấy theo thứ tự: khóa quyền Admin → khóa hội thoại/nhóm → khóa dòng user tăng dần; không lấy ngược. Luồng chat thường không lấy khóa Admin toàn cục. Rollback/retry có giới hạn khi deadlock/serialization failure; không retry âm thầm thao tác ngoài DB chưa có idempotency.
+Không gọi SMTP/LLM hay chờ người dùng trong khi giữ khóa Admin. Mọi luồng tuân theo mục 7.1: cổng quyền shared/exclusive → nhóm → cặp user; không lấy ngược. Chat thường chỉ lấy shared lock ở cổng quyền, nên nhiều hội thoại vẫn chạy đồng thời. Rollback/retry có giới hạn khi deadlock/serialization failure; không retry âm thầm thao tác ngoài DB chưa có idempotency.
 
 ### 5.5 Kiểm thử và đáp ứng đề
 
@@ -452,11 +459,11 @@ Không gọi SMTP/LLM hay chờ người dùng trong khi giữ khóa Admin. Lu�
 | Hai bootstrap đồng thời; bootstrap khi đã có Admin | Một bootstrap thành công; không tạo Admin qua đăng ký công khai. |
 | Khóa, soft delete, reset password Admin | Session bị thu hồi theo policy; lịch sử/FK không bị xóa dây chuyền. |
 
-Đáp ứng phân hệ Admin trong đề và nguyên tắc Server phân quyền; không có yêu cầu bắt buộc phải hỏi thầy về users.role hay bảng admins. A/B cần duyệt quyền cấp/thu Admin, bootstrap/recovery và việc cùng tài khoản dùng hai UI. Nếu giảng viên có mô hình vai trò riêng ngoài PDF, phải đối chiếu trước khi đổi hợp đồng.
+Đáp ứng phân hệ Admin trong đề và nguyên tắc Server phân quyền; không có yêu cầu bắt buộc phải hỏi thầy về users.role hay bảng admins. Thiết kế A/B đã chọn quyền cấp/thu Admin, bootstrap/recovery và việc cùng tài khoản dùng hai UI. Nếu giảng viên có mô hình vai trò riêng ngoài PDF, phải đối chiếu trước khi đổi hợp đồng.
 
 ## 6. Tổng hợp thay đổi ERD và ràng buộc
 
-| Thành phần | Baseline | Bản đề xuất |
+| Thành phần | Baseline | Thiết kế chính thức |
 |---|---|---|
 | `users` | 11 cột | 12 cột: thêm `role VARCHAR(10) NN DEFAULT 'USER'`, CHECK USER/ADMIN. |
 | `activity_logs.session_id` | `VARCHAR(64) NULL` | `UUID NN UK`; UNIQUE đơn `uq_activity_session`. |
@@ -467,38 +474,155 @@ Không gọi SMTP/LLM hay chờ người dùng trong khi giữ khóa Admin. Lu�
 | Index/sequence direct | `idx_dm_pair_time`, identity mặc định | Thay bằng `idx_dm_pair_id` với cùng hai biểu thức cặp rồi `id`; giữ CACHE 1, increment 1, no cycle. Không âm thầm giữ cả hai index. |
 | PK/FK/ON DELETE | 13 PK, 21 FK | Giữ nguyên; không có FK mới từ watermark và không đổi cascade/restrict. |
 
-Các bảng còn lại giữ nguyên: login_history, friend_requests, friendships, user_blocks, direct_messages (trừ index và việc ghi rõ CACHE 1), message_hidden, spam_reports. Giữ bốn index tường minh còn lại từ dự thảo: idx_login_history_time, uq_pending_friend_pair, idx_group_messages_time, idx_spam_reports_time. Cộng index thay thế và unique IV là **6 CREATE INDEX tường minh** trong phương án; UNIQUE session là constraint có index hỗ trợ riêng. Các PK/UNIQUE sẵn có vẫn tạo index hỗ trợ như cũ.
+Các bảng còn lại giữ nguyên cột. Bộ **6 index tường minh của bản 16/10** được hoàn thiện thành **16 index tại mục 8.2**, gồm thay khóa sắp xếp index nhóm và bổ sung index theo truy vấn thực tế. UNIQUE session và unique ghép báo cáo spam là constraint có index hỗ trợ riêng. Các PK/UNIQUE sẵn có vẫn tạo index hỗ trợ như cũ.
 
 Mermaid chỉ gắn UK cho UNIQUE **đơn**; không gắn UK riêng lên group_id/iv của unique ghép có điều kiện. CHECK/trigger/advisory lock/index biểu thức không phải quan hệ FK, nên không vẽ đường giả. Những cột/NULL/default không được liệt kê thay đổi đều giữ nguyên, kể cả chính sách ON DELETE.
 
-## 7. Các quyết định còn chờ và mức sẵn sàng viết SQL
+## 7. Quyết định chính thức cho các P1 còn lại
 
-| Cần xác nhận | Người xác nhận | Mặc định đã chọn để làm tiếp sau phê duyệt |
+### 7.1 Một quy ước transaction và phân quyền xuyên suốt
+
+**Chọn READ COMMITTED, khóa transaction trong PostgreSQL và đọc lại sau khi lấy khóa**, thay vì Java synchronized (không bảo vệ nhiều Connection/Server), check-then-write không khóa (race), hoặc SERIALIZABLE cho mọi thao tác (retry khó giải thích và vẫn phải đặc tả quyền). Mỗi nghiệp vụ dùng một JDBC Connection, autoCommit=false, rollback khi lỗi và trả Connection về pool sau khi khôi phục cấu hình. Không ghép lấy advisory lock và đọc dữ liệu trong cùng câu lệnh; câu đọc sau khóa cần snapshot mới.
+
+Quy ước thứ tự khóa bắt buộc, bổ sung cho các thuật toán mục 2–5:
+
+1. **Cổng quyền `-1::bigint`:** request đã xác thực, login/resume và mọi transaction đọc/ghi nghiệp vụ lấy `pg_advisory_xact_lock_shared(-1::bigint)` trước đọc quyền. Các mutation Admin, đổi role/status/password (kể cả self-service/reset), bootstrap lấy exclusive `pg_advisory_xact_lock(-1::bigint)` ngay từ đầu; không nâng shared thành exclusive giữa transaction. Nhiều request thường cùng giữ shared; thao tác thu hồi quyền chờ các transaction đã vào trước, rồi chặn request mới tới commit. Không giữ khóa khi chờ BCrypt/SMTP/LLM/mạng: hash trước, trong transaction đọc lại trạng thái và hash/version đã kiểm; nếu đã đổi thì từ chối/re-auth. Actor luôn lấy từ session được Server xác thực, không lấy từ payload.
+2. **Khóa dòng nhóm:** nếu có, khóa `chat_groups FOR UPDATE` theo group_id tăng dần. Tạo nhóm mới giữ dòng mới trong transaction. Các mutation nhóm và gửi tin đều dùng bước này; đọc lịch sử chỉ cần một SELECT snapshot nhất quán kèm membership.
+3. **Khóa cặp user:** dùng cùng công thức SHA-256 không âm ở mục 3.3 cho DM, clear, hide, request, accept/reject, unfriend, block/unblock và report. Giữ tiền tố `dm:` cho mọi luồng để không sinh hai namespace khác nhau cho cùng cặp. Nếu một transaction cần nhiều cặp, tính và loại trùng key rồi lấy theo key tăng dần; không theo thứ tự Client gửi. Thao tác nhóm thêm người cũng lấy khóa cặp actor–người được thêm để kiểm tra block. Không có luồng lấy cặp rồi lấy nhóm.
+
+Trạng thái ACTIVE được kiểm tra sau cổng quyền; mutation kiểm tra target theo quy tắc từng chức năng. Khóa role/status/password độc quyền khiến thao tác đang chạy có ranh giới trước/sau thu hồi rõ ràng mà không cần khóa độc quyền toàn hệ thống cho chat. Không thêm khóa dòng users FOR UPDATE trong luồng chat thường. Sửa profile thường kiểm tra ACTIVE trong shared gate; cấm sửa role/status/password_hash ngoài service chuyên trách. Mọi writer/import phải theo quy ước; owner DB trực tiếp có thể phá invariant. Runtime role không là superuser/owner, không cấp DB credential cho client; không cấp DELETE users/chat_groups/direct_messages/group_messages cho runtime.
+
+Sau commit thu hồi session dưới registry lock của Server; mọi request tiếp theo vẫn đọc quyền hiện tại. ACK/push sau commit; ngay trước đưa nội dung vào hàng đợi kiểm tra session/trạng thái/membership hiện tại; không thể thu hồi byte đã phát hoặc plaintext đã lưu. Retry tối đa 3 lần với backoff cho deadlock/serialization failure đã rollback; timeout/cancel thì rollback và báo lỗi. Không tự retry SEND khi mất ACK sau commit vì baseline chưa có message idempotency key.
+
+**Test cần chạy:** chat hai cặp chạy song song; khóa account chờ chat cũ và chặn chat mới; đổi password trong lúc login; worker cố đảo thứ tự khóa; rollback giải phóng gate/cặp/nhóm; retry không gửi SMTP hai lần. **Rủi ro:** thay quyền độc quyền chặn ngắn toàn hệ thống; chấp nhận cho đồ án nhỏ, giữ transaction ngắn và có lock/statement timeout. Đây là bảo đảm của service + DB lock, không phải 13 bảng tự cưỡng chế mọi quyền.
+
+### 7.2 Friend request, friendship và block
+
+**Chọn giữ ba bảng và enum hiện tại**, partial unique PENDING hai chiều, cùng khóa cặp cho mọi mutation. Không thêm CANCELLED hoặc bảng sự kiện: đề không yêu cầu lịch sử lý do hủy. Không tự accept lời mời ngược chiều: trả ALREADY_PENDING để người nhận chủ động đồng ý.
+
+- SEND_REQUEST: hai user khác nhau và ACTIVE; không block ở bất kỳ chiều nào, chưa là bạn, chưa có PENDING; INSERT. Partial unique là hàng rào DB cuối, bắt unique violation thành lỗi nghiệp vụ.
+- ACCEPT: actor đúng receiver, request còn PENDING; đọc lại sau khóa, hai tài khoản ACTIVE, không block hai chiều. UPDATE ACCEPTED và INSERT friendship `(min,max)` trong cùng transaction; retry request đã ACCEPTED chỉ trả thành công nếu friendship vẫn tồn tại, không tự tạo lại sau unfriend/block.
+- REJECT: chỉ receiver, PENDING → REJECTED. UNFRIEND: xóa friendship chuẩn hóa, không sửa lịch sử ACCEPTED. Request mới sau unfriend được phép nếu không block.
+- BLOCK: actor ACTIVE, target tồn tại và không DELETED; INSERT block có hướng idempotent, DELETE friendship, **DELETE chỉ các request PENDING hai chiều**, giữ ACCEPTED/REJECTED. Xóa request chưa giải quyết thay vì gán REJECTED sai nghĩa. UNBLOCK chỉ xóa dòng do actor tạo; không tự khôi phục bạn/request. Không bắt buộc làm UI unblock nếu phạm vi đề không yêu cầu.
+- Block lưu có hướng; tìm kiếm ẩn người đã block actor theo đúng PDF. **Policy nhóm đã chọn ngoài yêu cầu tối thiểu:** khi block tồn tại ở một chiều, cấm lời mời và DM mới cả hai chiều, cấm thêm trực tiếp người đó vào nhóm bởi actor. Không tự xóa hai người khỏi nhóm chung hoặc chặn chat nhóm chung; UI vẫn cung cấp block/report riêng. Lịch sử cũ vẫn xem được theo marker xóa của từng người.
+- DM không đòi friendship (PDF cho chat qua tìm kiếm); sender/receiver phải ACTIVE và không block; receiver offline vẫn được lưu. Recipient LOCKED/DELETED không nhận tin mới. `is_read` chỉ chuyển true bởi receiver của tin nhìn thấy, không dùng thay delivery ACK.
+
+**Dữ liệu:** giữ cột, CHECK tự liên hệ, PK friendship có thứ tự và unique PENDING; thêm index inbox và chiều thứ hai friendship tại mục 8.2. **Test:** hai request ngược đồng thời chỉ một PENDING; accept/block đồng thời không còn friendship sau block; unfriend rồi retry ACCEPT không tạo lại bạn; block rồi SEND bị từ chối; unblock không hồi sinh request. **Rủi ro:** mất lịch sử PENDING bị hủy là có chủ ý; semantics block hai chiều rộng hơn câu chữ tối thiểu trong PDF và được ghi là khuyến nghị, không gán cho giảng viên.
+
+### 7.3 Thành viên và Admin nhóm
+
+**Chọn membership hiện tại + khóa dòng nhóm**, thay vì composite FK `(group_id,sender_id)` tới membership (xóa thành viên sẽ xung đột lịch sử), hoặc bảng lịch sử membership mới (chưa cần cho policy lịch sử đã chọn).
+
+- CREATE: creator ACTIVE và ít nhất một user ACTIVE khác, username được resolve tại Server, loại trùng; kiểm tra block actor–người được thêm. INSERT nhóm và tất cả membership, creator is_admin=true trong một transaction. Một target lỗi thì rollback toàn bộ, không tạo nhóm một người.
+- Thành viên ACTIVE được đổi tên/thêm user ACTIVE, đúng quyền tối thiểu của PDF; chỉ Admin nhóm ACTIVE được cấp/thu is_admin hoặc xóa người khác. Group creator chỉ là thông tin lịch sử, không có quyền vĩnh viễn. System Admin không tự là group Admin.
+- Mọi mutation sau khóa nhóm đọc lại actor membership và status. Thêm thành viên lấy khóa cặp để không lọt qua block đồng thời. Gửi tin và remove cùng lấy khóa nhóm nên remove thắng thì send bị từ chối. User hiện tại được đọc toàn bộ lịch sử nhóm, người bị remove không tải tiếp; re-add đọc lại toàn bộ. Không cho client chọn joined_at hoặc sender_id.
+- **Admin cuối:** cấm demote/remove/rời nhóm nếu còn thành viên ACTIVE mà không còn Admin ACTIVE. Cho phép chuyển quyền bằng một transaction cấp người kế nhiệm rồi rời/xóa membership. Chức năng tự rời là policy hỗ trợ, không phải yêu cầu thêm UI bắt buộc. Nếu người cuối rời, giữ nhóm và tin làm lịch sử, không hard-delete; nhóm rỗng không nhận tin và không hiển thị cho User không còn membership.
+- Khi LOCKED/DELETED làm nhóm mất Admin ACTIVE: trong transaction status exclusive gate, khóa tất cả nhóm target tham gia theo ID tăng, cập nhật status, rồi nếu nhóm còn user ACTIVE mà không có Admin ACTIVE, **tự cấp is_admin cho user ACTIVE có id nhỏ nhất**. Không xóa membership/tin của target; khi unlock thì có thể có nhiều Admin, hợp lệ. Nhóm không còn user ACTIVE được coi là tạm ngưng; khi một account được mở khóa, cùng service sửa invariant bằng policy trên. Không trao thêm quyền system Admin. Cách này ưu tiên khóa tài khoản có vấn đề hơn từ chối khóa vì họ là Admin nhóm cuối.
+
+**Dữ liệu:** giữ PK `(group_id,user_id)`, bỏ encrypted_group_key theo mục 4, không FK membership từ tin. Invariant số lượng/quyền nằm ở transaction service, không viết CHECK truy vấn bảng khác. **Test:** tạo nhóm target lỗi rollback; hai Admin xóa nhau; remove/send đồng thời; khóa Admin nhóm cuối tự chuyển quyền; khóa toàn bộ rồi mở lại một người; re-add xem lịch sử; thành viên thường gọi opcode remove bị từ chối. **Rủi ro:** policy toàn bộ lịch sử và tự chọn kế nhiệm là quyết định sản phẩm của thiết kế này; không cung cấp bảo mật lịch sử theo từng giai đoạn như E2EE.
+
+### 7.4 Điều kiện báo cáo spam
+
+**Chọn bằng chứng một DM đã commit từ reported → reporter**, sát User §10 PDF; không tính chỉ tin do reporter tự gửi hoặc chỉ chung nhóm. Chưa có yêu cầu report tin nhóm, không mở rộng schema evidence/event.
+
+Actor ACTIVE, target tồn tại khác actor (cho phép LOCKED/DELETED để tiếp tục lưu khiếu nại); lấy khóa cặp và kiểm tra EXISTS direct_messages(sender_id=reported,receiver_id=actor). Tin đã hidden/clear vẫn là bằng chứng vì không xóa vật lý. INSERT spam_reports, không nhận reporter_id từ client. Một cặp chỉ có **một report trong toàn bộ thời gian** qua `UNIQUE(reporter_id,reported_id)`; retry trả report cũ, không đổi created_at/reason. Không chọn report vô hạn (spam hệ thống) hoặc cooldown dùng thời gian động trong CHECK (không phù hợp). Đề không yêu cầu đóng/mở vụ việc; nếu sau này có workflow thì thiết kế lại giới hạn này.
+
+**Thay đổi:** thêm unique ghép, không cột/bảng/FK mới. **Test:** chưa chat, chỉ chat chiều ngược, chỉ nhóm đều từ chối; đã nhận DM nhưng clear vẫn report được; hai retry chỉ một dòng; Client giả reporter không có hiệu lực. **Rủi ro:** không report lần hai sau một vụ đã xử lý, chấp nhận cho baseline không có trạng thái xử lý; reason tùy chọn, Server giới hạn 2000 ký tự.
+
+### 7.5 ON DELETE, soft delete và dữ liệu lịch sử
+
+**Chọn giữ 21 FK với 9 RESTRICT, 12 CASCADE** theo ERD hiện tại; không thay tất cả thành CASCADE (mất lịch sử) hoặc tất cả thành RESTRICT (liên kết phụ thuộc không dọn được khi bảo trì hợp lệ). Không có chức năng hard-delete user/nhóm trong runtime. ID và FK không ON UPDATE CASCADE; giữ mặc định NO ACTION, FK immediate, không DEFERRABLE.
+
+| Bảng con / FK | ON DELETE đã chọn | Lý do |
 |---|---|---|
-| Server encryption có đủ §12g hay phải E2EE | Giảng viên, sau đó A/B | PROVISIONAL Server-side AES-GCM; không quảng bá E2EE. |
-| Phiên thật, logout/resume, thống kê gồm hai Client | A/B | Theo §2; UUID Client tạo là idempotency, không là auth. |
-| Clear theo lượt transaction, mọi writer phải lấy khóa trước ID | A/B | Theo §3; timestamp không quyết định visibility. |
-| Mode mã hóa bất biến; một DEK; lịch sử thành viên mới; bỏ cột dự phòng | A/B | Theo §4; rotate KEK bằng rewrap, DEK chỉ bảo trì full re-encryption. |
-| Role, bootstrap, bảo vệ Admin cuối, quyền hai UI và opcode | A/B | Theo §5; mọi API dùng chung phải review trước code. |
-| P1 khác trong ERD_Review | A/B | Vẫn phải chốt transaction friend/block/spam, chính sách từng ON DELETE, cách đếm bạn cấp hai, username/email hoa thường và bộ index cuối. Không coi bốn đề xuất này là đã nghiệm thu toàn bộ schema. |
+| login_history.user_id, activity_logs.user_id | RESTRICT | Giữ lịch sử/thống kê |
+| friend_requests.sender_id/receiver_id | CASCADE | Liên kết tài khoản, chỉ dọn khi bảo trì xóa vật lý |
+| friendships.user_id_1/user_id_2 | CASCADE | Cặp quan hệ phụ thuộc |
+| user_blocks.blocker_id/blocked_id | CASCADE | Cặp chặn phụ thuộc |
+| direct_messages.sender_id/receiver_id | RESTRICT | Không mất hội thoại |
+| message_hidden.message_id/user_id | CASCADE | Marker phụ thuộc tin/user |
+| conversation_clears.user_id/partner_id | CASCADE | Marker phụ thuộc user; watermark không FK |
+| chat_groups.created_by | RESTRICT | Giữ thông tin creator |
+| group_members.group_id | CASCADE | Liên kết thuộc nhóm |
+| group_members.user_id | RESTRICT | Không phá membership/lịch sử qua hard delete |
+| group_messages.group_id | CASCADE | Tin thuộc nhóm, chỉ bảo trì xóa nhóm toàn bộ |
+| group_messages.sender_id | RESTRICT | Giữ người gửi |
+| spam_reports.reporter_id/reported_id | RESTRICT | Giữ dấu vết khiếu nại |
 
-**Kết luận sẵn sàng:** đã có bốn phương án kỹ thuật cụ thể để chuyển sang DDL sau khi A/B duyệt. **Chưa sẵn sàng coi database.sql là thiết kế chốt cuối** vì phạm vi mã hóa còn PROVISIONAL, thay đổi hợp đồng chưa được B duyệt và các P1 ngoài bốn vấn đề vẫn còn. Có thể bắt đầu bản SQL nháp có đánh dấu giả định khi người dùng yêu cầu ở bước sau; trong tác vụ này không tạo file SQL.
+Soft delete chỉ đổi status DELETED, không tái sử dụng username/email, không xóa tin/login/report/membership/friendship/block. DELETE user không được dùng để thực hiện UI xóa. DELETED là cuối vòng đời; cấm đổi lại ACTIVE/LOCKED, khác với khóa có thể mở. Các PENDING liên quan user DELETED được DELETE cùng transaction; không cần khóa cặp vì exclusive gate chặn mọi writer thường. Nhóm được xử lý kế nhiệm theo 7.3. UI danh sách bạn và tìm người bỏ DELETED, vẫn có thể hiện LOCKED offline; lịch sử giữ tên/hồ sơ hiện tại hoặc nhãn đã xóa, không snapshot danh tính cũ. Quyền xem lịch sử vẫn theo chính actor và membership.
 
-## 8. Kiểm tra tài liệu và giới hạn xác minh
+**Test:** xóa user không mất FK/tin/thống kê; DELETED không login hoặc phục hồi; thử từng hard DELETE với dữ liệu con đúng RESTRICT/CASCADE trong DB test bằng owner; soft delete không chạy CASCADE; runtime DELETE bị từ chối. **Rủi ro:** chủ DB vẫn có thể xóa trực tiếp; đây không phải cơ chế lưu trữ chống can thiệp owner hoặc yêu cầu xóa dữ liệu cá nhân theo pháp lý.
 
-Bộ đầu ra: [Database_Decisions_Proposed.md](Database_Decisions_Proposed.md), [ERD_Proposed.mmd](ERD_Proposed.mmd), [ERD_Proposed.svg](ERD_Proposed.svg), [ERD_Proposed.png](ERD_Proposed.png).
+### 7.6 Danh tính, validation và bảo mật cơ bản
 
-Đã kiểm tra thành công:
+**Chọn lưu username/email đã canonical hóa**, giữ UNIQUE đơn hiện tại, thay vì citext (extension không cần thiết) hoặc functional unique cộng cột hiển thị (phức tạp hơn baseline).
 
-| Kiểm tra thực tế | Kết quả |
-|---|---|
-| Mermaid chính thức có sẵn | `mermaid.parse`, `getDiagramFromText`, `render` chạy thành công bằng bundle Mermaid của VS Code; không tải/cài renderer. |
-| Mô hình sau parse | 13 bảng, 65 cột, 21 FK; 8 PK đơn và 5 PK ghép; 3 UNIQUE đơn (username, email, session_id). Có 58 cột bắt buộc và 7 nullable. |
-| Đối chiếu baseline | Chỉ thêm role/watermark, sửa session_id, bỏ encrypted_group_key; các kiểu và PK/FK/UK còn lại khớp. 21 đường FK, cardinality và ON DELETE không đổi. Metadata bổ sung đúng các giả định ở §6. |
-| Hình ảnh | SVG 2857 × 2673, hợp lệ XML, không dùng foreignObject; PNG 5714 × 5346 pixel, mở/giải mã được. Đã xem toàn cảnh và chi tiết các cột mới/nhóm: font Arial, nền sáng, chữ không bị cắt. |
-| Tài liệu | 12 khối SQL minh họa có code fence cân bằng; link file nội bộ tồn tại; không ký tự lỗi Unicode hoặc khoảng trắng cuối dòng. |
-| Phạm vi | SHA-256 của 10 file nguồn, schema và ERD/hình gốc không đổi. Chỉ giữ 4 đầu ra đề xuất; file kiểm tra/render tạm được dọn sau xác minh. |
+- Username ổn định, không cho đổi sau tạo; 3–50 ký tự ASCII `[a-z0-9_.-]`, trim và lowercase Locale.ROOT tại Server, DB CHECK regex `^[a-z0-9_.-]{3,50}$`. Tên tiếng Việt đặt trong full_name, trim, CHECK `btrim(full_name) <> ''`. Bảo lưu username của DELETED.
+- Email 1–100 ký tự, chỉ ASCII cho đồ án; Server trim/lowercase toàn địa chỉ, kiểm định dạng cơ bản; DB CHECK `email = lower(btrim(email))`, `email <> ''`, regex `^[!-~]+$` cấm khoảng trắng/non-ASCII. UNIQUE gồm cả user DELETED. Đây là policy ứng dụng coi email không phân biệt hoa/thường, không tuyên bố mọi hệ thống mail có semantics giống nhau. Từ chối email Unicode/EAI, không cắt chuỗi âm thầm.
+- Giữ 10 CHECK baseline (gender nullable với MALE/FEMALE/OTHER; status; action OPEN_APP; request enum; 6 CHECK tự liên hệ/thứ tự). Thêm role enum, watermark >=0, key–mode, IV theo mục 3–5; thêm CHECK id>0 cho tám bảng identity (giúp giả định watermark), tên nhóm `btrim(group_name) <> ''`, DM/group content không rỗng và `octet_length(content) <= 65536`, reason NULL hoặc char_length<=2000. Full_name/group_name VARCHAR giới hạn sẵn; nội dung whitespace-only từ Client bị Server từ chối, ciphertext Base64 không đem trim như plaintext.
+- Server giới hạn plaintext tin 16000 byte UTF-8 trước mã hóa (Base64 + tag nằm dưới 65536), payload Socket tối đa 128 KiB/frame; JSON có framing độ dài rõ, timeout/rate limit login/report; PreparedStatement và allowlist sort/filter. Với tìm chuỗi dùng ILIKE và escape `%`, `_`, ký tự escape để tìm literal; luôn áp dụng visibility trước LIMIT/pagination. Không thêm trigram/full text cho quy mô đồ án trước khi đo.
+- Password BCrypt: Server giới hạn đầu vào tối đa 72 byte UTF-8 để tránh thư viện cắt ngầm, kiểm độ mạnh tối thiểu, không log password/hash/token. Không CHECK hash chỉ bằng regex rồi coi là bảo mật; Server dùng thư viện BCrypt theo stack. Reset theo PDF: mật khẩu ngẫu nhiên đủ mạnh, chỉ hash trong DB, SMTP có TLS, không log secret; tạo/hash ngoài khóa, exclusive gate đọc lại và commit hash rồi gửi email ngoài transaction, lỗi SMTP trả thất bại gửi và cho phép reset lại. Không hứa atomic DB+SMTP; không thêm outbox/bảng reset ở baseline. Rate limit reset, phản hồi công khai không lộ email tồn tại.
+- Khi chạy qua mạng, chọn JSSE TLS có sẵn JDK bọc TCP với xác minh chứng chỉ; không tự trust-all. Loopback demo có thể TCP nhưng phải ghi rõ hạn chế. Không đổi stack/dependency, đây là điều kiện triển khai an toàn của thiết kế; AES-GCM lưu DB không bảo vệ password/tin trên đường truyền. Server kiểm quyền trước gửi nội dung sang LLM, chỉ gửi đoạn người dùng chủ động chọn, không tự xuất lịch sử nhóm mã hóa.
 
-Renderer dùng Node/Playwright/Chromium và Mermaid có sẵn trong môi trường, chỉ nạp module cài đặt qua localhost. Không đưa schema lên dịch vụ render bên ngoài. Sơ đồ tổng quan vẫn cần xem phóng to khi chèn báo cáo; chưa kiểm tra nhập SVG trong Word. Constraint ghép/có điều kiện, index biểu thức và trigger không được Mermaid thực thi; tài liệu này là nguồn mô tả phần đó.
+**Test:** username khác hoa trùng sau normalize; ghi trực tiếp uppercase bị CHECK; email khoảng trắng/Unicode/trùng; chuỗi rỗng, NULL bắt buộc, ID<=0; chuỗi tìm `%_`; message UTF-8 đúng/vượt biên; mật khẩu vượt 72 byte; reset SMTP lỗi không lưu plaintext; client bỏ TLS xác minh phải thất bại. **Rủi ro:** reset làm mật khẩu cũ mất hiệu lực trước khi email tới; có thể thử reset lại, không cam kết delivery. Các giới hạn nhập liệu là lựa chọn mới, không phải yêu cầu nguyên văn PDF.
 
-Chưa có PostgreSQL/pgJDBC đang được kiểm thử trong phạm vi này. **12 khối SQL chưa được chạy hoặc kiểm chứng bằng parser PostgreSQL**, chưa chạy test trên DB rỗng/concurrency/AEAD/Server; trigger/khóa cần kiểm thử tích hợp trước phát hành. Danh sách test ở từng quyết định là test cần triển khai, chưa phải test đã chạy. Không cài dependencies mới, không tạo/sửa database.sql hoặc Java, không commit/push, không sửa tài liệu chung hay schema/ERD gốc.
+### 7.7 Thống kê Admin và khoảng thời gian
+
+**Chọn cột thứ hai là tổng số người duy nhất cách tối đa hai cạnh**, loại chính user; cột trực tiếp riêng. Với U–A,U–B,A–C,B–C: trực tiếp 2, tổng trực tiếp+cấp hai 3. Không chọn chỉ cấp hai (=1) vì câu PDF “tính luôn” nghiêng về tổng; không chọn cộng số đường đi vì đếm trùng. Đây là diễn giải mặc định có căn cứ, chưa khẳng định thầy xác nhận. Self-join/CTE hai bước UNION DISTINCT, không cần đệ quy tùy độ sâu; loại DELETED ở cả bước trung gian và đích, LOCKED vẫn tính là quan hệ tồn tại. Block đã xóa friendship nên không tính nữa.
+
+Lượt mở = COUNT OPEN_APP, người hoạt động/tháng = DISTINCT user_id, đối tác/nhóm = DISTINCT receiver_id/group_id trong tin do user chủ động gửi. Lịch sử hidden/clear vẫn tính hoạt động thật. Đếm đăng ký và hoạt động quá khứ bao gồm account hiện LOCKED/DELETED để không sửa số liệu lịch sử khi khóa/xóa; Admin lọc status riêng nếu muốn. JOIN profile lấy tên hiện tại. Khoảng `[from,to)` và múi giờ Asia/Ho_Chi_Minh, đủ 12 tháng kể cả 0; không dùng BETWEEN có hai biên đóng. Đã đăng nhập từ tháng trước và chỉ reconnect tháng sau không tạo OPEN_APP mới; metric không phải số người đang online.
+
+**Dữ liệu:** không bảng/cột đếm cache; thêm users.created_at và index thời gian/activity tại 8.2. **Test:** hình kim cương, chu kỳ, user không bạn, bạn bị DELETED, 2 session/1 user, tháng 0, biên năm và UTC/VN, khóa user không làm mất số tháng cũ. **Rủi ro:** nếu giảng viên muốn chỉ cấp hai thì sửa truy vấn/nhãn, không thay schema.
+
+## 8. Đặc tả chuyển sang database.sql
+
+### 8.1 Nguồn cột, constraint và thứ tự tạo
+
+Nguồn cột cuối là [ERD.mmd](ERD.mmd): **13 bảng, 65 cột, 21 FK, 8 PK identity đơn và 5 PK ghép, 58 cột NOT NULL, 7 nullable**. Giữ kiểu/độ dài/default của [schema B](archive/Database_Schema_Draft.md) trừ các thay đổi mục 6. Các CHECK/index/trigger/quyền/transaction trong tài liệu này bổ sung cho hình; không suy ra UK đơn từ unique ghép.
+
+Tạo users trước; tiếp login_history, activity_logs, friend_requests, friendships, user_blocks, direct_messages; sau đó message_hidden, conversation_clears; chat_groups trước group_members/group_messages; spam_reports sau users. Dùng BIGINT GENERATED ALWAYS AS IDENTITY START 1 INCREMENT 1 CACHE 1 NO CYCLE cho tám id, không cấp ID trước khóa DM. TIMESTAMPTZ không đổi thành timestamp local. `conversation_clears.cleared_at` bắt buộc không default, service ghi clock_timestamp; watermark default 0. Không tự seed Admin/password/key trong script.
+
+UNIQUE constraint cuối: users.username; users.email; activity_logs.session_id; **spam_reports(reporter_id,reported_id)**. PK ghép giữ nguyên 5 bảng. CHECK cuối: 10 baseline + 4 thuộc role/watermark/key-mode/IV + 8 id dương + username/email canonical (email tách 3 biểu thức) + tên/full_name/content/reason tại 7.6; không dùng CHECK CURRENT_DATE cho dob hoặc CHECK truy vấn bảng khác. Dob nullable, Server kiểm không ở tương lai khi nhập; không đặt invariant tuổi tùy tiện từ đề.
+
+Trigger DDL bắt buộc của phương án mã hóa: hai guard ở 4.3 cho mode bất biến và mode–IV/group/sender. Các invariant friend/group/admin/status terminal được bảo đảm bởi Server service/khóa, không tuyên bố DDL đơn lẻ đủ. Định nghĩa quyền runtime và bootstrap vận hành riêng; mọi script DDL phải chạy trên DB test rỗng trước dùng thật. DDL minh họa ALTER ở mục 2–5 là thông tin chênh lệch, không chạy nối nguyên văn thành migration.
+
+### 8.2 Bộ index cuối được chọn
+
+**16 CREATE INDEX tường minh** dưới đây, cộng index tự sinh cho 13 PK và 4 UNIQUE constraint. Chưa có EXPLAIN/benchmark; chọn theo đường truy vấn cần dùng, không tạo mọi FK index một cách máy móc vì không hard-delete runtime.
+
+| Tên | Khóa / điều kiện | Công dụng |
+|---|---|---|
+| idx_login_history_time | login_history(login_time DESC) | Login chung |
+| idx_login_history_user_time | login_history(user_id,login_time DESC) | Login từng user |
+| idx_activity_time_user | activity_logs(created_at,user_id) | Khoảng ngày, biểu đồ tháng |
+| idx_activity_user_time | activity_logs(user_id,created_at) | Hoạt động từng user |
+| uq_pending_friend_pair | friend_requests(LEAST(sender_id,receiver_id),GREATEST(sender_id,receiver_id)) WHERE status='PENDING', UNIQUE | Chống PENDING hai chiều |
+| idx_friend_requests_inbox | friend_requests(receiver_id,created_at DESC) WHERE status='PENDING' | Inbox yêu cầu |
+| idx_friendships_second | friendships(user_id_2,user_id_1) | Chiều còn lại của friendship; chiều đầu đã có PK |
+| idx_dm_pair_id | direct_messages(LEAST(sender_id,receiver_id),GREATEST(sender_id,receiver_id),id) | Watermark/lịch sử; thay idx_dm_pair_time |
+| idx_dm_sender_time | direct_messages(sender_id,created_at,receiver_id) | Thống kê chủ động; bằng chứng spam có thể lọc receiver |
+| idx_dm_receiver_id | direct_messages(receiver_id,id) | Danh sách hội thoại/offline theo receiver |
+| idx_group_members_user | group_members(user_id,group_id) | Liệt kê nhóm của user, đổi status/kế nhiệm |
+| idx_group_messages_time | group_messages(group_id,created_at,id) | Lịch sử nhóm thứ tự ổn định khi cùng timestamp |
+| idx_group_messages_sender_time | group_messages(sender_id,created_at,group_id) | Thống kê nhóm chủ động |
+| idx_spam_reports_time | spam_reports(created_at DESC) | Danh sách spam |
+| idx_users_created_at | users(created_at) | Đăng ký mới/biểu đồ đăng ký |
+| uq_group_message_iv | group_messages(group_id,iv) WHERE iv IS NOT NULL, UNIQUE | Nonce không trùng trong các tin lưu cùng nhóm/DEK |
+
+Không giữ idx_dm_pair_time cũ; không tạo thêm index username/email đã có UNIQUE, chưa cần index role cho tập Admin nhỏ; không thêm search extension. Tối ưu lại sau khi EXPLAIN trên dữ liệu test cho thấy cần thiết.
+
+## 9. Kiểm chứng và phạm vi chưa chạy
+
+DDL và suite tại script/tests đã thực thi trên database test mới: **202 PASS, 0 FAIL** ở lần chạy cuối. Catalog thực xác nhận 13 bảng, 65 cột, 58 NOT NULL, 13 PK, 21 FK, 4 UNIQUE, 31 CHECK, 33 index và 2 trigger. Ba lần trước dừng do lỗi trong bộ test: cách đọc DESC, fixture trùng UUID, SQLSTATE RESTRICT. Không nới lỏng constraint hoặc thay đổi logic schema để đạt PASS. Chi tiết và tên database test trong [TEST_RESULTS.md](TEST_RESULTS.md).
+
+Chưa chạy Java/JDBC, kiểm thử nhiều Connection với barrier, quyền runtime non-owner, bootstrap/kế nhiệm Admin, SMTP/LLM, TLS, đo EXPLAIN/hiệu năng hoặc AEAD roundtrip. Những test tương ứng ở mục 2–7 vẫn là test cần triển khai. Không dùng việc PASS trigger/unique IV để khẳng định AES-GCM hoặc concurrency đã đúng.
+
+Đủ điều kiện SQL cho phần database mốc 20%; mốc toàn dự án còn cần GUI, báo cáo và ảnh commit. Server-side AES-GCM vẫn PROVISIONAL. Không thêm bảng session/audit/key history hoặc cơ chế doanh nghiệp ngoài yêu cầu hiện tại.
+
+## 10. Nguồn thực thi và bảo toàn tài liệu
+
+- [database.sql](../../script/database.sql): DDL thực thi, không phải migration.
+- [Database_Schema.md](Database_Schema.md): cột, ràng buộc, index từ catalog thực.
+- [ERD.mmd](ERD.mmd), [SVG](ERD.svg), [PNG](ERD.png): 13 bảng/65 cột/21 FK; CHECK, index biểu thức và policy service được mô tả trong tài liệu, không vẽ FK giả.
+- [Bản schema B](archive/Database_Schema_Draft.md), [DOCX](archive/Database_Schema_Draft.docx), [ERD cũ](archive/ERD_2026-10-16.mmd), [review cũ](archive/ERD_Review_2026-10-16.md): nguồn lịch sử, không phải bản chính thức song song.
+- [PostgreSQL locks](https://www.postgresql.org/docs/18/explicit-locking.html), [constraints](https://www.postgresql.org/docs/18/ddl-constraints.html), [sequence/cache](https://www.postgresql.org/docs/18/sql-createsequence.html), [NIST GCM](https://csrc.nist.gov/pubs/sp/800/38/d/final).
