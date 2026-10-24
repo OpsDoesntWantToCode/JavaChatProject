@@ -3,7 +3,7 @@
 > **Phiên bản tài liệu:** 2.0 — chỉnh cách diễn đạt để dùng chung cho hai thành viên và mọi trợ lý AI, 16/10/2026. **Không thay đổi stack đã thống nhất.**  
 > **Phạm vi:** Đồ án cuối kỳ môn Lập trình ứng dụng Java, nhóm 2 người  
 > **Trạng thái:** **Tech stack đã thống nhất.** Các lựa chọn kiến trúc/bảo mật còn mở được đánh dấu riêng bên dưới.  
-> **Nguồn quyết định:** Thảo luận và xác nhận giữa thành viên A và B; yêu cầu chính thức `Final Project.pdf`; bản thiết kế/feedback `Feedback 2 ben`. Việc nhóm dùng các trợ lý AI khác nhau **không ảnh hưởng các quyết định kỹ thuật**.
+> **Nguồn quyết định:** Thảo luận và xác nhận giữa thành viên A và B; yêu cầu chính thức `docs/final-project.pdf`; bản thiết kế/feedback `Feedback 2 ben`. Việc nhóm dùng các trợ lý AI khác nhau **không ảnh hưởng các quyết định kỹ thuật**.
 
 ## 1. Công nghệ chính thức
 
@@ -32,6 +32,8 @@
 
 ### Những lựa chọn KHÔNG nằm trong stack chính
 
+- **Không dùng WebSocket**: BẮT BUỘC dùng **Java TCP Socket thuần** (\java.net.Socket\, \java.net.ServerSocket\ trên tầng Transport/OS mạng). Tuyệt đối không dùng WebSocket (\ws://\), Socket.io hay công nghệ Web.
+- **Không làm ứng dụng Web/HTML**: Giao diện BẮT BUỘC là **Window Java Desktop** (Java Swing + FlatLaf) đóng gói thành các file \.jar\.
 - **Không dùng Supabase**: PostgreSQL chạy local là phương án của nhóm. Việc nộp SQL script vốn cũng có thể thực hiện trên Supabase, nhưng nhóm chủ động loại dịch vụ Cloud để giảm phụ thuộc.
 - **Không chọn JavaFX**, **không chọn Jackson** (chọn Swing + FlatLaf và Gson).
 - **Không chọn Spring Boot** hay ORM làm stack chính. Nếu muốn thêm framework về sau, hai thành viên phải thống nhất trước; không để bất kỳ trợ lý AI nào tự áp dụng.
@@ -129,9 +131,9 @@ JavaChatProject/
 - Thành viên A và B đều dùng cùng một baseline ở Mục 1. Chỉ thay đổi stack sau khi **cả hai thành viên đồng ý** và cập nhật tài liệu này; các gợi ý của AI không tự có hiệu lực.
 - **Không tự thay Swing bằng JavaFX, Gson bằng Jackson, PostgreSQL bằng Supabase, hay tự thêm Spring Boot/ORM**.
 - Các mục trong **Mục 6 là quyết định còn mở**. AI chỉ được đưa ra đề xuất và nêu tác động, không trình bày chúng thành yêu cầu đã chốt.
-- Đối chiếu `docs/Project_Context.md` và `Final Project.pdf` khi thiết kế database/chức năng. Dùng bộ Database chính thức đã kiểm thử SQL; không suy rộng thành đã hoàn thành nghiệp vụ Server.
+- Đối chiếu `AGENTS.md` và `docs/final-project.pdf` khi thiết kế database/chức năng. Dùng bộ Database chính thức đã kiểm thử SQL; không suy rộng thành đã hoàn thành nghiệp vụ Server.
 - Mọi thay đổi ảnh hưởng `server/`, `shared/`, giao thức JSON/Socket hoặc `pom.xml` cần được hai thành viên review, dù AI nào đề xuất thay đổi.
 
 ## 8. Phân biệt công nghệ sản phẩm với công cụ hỗ trợ lập trình
 
-**Công nghệ sản phẩm (bắt buộc theo quyết định nhóm)**: Java/Maven/Swing/PostgreSQL/Socket/Gson/... ở Mục 1. **Công cụ cá nhân (không bắt buộc đồng nhất)**: IDE, AI coding assistant, cách viết prompt, extension. A có thể dùng Codex CLI; B dùng AI khác mà vẫn tuân thủ cùng source of truth. Không đưa quy định "chỉ người A được sửa code" vào tài liệu tech stack; việc chia trách nhiệm nằm trong `Project_Context.md` và phân quyền Git của nhóm.
+**Công nghệ sản phẩm (bắt buộc theo quyết định nhóm)**: Java/Maven/Swing/PostgreSQL/Socket/Gson/... ở Mục 1. **Công cụ cá nhân (không bắt buộc đồng nhất)**: IDE, AI coding assistant, cách viết prompt, extension. A có thể dùng Codex CLI; B dùng AI khác mà vẫn tuân thủ cùng source of truth. Không đưa quy định "chỉ người A được sửa code" vào tài liệu tech stack; việc chia trách nhiệm nằm trong `AGENTS.md` và phân quyền Git của nhóm.

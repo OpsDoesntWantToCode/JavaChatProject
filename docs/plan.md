@@ -2,8 +2,8 @@
 
 > **Dự án:** Java Chat System (Đồ án Lập trình ứng dụng Java)  
 > **Phân vai chính thức:**
-> - **Thành viên A (Hải):** Phụ trách Admin UI (9 nhóm chức năng) + Script CSDL PostgreSQL + Phần Thiết kế CSDL & Màn hình Admin trong báo cáo.
-> - **Thành viên B (Minh):** Phụ trách User UI (12 nhóm chức năng) + Khởi tạo Repo Git/Maven + Dựng khung Báo cáo & Phần Màn hình User trong báo cáo.
+> - **Thành viên A:** Lưu Chí Hải (MSSV: 24127030) — Phụ trách Admin UI (9 nhóm chức năng) + Script CSDL PostgreSQL + Phần Thiết kế CSDL & Màn hình Admin trong báo cáo.
+> - **Thành viên B:** Trần Nguyễn Tuấn Minh (MSSV: 24127084) — Phụ trách User UI (12 nhóm chức năng) + Khởi tạo Repo Git/Maven + Dựng khung Báo cáo & Phần Màn hình User trong báo cáo.
 >
 > **Mốc thời gian điều chỉnh (Chiến lược về đích sớm):**
 > - *Hạn chót chính thức mốc 20% của môn học:* **22/11/2026**
@@ -43,10 +43,10 @@
 
 ### 3.1 Khởi tạo & Cơ sở Dữ liệu (Dùng chung)
 - [x] **Setup Repository & Cấu trúc thư mục** *(Hoàn thành: 22/10/2026)*: Khởi tạo Git repo, tạo các thư mục chuẩn `src/admin`, `src/user`, `script`, `git`, `docs`.
-- [x] **Thống nhất Công nghệ & Quy tắc AI** *(Hoàn thành: 22/10/2026)*: Chốt Java 21, Swing + FlatLaf, PostgreSQL local, Gson, `AGENTS.md`, `docs/Tech_Stack.md`, `docs/Project_Context.md`.
-- [x] **Thiết kế & Hoàn thiện CSDL 13 bảng** *(Hoàn thành: 23/10/2026)*: Hoàn tất `docs/database/schema.md` và `docs/database/schema_context.md` (giải quyết UUID phiên, Watermark xóa tin, mã hóa nhóm).
+- [x] **Thống nhất Công nghệ & Quy tắc AI** *(Hoàn thành: 22/10/2026)*: Chốt Java 21, Swing + FlatLaf, PostgreSQL local, Gson, `AGENTS.md`, `docs/tech-stack.md`.
+- [x] **Thiết kế & Hoàn thiện CSDL 13 bảng** *(Hoàn thành: 23/10/2026)*: Hoàn tất `docs/database/schema.md` (tích hợp 13 bảng, sơ đồ Mermaid ERD và cẩm nang vận hành CSDL: UUID phiên, Watermark xóa tin, mã hóa nhóm).
 - [x] **Viết Script Tạo CSDL Chính thức** *(Hoàn thành: 23/10/2026)*: Hoàn tất `script/database.sql` (chạy độc lập trên database rỗng, 100% ràng buộc và triggers).
-- [x] **Xuất Sơ đồ ERD** *(Hoàn thành: 23/10/2026)*: Hoàn tất sơ đồ hình ảnh `docs/database/ERD.png` và `docs/database/ERD.svg` sẵn sàng dán vào báo cáo.
+- [x] **Tích hợp Sơ đồ ERD & Cẩm nang vào Schema** *(Hoàn thành: 24/10/2026)*: Nhúng sơ đồ ERD Mermaid trực tiếp vào `docs/database/schema.md`, xóa bỏ các file ảnh và context trùng lặp để tài liệu CSDL đạt chuẩn nguồn chân lý duy nhất.
 - [x] **Dọn dẹp Kho lưu trữ** *(Hoàn thành: 24/10/2026)*: Xóa bỏ các tệp nháp rác, archive các tài liệu giải trình cũ, đưa `script/` về trạng thái tinh gọn chỉ chứa 1 file SQL.
 
 ---
@@ -121,7 +121,7 @@
 
 Ngay sau khi nghiệm thu mốc 20%, nhóm sẽ chuyển sang giai đoạn lập trình logic thực tế:
 - [ ] **Socket TCP Server** *(Tuần 1: 06/11 – 13/11/2026)*: Xây dựng Server đa luồng, quản lý danh sách socket kết nối online, định tuyến tin nhắn realtime và lưu tin nhắn offline.
-- [ ] **Tầng Dữ liệu pgJDBC** *(Tuần 2: 14/11 – 21/11/2026)*: Kết nối PostgreSQL qua Connection Pool, triển khai các DAO với PreparedStatement, Transaction và Advisory lock theo chuẩn `docs/database/schema_context.md`.
+- [ ] **Tầng Dữ liệu pgJDBC** *(Tuần 2: 14/11 – 21/11/2026)*: Kết nối PostgreSQL qua Connection Pool, triển khai các DAO với PreparedStatement, Transaction và Advisory lock theo chuẩn `docs/database/schema.md`.
 - [ ] **Tin nhắn Cá nhân & Nghiệp vụ Bạn bè** *(Tuần 3: 22/11 – 29/11/2026)*: Chat 1-1 realtime/offline, Watermark xóa tin, Quản lý bạn bè, Block, Báo cáo Spam.
 - [ ] **Mã hóa nhóm AES-GCM & Dịch vụ Ngoài** *(Tuần 4: 30/11 – 06/12/2026)*: Chat nhóm mã hóa Server-side AES-GCM, Jakarta Mail reset pass, Java 21 `HttpClient` gọi LLM API.
 - [ ] **Thống kê JFreeChart & Đóng gói JAR** *(Tuần 5: 07/12 – 12/12/2026)*: JFreeChart thống kê Admin, Đóng gói 2 file JAR (`Admin.jar`, `User.jar`) kèm file cấu hình DB `config.properties`, quay video demo Youtube và hoàn tất báo cáo cuối kỳ.

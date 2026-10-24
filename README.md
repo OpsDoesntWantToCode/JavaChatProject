@@ -1,32 +1,35 @@
 # JavaChatProject
 
-Dự án Java Chat Application phục vụ bài tập nhóm.
+Dự án Java Chat Application phục vụ đồ án môn Lập trình ứng dụng Java.
 
-## Database chính thức của nhóm
+## 1. Thành viên Nhóm
 
-- [Schema](docs/database/Database_Schema.md), [quyết định thiết kế](docs/database/Database_Decisions.md), [ERD](docs/database/ERD.mmd) ([SVG](docs/database/ERD.svg), [PNG](docs/database/ERD.png)).
-- [SQL tạo database](script/database.sql), [hướng dẫn test](script/tests/README.md), [kết quả PostgreSQL 18.6](docs/database/TEST_RESULTS.md): 202 PASS, 0 FAIL ở lần chạy cuối.
-- [Nguồn thiết kế cũ](docs/database/archive/README.md) được lưu riêng; schema hiện hành có 13 bảng, 65 cột và 21 FK. Server-side AES-GCM vẫn PROVISIONAL, không phải E2EE. Test SQL không thay cho test nghiệp vụ Java/concurrency/AEAD.
+| STT | Họ và Tên | MSSV | Vai trò & Phân công | Nhánh làm việc |
+| :---: | :--- | :---: | :--- | :--- |
+| 1 | **Lưu Chí Hải** | **24127030** | Thành viên A: Phụ trách Admin UI, CSDL PostgreSQL (`script/database.sql`), sơ đồ ERD | `feat/admin-db` |
+| 2 | **Trần Nguyễn Tuấn Minh** | **24127084** | Thành viên B: Phụ trách User UI, Maven/Repository (`pom.xml`), tổng hợp Báo cáo | `feat/user-ui` |
 
-## Cấu trúc thư mục
+- **Nhánh chính (Tích hợp):** `main`
+- **Sở hữu chung (Review chéo):** `server/`, `shared/` (DTO, Socket protocol), `pom.xml`, `docs/plan.md`.
 
-```
+## 2. Cấu trúc Tài liệu & Database
+
+- **Chỉ dẫn AI & Quy tắc dự án:** [AGENTS.md](AGENTS.md)
+- **Kế hoạch & Checklist tiến độ:** [docs/plan.md](docs/plan.md)
+- **Công nghệ & Kiến trúc:** [docs/tech-stack.md](docs/tech-stack.md)
+- **Cơ sở dữ liệu & Sơ đồ ERD:** [docs/database/schema.md](docs/database/schema.md) (đặc tả 13 bảng, 65 cột, sơ đồ Mermaid ERD và cẩm nang vận hành backend).
+- **Script tạo CSDL PostgreSQL:** [script/database.sql](script/database.sql).
+
+## 3. Cấu trúc Thư mục
+
+```text
 JavaChatProject/
+├── docs/            # Tài liệu thiết kế, kế hoạch và CSDL
+├── script/          # Chứa duy nhất file database.sql tạo CSDL
 ├── src/
-│   ├── admin/       # A phụ trách Admin UI
-│   └── user/        # B phụ trách User UI
-├── script/          # Bạn A lưu trữ các file cơ sở dữ liệu (.sql) vào đây
-└── git/             # Nơi lưu ảnh chụp commit / git log của 2 người lúc nộp bài
+│   ├── admin/       # Lưu Chí Hải phụ trách Admin UI
+│   └── user/        # Trần Nguyễn Tuấn Minh phụ trách User UI
+├── git/             # Nơi lưu ảnh chụp commit / git log của 2 người lúc nộp bài
+├── AGENTS.md        # Bản chỉ dẫn toàn diện cho AI coding assistants
+└── README.md
 ```
-
-## Phân công & Nhánh làm việc (Branches)
-
-- `main`: Branch tích hợp chung.
-- `feat/admin-db`: Branch dành cho **thành viên A**, phụ trách Admin UI, ERD, PostgreSQL và `script/database.sql`.
-- `feat/user-ui`: Branch dành cho **thành viên B**, phụ trách User UI, Maven/repository và báo cáo.
-
-## Hướng dẫn nộp bài
-
-1. Mỗi bạn làm việc trên nhánh tính năng tương ứng (`feat/admin-db` hoặc `feat/user-ui`).
-2. Sau khi hoàn thành và merge, chụp ảnh màn hình lịch sử commit (`git log --graph` hoặc trên GitHub).
-3. Lưu các hình ảnh vào thư mục `git/` trước khi đóng gói nộp bài.
