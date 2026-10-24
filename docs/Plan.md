@@ -1,7 +1,6 @@
-# MA TRẬN PHÂN CÔNG CÔNG VIỆC & KẾ HOẠCH RÚT GỌN (MỐC 20%)
+# KẾ HOẠCH TRIỂN KHAI DỰ ÁN — JAVA CHAT SYSTEM (MỐC 20%)
 
 > **Dự án:** Java Chat System (Đồ án Lập trình ứng dụng Java)  
-> **Căn cứ pháp lý:** [Final Project.pdf](file:///d:/JavaChatProject/docs/Final%20Project.pdf) (Khoa CNTT - BM Công nghệ phần mềm)  
 > **Phân vai chính thức:**
 > - **Thành viên A (Hải):** Phụ trách Admin UI (9 nhóm chức năng) + Script CSDL PostgreSQL + Phần Thiết kế CSDL & Màn hình Admin trong báo cáo.
 > - **Thành viên B (Minh):** Phụ trách User UI (12 nhóm chức năng) + Khởi tạo Repo Git/Maven + Dựng khung Báo cáo & Phần Màn hình User trong báo cáo.
@@ -12,125 +11,117 @@
 
 ---
 
-## 1. Đối chiếu & Chuẩn hóa Kế hoạch theo Đề bài Gốc (Final Project.pdf)
+## 1. Yêu cầu Cốt lõi & Chuẩn hóa Cấu trúc Nộp bài 20%
 
-Sau khi rà soát chéo giữa bản nháp kế hoạch và [Final Project.pdf](file:///d:/JavaChatProject/docs/Final%20Project.pdf), các điểm cần lưu ý và bổ sung gồm:
-
-1. **Cấu trúc nén nộp bài mốc 20% (Tuyệt đối không được sai để tránh bị 0đ):**
-   ```text
-   NopBai_NhomXX_20pct.zip
-   ├── src/
-   │   ├── admin/      (Mã nguồn màn hình Admin của Hải)
-   │   └── user/       (Mã nguồn màn hình User của Minh)
-   ├── script/         (File database.sql của Hải)
-   ├── git/            (Ảnh chụp màn hình commit của Hải và Minh)
-   └── BaoCao.pdf      (Báo cáo nhóm đầy đủ 5 phần bắt buộc)
-   ```
-2. **Các chi tiết màn hình Admin của Hải cần đảm bảo khớp đề:**
-   - *Quản lý User:* Form xem/thêm/sửa phải có đủ các trường: `username`, `fullname`, `address`, `dob` (ngày sinh), `gender`, `email`, `status`.
-   - *Thống kê Bạn bè (Yêu cầu 7):* Phải có bộ lọc số lượng bạn bè trực tiếp gồm ComboBox toán tử (`=`, `<`, `>`) và ô nhập số.
-   - *Người dùng hoạt động (Yêu cầu 8):* Phải hiển thị đủ 3 cột số liệu (Mở app, Chat bao nhiêu người, Chat bao nhiêu nhóm) và có bộ lọc số lượng hoạt động (`=`, `<`, `>`).
-3. **Các chi tiết màn hình User của Minh cần đảm bảo khớp đề:**
-   - *Tab Bạn bè Online (Yêu cầu 8):* Tách rõ danh sách bạn đang online có chấm xanh, có nút Chat nhanh và nút Tạo nhóm.
-   - *Tìm kiếm người dùng (Yêu cầu 9):* Kết quả tìm kiếm (loại trừ người đã chặn mình) phải có nút Chat và Tạo nhóm trực tiếp.
-   - *Tìm kiếm tin nhắn (Yêu cầu 11f, 11g):* Phân biệt rõ tìm trong 1 cuộc hội thoại và tìm toàn bộ các cuộc hội thoại; có nút điều hướng (Lên/Xuống) để nhảy đến đúng đoạn chat.
-   - *Nhóm chat (Yêu cầu 12):* Tạo nhóm phải cho phép thêm tối thiểu 1 người; có cờ Mã hóa nhóm; danh sách thành viên phải phân biệt Admin nhóm và chỉ Admin nhóm mới có nút Xóa thành viên.
+- **Quy tắc đóng gói (Tuyệt đối không sai cấu trúc để tránh bị 0đ):**
+  ```text
+  NopBai_NhomXX_20pct.zip
+  ├── src/
+  │   ├── admin/      # Mã nguồn các màn hình Admin (Hải)
+  │   └── user/       # Mã nguồn các màn hình User (Minh)
+  ├── script/         # Chứa duy nhất file database.sql tạo CSDL
+  ├── git/            # Ảnh chụp màn hình git log / commit của Hải và Minh
+  └── BaoCao.pdf      # Báo cáo nhóm đầy đủ 5 phần bắt buộc
+  ```
+- **Quy chuẩn UI (Swing + FlatLaf):**
+  - Kích thước cửa sổ chính: Chuẩn 1000x700 px (hoặc tỷ lệ tương đương, có khả năng co giãn responsive).
+  - Look & Feel: FlatLaf (hỗ trợ Light / Dark theme), font chữ hệ thống rõ ràng (`Segoe UI` / `Inter`).
+  - Dữ liệu mẫu (Dummy data): Bắt buộc đổ sẵn vài dòng dữ liệu sống động vào bảng `JTable`, danh sách bạn bè và khung chat để phục vụ chụp hình báo cáo.
 
 ---
 
-## 2. Lịch trình Thực hiện Rút gọn (Target Finish: 05/11/2026)
+## 2. Tiến độ Thực hiện Tổng quan (Lộ trình Rút gọn)
 
-```mermaid
-gantt
-    title LỘ TRÌNH RÚT GỌN MỐC 20% (22/10 - 05/11/2026)
-    dateFormat  YYYY-MM-DD
-    axisFormat  %d/%m
-    section GĐ 1: Khởi tạo
-    Thống nhất ERD & FlatLaf UI        :done, des1, 2026-10-22, 2026-10-24
-    Setup Branch & Dummy Data Format   :done, des2, 2026-10-23, 2026-10-24
-    section GĐ 2: Hải (feat/admin-db)
-    Script CSDL & Xuất ERD Diagram     :active, h1, 2026-10-25, 2026-10-26
-    Admin MainFrame & Quản lý User     :h2, 2026-10-27, 2026-10-29
-    Login History, Spam & Nhóm chat    :h3, 2026-10-30, 2026-10-31
-    Thống kê FOF, Hoạt động & Biểu đồ  :h4, 2026-11-01, 2026-11-02
-    section GĐ 2: Minh (feat/user-ui)
-    Màn hình Login, Register, Profile  :active, m1, 2026-10-25, 2026-10-27
-    Tab Bạn bè, Online, Search, Request:m2, 2026-10-28, 2026-10-30
-    Khung Chat 1-1, Tìm tin, LLM Popup :m3, 2026-10-31, 2026-11-01
-    Khung Chat Nhóm & Quản lý nhóm     :m4, 2026-11-01, 2026-11-02
-    section GĐ 3: Ghép bài & Nộp
-    Merge PR vào main & Test biên dịch :int1, 2026-11-03, 2026-11-03
-    Chụp ảnh Git & Viết Báo cáo PDF    :int2, 2026-11-04, 2026-11-05
-    Đóng gói nghiệm thu mốc 20%        :milestone, m_done, 2026-11-05, 0d
-    section Mốc 80% (Dồn lực)
-    Triển khai Socket & Nghiệp vụ 80%  :crit, active, s80, 2026-11-06, 2026-12-12
-```
+- **Chặng 1 (22/10 – 24/10):** Khởi tạo, thống nhất ERD, làm sạch repo, chốt giao thức và công nghệ.
+- **Chặng 2 (25/10 – 02/11):** Triển khai giao diện tĩnh độc lập song song (Hải làm Admin, Minh làm User).
+- **Chặng 3 (03/11 – 05/11):** Ghép mã nguồn vào `main`, chụp minh chứng Git, hoàn thiện Báo cáo PDF và đóng gói nộp mốc 20%.
+- **Chặng 4 (06/11 – 12/12):** Dồn toàn lực cho mốc 80% (TCP Socket Server, pgJDBC, Transaction, AES-GCM, Mail, LLM, đóng gói JAR).
 
 ---
 
-## 3. Chi tiết Phân công Công việc Từng Thành viên
+## 3. Danh mục Nhiệm vụ & Hạn chót Từng Task (Task Matrix)
 
-### 3.1 Thành viên A — Hải (Nhánh `feat/admin-db`)
-*Mục tiêu: Hoàn tất 11 màn hình Swing + FlatLaf với dữ liệu mẫu đẹp mắt, script CSDL sạch và tối thiểu 8–10 commits.*
-
-| STT | Tên Commit dự kiến | Màn hình / Thành phần UI | Mô tả chi tiết & Dummy Data cần có | Hạn chót |
-| :---: | :--- | :--- | :--- | :---: |
-| **H1** | `feat(db): finalize script/database.sql and ERD diagram` | `script/database.sql` | 13 bảng PostgreSQL đã test 100% PASS, xuất ảnh ERD diagram độ phân giải cao đưa vào thư mục docs/báo cáo. | 26/10 |
-| **H2** | `feat(admin-ui): create AdminMainFrame and navigation sidebar` | `AdminMainFrame` | Cửa sổ 1000x700, FlatLaf Dark/Light, thanh Sidebar trái với menu 9 chức năng và Header thông tin Admin. | 27/10 |
-| **H3** | `feat(admin-ui): implement UserManagementPanel and UserDetailDialog` | `UserManagementPanel`, `UserDetailDialog` | Bảng danh sách User (10 dòng mẫu), lọc tên/username/status, sắp xếp; các nút Thêm/Sửa/Xóa/Khóa/ResetPass; Dialog xem login history & friend list. | 29/10 |
-| **H4** | `feat(admin-ui): implement GlobalLoginHistoryPanel` | `GlobalLoginHistoryPanel` | Bảng hiển thị lịch sử đăng nhập chung (thời gian, username, họ tên), lọc theo thời gian. | 30/10 |
-| **H5** | `feat(admin-ui): implement GroupManagementPanel and GroupDetailDialog` | `GroupManagementPanel` | Bảng danh sách nhóm chat (sắp xếp tên/ngày tạo, lọc tên), Dialog xem danh sách thành viên và danh sách Admin nhóm. | 31/10 |
-| **H6** | `feat(admin-ui): implement SpamReportPanel with action dialogs` | `SpamReportPanel` | Bảng báo cáo spam (thời gian, người gửi báo cáo, người bị báo cáo, lý do), sắp xếp/lọc thời gian/username, nút Khóa tài khoản vi phạm. | 31/10 |
-| **H7** | `feat(admin-ui): implement NewUsersPanel and FriendStatisticsPanel` | `NewUsersPanel`, `FriendStatisticsPanel` | - Màn hình đăng ký mới: Date Picker khoảng thời gian.<br>- Màn hình FOF: Cột bạn trực tiếp, bạn của bạn; ComboBox toán tử (`=`, `<`, `>`) và ô nhập số lượng bạn. | 01/11 |
-| **H8** | `feat(admin-ui): implement ActiveUsersPanel with filter criteria` | `ActiveUsersPanel` | Bảng thống kê hoạt động (Mở app, Chat bao nhiêu người, Chat bao nhiêu nhóm), bộ lọc khoảng thời gian và lọc số lượng hoạt động (`=`, `<`, `>`). | 02/11 |
-| **H9** | `feat(admin-ui): implement RegistrationChartPanel and ActivityChartPanel` | `RegistrationChartPanel`, `ActivityChartPanel` | 2 biểu đồ cột mẫu (dùng JFreeChart hoặc vẽ JPanel Bar Chart) có ComboBox chọn năm, trục hoành 12 tháng, trục tung số lượng. | 02/11 |
+### 3.1 Khởi tạo & Cơ sở Dữ liệu (Dùng chung)
+- [x] **Setup Repository & Cấu trúc thư mục** *(Hoàn thành: 22/10/2026)*: Khởi tạo Git repo, tạo các thư mục chuẩn `src/admin`, `src/user`, `script`, `git`, `docs`.
+- [x] **Thống nhất Công nghệ & Quy tắc AI** *(Hoàn thành: 22/10/2026)*: Chốt Java 21, Swing + FlatLaf, PostgreSQL local, Gson, `AGENTS.md`, `docs/Tech_Stack.md`, `docs/Project_Context.md`.
+- [x] **Thiết kế & Hoàn thiện CSDL 13 bảng** *(Hoàn thành: 23/10/2026)*: Hoàn tất `docs/database/schema.md` và `docs/database/schema_context.md` (giải quyết UUID phiên, Watermark xóa tin, mã hóa nhóm).
+- [x] **Viết Script Tạo CSDL Chính thức** *(Hoàn thành: 23/10/2026)*: Hoàn tất `script/database.sql` (chạy độc lập trên database rỗng, 100% ràng buộc và triggers).
+- [x] **Xuất Sơ đồ ERD** *(Hoàn thành: 23/10/2026)*: Hoàn tất sơ đồ hình ảnh `docs/database/ERD.png` và `docs/database/ERD.svg` sẵn sàng dán vào báo cáo.
+- [x] **Dọn dẹp Kho lưu trữ** *(Hoàn thành: 24/10/2026)*: Xóa bỏ các tệp nháp rác, archive các tài liệu giải trình cũ, đưa `script/` về trạng thái tinh gọn chỉ chứa 1 file SQL.
 
 ---
 
-### 3.2 Thành viên B — Minh (Nhánh `feat/user-ui`)
-*Mục tiêu: Hoàn tất 13 màn hình/dialog User Swing + FlatLaf với dummy chat data sống động, khung báo cáo và tối thiểu 8–10 commits.*
+### 3.2 Phân hệ Quản trị (Admin UI) — Thành viên A: Hải (`src/admin/`)
 
-| STT | Tên Commit dự kiến | Màn hình / Thành phần UI | Mô tả chi tiết & Dummy Data cần có | Hạn chót |
-| :---: | :--- | :--- | :--- | :---: |
-| **M1** | `feat(user-ui): create LoginFrame and RegisterFrame` | `UserLoginFrame`, `UserRegisterFrame` | Màn hình đăng nhập hiện đại, form đăng ký đầy đủ (username, họ tên, địa chỉ, ngày sinh, giới tính, email). | 26/10 |
-| **M2** | `feat(user-ui): implement ForgotPasswordDialog and ProfileDialog` | `ForgotPasswordDialog`, `UserProfileDialog` | Dialog quên mật khẩu (nhập email nhận pass ngẫu nhiên); Dialog cập nhật profile cá nhân và đổi mật khẩu. | 27/10 |
-| **M3** | `feat(user-ui): create UserMainChatFrame layout and tabs` | `UserMainChatFrame` | Khung chat tổng thể 1000x700: Cột trái (Tabs Bạn bè/Nhóm), Cột giữa (Vùng hội thoại), Cột phải (Thông tin/Thành viên). | 28/10 |
-| **M4** | `feat(user-ui): implement FriendListPanel and OnlineFriendsPanel` | `FriendListPanel`, `OnlineFriendsPanel` | - Danh sách bạn bè: chấm xanh/xám, lọc tên, nút Hủy bạn, nút Block.<br>- Tab Bạn Online: lọc tên, nút Chat ngay, nút Tạo nhóm. | 29/10 |
-| **M5** | `feat(user-ui): implement FriendRequestDialog and UserSearchDialog` | `FriendRequestDialog`, `UserSearchDialog` | - Danh sách yêu cầu kết bạn: nút Đồng ý/Từ chối.<br>- Tìm kiếm người dùng: tìm theo username/họ tên, kết quả có nút Kết bạn, Chat, Tạo group. | 30/10 |
-| **M6** | `feat(user-ui): implement ChatPanel1on1 with message history` | `ChatPanel1on1` | Khung chat 1-1 với các bong bóng tin nhắn mẫu (trái/phải), thanh tiêu đề có nút Báo cáo spam, nút Xóa toàn bộ lịch sử, thanh tìm kiếm. | 31/10 |
-| **M7** | `feat(user-ui): implement ChatSearchDialog and MessageContextMenu` | `ChatSearchDialog`, `MessagePopupMenu` | Popup/Menu chuột phải xóa 1 hoặc vài dòng tin nhắn; Dialog tìm kiếm chuỗi tin nhắn với 1 người hoặc tất cả kèm nút di chuyển Lên/Xuống. | 01/11 |
-| **M8** | `feat(user-ui): implement LLMAssistPopup for chat suggestions` | `LLMAssistPopup` | Nút icon cạnh ô nhập chat, bấm mở popup hiển thị các câu gợi ý trả lời lịch sự/chỉnh sửa câu văn từ AI. | 01/11 |
-| **M9** | `feat(user-ui): implement GroupChatPanel and GroupCreationDialog` | `GroupChatPanel`, `GroupCreateDialog` | Dialog tạo nhóm (thêm >= 1 username, cờ mã hóa); Panel chat nhóm kèm sidebar quản lý thành viên (đổi tên, thêm người, gán admin, xóa member). | 02/11 |
-| **M10**| `docs(report): setup report template and table of contents` | `docs/BaoCao_Draft.docx` (hoặc LaTeX) | Khởi tạo khung tài liệu báo cáo gồm đủ 5 mục chính theo yêu cầu đề bài. | 03/11 |
-
----
-
-## 4. Giai đoạn Tích hợp & Đóng gói Nghiệm thu (03/11 - 05/11/2026)
-
-1. **Merge code & Kiểm thử biên dịch (03/11/2026):**
-   - Tạo Pull Request từ `feat/admin-db` và `feat/user-ui` vào `main`.
-   - Vì Hải chỉ làm trong `src/admin` và Minh chỉ làm trong `src/user`, quá trình merge cam kết không bị xung đột.
-   - Chạy lệnh biên dịch thử: bảo đảm không có lỗi `compile error`.
-2. **Minh chứng Git (04/11/2026):**
-   - Vào GitHub repository, lọc commit của Hải -> Chụp màn hình lưu vào `git/commits_Hai.png`.
-   - Lọc commit của Minh -> Chụp màn hình lưu vào `git/commits_Minh.png`.
-3. **Hoàn thiện Báo cáo PDF (04/11 - 05/11/2026):**
-   - **Mục 1:** Thông tin nhóm (Họ tên, MSSV của Hải và Minh).
-   - **Mục 2:** Danh sách công việc từng thành viên (bám sát bảng phân vai trên).
-   - **Mục 3:** Bảng đóng góp: Hải (50%), Minh (50%) — Tổng = 100%.
-   - **Mục 4:** Thiết kế cơ sở dữ liệu: Hải chèn sơ đồ ERD 13 bảng và tóm tắt ý nghĩa ràng buộc.
-   - **Mục 5:** Danh sách màn hình đã thiết kế: Dán hình chụp 11 màn hình Admin (Hải) và 13 màn hình User (Minh) kèm chú thích ngắn gọn.
-4. **Kiểm tra đóng gói file nén (05/11/2026):**
-   - Tạo file `.zip` theo cấu trúc bắt buộc: gồm đúng 3 thư mục `src/`, `script/`, `git/` và tệp `BaoCao.pdf`.
+- [ ] **Task A1 — Khung giao diện chính Admin (`AdminMainFrame`)** *(Hạn chót: 26/10/2026)*:
+  - *Mô tả:* Cửa sổ chính kích thước 1000x700. Cột trái là Sidebar điều hướng chứa menu 9 chức năng (dùng `CardLayout` hoặc `JTabbedPane` ẩn tab header). Header hiển thị thông tin Admin đang đăng nhập và nút Đăng xuất.
+- [ ] **Task A2 — Quản lý danh sách người dùng (`UserManagementPanel`)** *(Hạn chót: 27/10/2026)*:
+  - *Mô tả:* Bảng `JTable` hiển thị danh sách user (ID, username, họ tên, địa chỉ, ngày sinh, giới tính, email, trạng thái). Thanh công cụ phía trên gồm: Ô tìm kiếm/lọc (theo tên, username, trạng thái `ACTIVE`/`LOCKED`), ComboBox sắp xếp (theo tên, ngày tạo). Thanh nút chức năng: Thêm, Cập nhật, Xóa, Khóa/Mở khóa, Đổi mật khẩu.
+- [ ] **Task A3 — Hộp thoại chi tiết người dùng (`UserDetailDialog`)** *(Hạn chót: 28/10/2026)*:
+  - *Mô tả:* Dialog dạng popup khi bấm xem chi tiết 1 user: Gồm 2 tab: (1) Bảng lịch sử đăng nhập của riêng user đó; (2) Danh sách bạn bè hiện tại của user đó.
+- [ ] **Task A4 — Lịch sử đăng nhập toàn hệ thống (`GlobalLoginHistoryPanel`)** *(Hạn chót: 29/10/2026)*:
+  - *Mô tả:* Bảng hiển thị danh sách đăng nhập theo thứ tự thời gian mới nhất (Thời gian đăng nhập, Tên đăng nhập, Họ tên). Có ô lọc theo username hoặc khoảng ngày.
+- [ ] **Task A5 — Quản lý nhóm chat (`GroupManagementPanel` & `GroupDetailDialog`)** *(Hạn chót: 30/10/2026)*:
+  - *Mô tả:* Bảng danh sách các nhóm chat (Tên nhóm, Người tạo, Ngày tạo, Cờ mã hóa). Bộ lọc theo tên nhóm, sắp xếp theo tên/ngày tạo. Dialog xem chi tiết: hiển thị danh sách thành viên trong nhóm và danh sách các Admin nhóm.
+- [ ] **Task A6 — Quản lý báo cáo Spam (`SpamReportPanel`)** *(Hạn chót: 31/10/2026)*:
+  - *Mô tả:* Bảng danh sách báo cáo vi phạm (Thời gian, Người báo cáo, Người bị báo cáo, Lý do spam). Bộ lọc/sắp xếp theo thời gian hoặc username bị báo cáo. Nút bấm thao tác nhanh: "Khóa tài khoản người bị báo cáo".
+- [ ] **Task A7 — Thống kê người dùng đăng ký mới (`NewUsersPanel`)** *(Hạn chót: 01/11/2026)*:
+  - *Mô tả:* Bộ chọn khoảng thời gian (Từ ngày - Đến ngày), ô lọc tên, ComboBox sắp xếp tên/ngày tạo. Bảng hiển thị danh sách người dùng đăng ký mới trong khoảng thời gian đã chọn.
+- [ ] **Task A8 — Thống kê số lượng bạn bè & FOF (`FriendStatisticsPanel`)** *(Hạn chót: 01/11/2026)*:
+  - *Mô tả:* Bảng hiển thị danh sách user gồm 2 cột số liệu quan trọng: "Số bạn trực tiếp" và "Số bạn của bạn (Friend-of-Friends)". Bộ lọc nâng cao: lọc theo tên, ComboBox toán tử (`=`, `<`, `>`) kèm ô nhập số lượng bạn bè trực tiếp để lọc.
+- [ ] **Task A9 — Thống kê người dùng hoạt động (`ActiveUsersPanel`)** *(Hạn chót: 02/11/2026)*:
+  - *Mô tả:* Bộ chọn khoảng thời gian (Từ ngày - Đến ngày). Bảng kết quả hiển thị danh sách user kèm 3 cột số liệu: Lượt mở app, Số người đã chat, Số nhóm đã chat. Có bộ lọc tên và bộ lọc số lượng hoạt động (`=`, `<`, `>`).
+- [ ] **Task A10 — Biểu đồ Đăng ký mới theo năm (`RegistrationChartPanel`)** *(Hạn chót: 03/11/2026)*:
+  - *Mô tả:* ComboBox chọn năm (ví dụ: 2024, 2025, 2026). Khung hiển thị biểu đồ cột (Bar Chart) với trục hoành là 12 tháng (Tháng 1 -> 12), trục tung là số lượng user mới. Sử dụng thư viện `JFreeChart` hoặc vẽ bằng `Graphics2D` mẫu với dữ liệu giả lập.
+- [ ] **Task A11 — Biểu đồ Người dùng hoạt động theo năm (`ActivityChartPanel`)** *(Hạn chót: 03/11/2026)*:
+  - *Mô tả:* ComboBox chọn năm. Khung biểu đồ cột/đường hiển thị số lượng người dùng duy nhất có mở ứng dụng trong từng tháng của năm đã chọn. Trục hoành 12 tháng, trục tung số lượt người mở app.
 
 ---
 
-## 5. Kế hoạch Tiếp nối cho Mốc 80% (06/11 - 12/12/2026)
+### 3.3 Phân hệ Người dùng (User UI) — Thành viên B: Minh (`src/user/`)
 
-Sau khi cán đích mốc 20% vào ngày 05/11/2026, nhóm sẽ có **trọn vẹn 37 ngày** để triển khai các hạng mục kỹ thuật cốt lõi:
-- **Tuần 1 (06/11 - 13/11):** Xây dựng Java TCP Socket Server, ClientHandler, ThreadPool, Gson Envelope protocol.
-- **Tuần 2 (14/11 - 21/11):** Tích hợp Database pgJDBC, Connection Pool, Login/Register BCrypt, Phân quyền Admin/User.
-- **Tuần 3 (22/11 - 29/11):** Chat 1-1 realtime/offline, Watermark xóa tin, Quản lý bạn bè, Block, Báo cáo Spam.
-- **Tuần 4 (30/11 - 06/12):** Chat nhóm mã hóa Server-side AES-GCM, Jakarta Mail reset pass, Java 21 HttpClient gọi LLM API.
-- **Tuần 5 (07/12 - 12/12):** JFreeChart thống kê Admin, Đóng gói 2 file JAR (`Admin.jar`, `User.jar`) kèm file cấu hình DB, Quay video demo Youtube và hoàn tất báo cáo cuối kỳ.
+- [ ] **Task U1 — Đăng nhập & Đăng ký tài khoản (`UserLoginFrame`, `UserRegisterFrame`)** *(Hạn chót: 26/10/2026)*:
+  - *Mô tả:* Giao diện đăng nhập hiện đại (username, password, nút Đăng nhập, link Quên mật khẩu, link Đăng ký). Giao diện Đăng ký tài khoản đầy đủ các trường theo đề bài: tên đăng nhập, họ tên, địa chỉ, ngày sinh (date picker/text), giới tính (Radio/ComboBox), email, mật khẩu.
+- [ ] **Task U2 — Quên mật khẩu & Hồ sơ cá nhân (`ForgotPasswordDialog`, `UserProfileDialog`)** *(Hạn chót: 27/10/2026)*:
+  - *Mô tả:* Dialog quên mật khẩu: nhập email để nhận mật khẩu ngẫu nhiên. Dialog thông tin cá nhân: cập nhật họ tên, địa chỉ, ngày sinh, giới tính; tab hoặc vùng riêng để thực hiện Đổi mật khẩu (mật khẩu cũ, mật khẩu mới, xác nhận mật khẩu mới).
+- [ ] **Task U3 — Khung giao diện chat chính (`UserMainChatFrame`)** *(Hạn chót: 28/10/2026)*:
+  - *Mô tả:* Cửa sổ chính 1000x700 chia layout 3 vùng: Cột trái (Thanh tìm kiếm, Tabs chuyển đổi Bạn bè / Nhóm chat), Vùng giữa (Khung chat hội thoại), Vùng phải (Thông tin người đang chat / danh sách thành viên nhóm).
+- [ ] **Task U4 — Danh sách bạn bè & Quản lý quan hệ (`FriendListPanel`)** *(Hạn chót: 29/10/2026)*:
+  - *Mô tả:* Danh sách hiển thị bạn bè có avatar/tên, chấm màu trạng thái Online (xanh) / Offline (xám). Ô lọc bạn bè theo tên. Menu ngữ cảnh (chuột phải) hoặc nút thao tác: "Hủy kết bạn", "Chặn người dùng (Block)" (kèm thông báo sau khi block sẽ không thể tìm thấy hoặc gửi kết bạn lại).
+- [ ] **Task U5 — Danh sách yêu cầu kết bạn (`FriendRequestDialog`)** *(Hạn chót: 29/10/2026)*:
+  - *Mô tả:* Danh sách các lời mời kết bạn đang chờ (`PENDING`), có ô lọc theo tên người gửi. Mỗi dòng có nút "Đồng ý" (Accept) và nút "Từ chối" (Reject).
+- [ ] **Task U6 — Tab Bạn bè đang Online (`OnlineFriendsPanel`)** *(Hạn chót: 30/10/2026)*:
+  - *Mô tả:* Danh sách lọc riêng những bạn bè đang có trạng thái Online. Có ô lọc tên, nút "Chat ngay" để mở nhanh khung chat, nút "Tạo nhóm" với người đó.
+- [ ] **Task U7 — Tìm kiếm người dùng hệ thống (`UserSearchDialog`)** *(Hạn chót: 30/10/2026)*:
+  - *Mô tả:* Ô tìm kiếm theo tên đăng nhập hoặc họ tên. Bảng hiển thị kết quả (tự động ẩn những người đã chặn mình). Trên từng kết quả có nút: "Gửi yêu cầu kết bạn", "Chat nhanh", hoặc "Tạo group".
+- [ ] **Task U8 — Khung chat 1-1 & Lịch sử tin nhắn (`ChatPanel1on1`)** *(Hạn chót: 31/10/2026)*:
+  - *Mô tả:* Vùng hiển thị tin nhắn dạng bong bóng (chat bubbles: tin mình gửi bên phải màu xanh, tin đối phương bên trái màu xám). Thanh tiêu đề trên cùng gồm: Tên/Avatar, trạng thái online/offline, nút "Báo cáo Spam", nút "Xóa toàn bộ lịch sử chat", ô tìm kiếm tin nhắn trong hội thoại. Phía dưới là ô nhập tin nhắn, nút "Gửi", nút "Gợi ý AI (LLM)".
+- [ ] **Task U9 — Tìm kiếm tin nhắn trong hội thoại & toàn cục (`ChatSearchDialog`)** *(Hạn chót: 01/11/2026)*:
+  - *Mô tả:* (1) Thanh tìm kiếm trong cuộc trò chuyện 1 người có nút Lên / Xuống (Next/Prev) để cuộn màn hình nhảy đến đúng đoạn chat. (2) Hộp thoại tìm kiếm toàn cục: gõ từ khóa tìm kiếm xuyên suốt tất cả các cuộc hội thoại, click vào kết quả sẽ mở đúng hội thoại và nhảy tới vị trí tin nhắn đó.
+- [ ] **Task U10 — Xóa tin nhắn linh hoạt (`MessageContextMenu`)** *(Hạn chót: 01/11/2026)*:
+  - *Mô tả:* Cho phép click chuột phải lên từng tin nhắn hoặc chọn nhiều tin để thực hiện: "Xóa tin nhắn phía tôi" (xóa lẻ 1 hoặc vài dòng lịch sử).
+- [ ] **Task U11 — Trợ lý gợi ý tin nhắn LLM (`LLMAssistPopup`)** *(Hạn chót: 02/11/2026)*:
+  - *Mô tả:* Nút icon AI cạnh ô gõ tin nhắn. Khi bấm sẽ hiện popup/dialog gợi ý: chọn phong cách (Chỉnh sửa lịch sự hơn, Rút gọn, Mở rộng câu văn), hiển thị kết quả gợi ý từ AI kèm nút "Áp dụng vào ô chat".
+- [ ] **Task U12 — Tạo nhóm & Quản lý nhóm chat (`GroupChatPanel`, `GroupCreateDialog`)** *(Hạn chót: 02/11/2026)*:
+  - *Mô tả:* Dialog tạo nhóm: nhập tên nhóm, chọn/nhập tối thiểu 1 username thành viên, checkbox "Bật mã hóa nhóm". Khung chat nhóm: Vùng hội thoại nhóm; Sidebar bên phải hiển thị tên nhóm (cho phép đổi tên), nút "Thêm thành viên", danh sách thành viên có huy hiệu "Admin nhóm". Nút "Gán Admin" cho thành viên và nút "Xóa khỏi nhóm" (chỉ hiển thị quyền xóa cho Admin nhóm).
+- [ ] **Task U13 — Hộp thoại Báo cáo Spam (`SpamReportDialog`)** *(Hạn chót: 02/11/2026)*:
+  - *Mô tả:* Dialog bật lên từ thanh chat: hiển thị tên người bị báo cáo, ô nhập lý do spam/quấy rối, nút "Gửi báo cáo".
 
+---
+
+### 3.4 Tích hợp, Báo cáo & Đóng gói Nghiệm thu 20% (Làm chung)
+- [ ] **Task C1 — Khung Báo cáo Đồ án (`BaoCao_Draft.docx` / LaTeX)** *(Hạn chót: 03/11/2026)*: Minh dựng sẵn template báo cáo đầy đủ 5 mục bắt buộc: (1) Thông tin nhóm, (2) Bảng phân công, (3) Bảng đóng góp 50-50, (4) Thiết kế CSDL (Hải viết và dán ERD), (5) Danh sách màn hình (chụp ảnh màn hình Admin và User).
+- [ ] **Task C2 — Ghép mã nguồn & Kiểm thử biên dịch** *(Hạn chót: 03/11/2026)*: Tạo PR gộp `feat/admin-db` và `feat/user-ui` vào nhánh `main`. Kiểm tra biên dịch không có bất kỳ lỗi cú pháp nào.
+- [ ] **Task C3 — Chụp minh chứng Git (`git/`)** *(Hạn chót: 04/11/2026)*: Chụp lịch sử commit của Hải lưu vào `git/commits_Hai.png`, chụp commit của Minh lưu vào `git/commits_Minh.png`.
+- [ ] **Task C4 — Xuất Báo cáo PDF & Đóng gói ZIP** *(Hạn chót: 05/11/2026)*: Xuất file `BaoCao.pdf`, kiểm tra nén file zip gồm đúng 3 thư mục `src/`, `script/`, `git/` và `BaoCao.pdf`.
+
+---
+
+## 4. Định hướng Tiếp nối cho Mốc 80% (06/11 – 12/12/2026)
+
+Ngay sau khi nghiệm thu mốc 20%, nhóm sẽ chuyển sang giai đoạn lập trình logic thực tế:
+- [ ] **Socket TCP Server** *(Tuần 1: 06/11 – 13/11/2026)*: Xây dựng Server đa luồng, quản lý danh sách socket kết nối online, định tuyến tin nhắn realtime và lưu tin nhắn offline.
+- [ ] **Tầng Dữ liệu pgJDBC** *(Tuần 2: 14/11 – 21/11/2026)*: Kết nối PostgreSQL qua Connection Pool, triển khai các DAO với PreparedStatement, Transaction và Advisory lock theo chuẩn `docs/database/schema_context.md`.
+- [ ] **Tin nhắn Cá nhân & Nghiệp vụ Bạn bè** *(Tuần 3: 22/11 – 29/11/2026)*: Chat 1-1 realtime/offline, Watermark xóa tin, Quản lý bạn bè, Block, Báo cáo Spam.
+- [ ] **Mã hóa nhóm AES-GCM & Dịch vụ Ngoài** *(Tuần 4: 30/11 – 06/12/2026)*: Chat nhóm mã hóa Server-side AES-GCM, Jakarta Mail reset pass, Java 21 `HttpClient` gọi LLM API.
+- [ ] **Thống kê JFreeChart & Đóng gói JAR** *(Tuần 5: 07/12 – 12/12/2026)*: JFreeChart thống kê Admin, Đóng gói 2 file JAR (`Admin.jar`, `User.jar`) kèm file cấu hình DB `config.properties`, quay video demo Youtube và hoàn tất báo cáo cuối kỳ.
