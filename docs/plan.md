@@ -80,7 +80,7 @@
 
 ### 3.3 Phân hệ Người dùng (User UI) — Thành viên B: Minh (`src/user/`)
 
-- [ ] **Task U1 — Đăng nhập & Đăng ký tài khoản (`UserLoginFrame`, `UserRegisterFrame`)** *(Hạn chót: 26/10/2026)*:
+- [x] **Task U1 — Đăng nhập & Đăng ký tài khoản (`UserLoginFrame`, `UserRegisterFrame`)** *(Hoàn thành: 26/10/2026)*:
   - *Mô tả:* Giao diện đăng nhập hiện đại (username, password, nút Đăng nhập, link Quên mật khẩu, link Đăng ký). Giao diện Đăng ký tài khoản đầy đủ các trường theo đề bài: tên đăng nhập, họ tên, địa chỉ, ngày sinh (date picker/text), giới tính (Radio/ComboBox), email, mật khẩu.
 - [ ] **Task U2 — Quên mật khẩu & Hồ sơ cá nhân (`ForgotPasswordDialog`, `UserProfileDialog`)** *(Hạn chót: 27/10/2026)*:
   - *Mô tả:* Dialog quên mật khẩu: nhập email để nhận mật khẩu ngẫu nhiên. Dialog thông tin cá nhân: cập nhật họ tên, địa chỉ, ngày sinh, giới tính; tab hoặc vùng riêng để thực hiện Đổi mật khẩu (mật khẩu cũ, mật khẩu mới, xác nhận mật khẩu mới).
