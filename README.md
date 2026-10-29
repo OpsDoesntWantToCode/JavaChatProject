@@ -2,6 +2,8 @@
 
 Dự án Java Chat Application phục vụ bài tập nhóm.
 
+Giao diện dùng **JavaFX 21 + CSS** trên JDK 21 theo quyết định Hải–Minh ngày 29/10/2026; build bằng Maven.
+
 ## Database chính thức của nhóm
 
 - [Schema](docs/database/Database_Schema.md), [quyết định thiết kế](docs/database/Database_Decisions.md), [ERD](docs/database/ERD.mmd) ([SVG](docs/database/ERD.svg), [PNG](docs/database/ERD.png)).
@@ -12,9 +14,13 @@ Dự án Java Chat Application phục vụ bài tập nhóm.
 
 ```
 JavaChatProject/
+├── pom.xml          # Maven + JavaFX
 ├── src/
-│   ├── admin/       # A phụ trách Admin UI
-│   └── user/        # B phụ trách User UI
+│   └── main/
+│       ├── java/com/chatapp/
+│       │   ├── admin/   # A phụ trách Admin UI
+│       │   └── user/    # B phụ trách User UI (dự kiến)
+│       └── resources/  # CSS và tài nguyên giao diện
 ├── script/          # Bạn A lưu trữ các file cơ sở dữ liệu (.sql) vào đây
 └── git/             # Nơi lưu ảnh chụp commit / git log của 2 người lúc nộp bài
 ```

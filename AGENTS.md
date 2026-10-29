@@ -15,7 +15,7 @@
 - Đọc vai trò của người yêu cầu trong prompt; không áp dụng giới hạn chỉ dành cho A lên các tác vụ của B hoặc ngược lại.
 
 ## Stack đã chọn
-Java 21 LTS, Maven, Java Swing + FlatLaf, PostgreSQL local + pgJDBC, Java Socket TCP, Gson, JFreeChart, Jakarta Mail, BCrypt, Java Cryptography API (AES-GCM), Java HttpClient cho LLM và Git/GitHub. Không tự ý thay stack hoặc thêm framework lớn nếu chưa có sự đồng ý.
+Java 21 LTS, Maven, JavaFX 21 + CSS, PostgreSQL local + pgJDBC, Java Socket TCP, Gson, JavaFX Charts, Jakarta Mail, BCrypt, Java Cryptography API (AES-GCM), Java HttpClient cho LLM và Git/GitHub. Hải và Minh đã đồng ý chuyển Swing + FlatLaf sang JavaFX ngày 29/10/2026. Không tự ý thay stack hoặc thêm framework lớn nếu chưa có sự đồng ý.
 
 ## Nguyên tắc thực hiện
 - Trước khi sửa, xem `git status`, xem mã nguồn liên quan và tóm tắt phạm vi file dự kiến thay đổi.

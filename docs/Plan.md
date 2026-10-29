@@ -1,6 +1,7 @@
 # MA TRẬN PHÂN CÔNG CÔNG VIỆC & KẾ HOẠCH RÚT GỌN (MỐC 20%)
 
 > **Dự án:** Java Chat System (Đồ án Lập trình ứng dụng Java)  
+> **Cập nhật 29/10/2026:** Hải và Minh đồng ý chuyển Swing + FlatLaf sang JavaFX 21 + CSS; dùng JavaFX Charts cho biểu đồ. Cấu trúc code theo Maven tại `src/main/java/com/chatapp/`; các tên `Panel`/`Frame` còn lại trong kế hoạch chỉ là tên dự kiến, không yêu cầu kế thừa Swing.
 > **Căn cứ pháp lý:** [Final Project.pdf](file:///d:/JavaChatProject/docs/Final%20Project.pdf) (Khoa CNTT - BM Công nghệ phần mềm)  
 > **Phân vai chính thức:**
 > - **Thành viên A (Hải):** Phụ trách Admin UI (9 nhóm chức năng) + Script CSDL PostgreSQL + Phần Thiết kế CSDL & Màn hình Admin trong báo cáo.
@@ -46,11 +47,11 @@ gantt
     dateFormat  YYYY-MM-DD
     axisFormat  %d/%m
     section GĐ 1: Khởi tạo
-    Thống nhất ERD & FlatLaf UI        :done, des1, 2026-10-22, 2026-10-24
+    Thống nhất ERD & GUI              :done, des1, 2026-10-22, 2026-10-24
     Setup Branch & Dummy Data Format   :done, des2, 2026-10-23, 2026-10-24
     section GĐ 2: Hải (feat/admin-db)
     Script CSDL & Xuất ERD Diagram     :active, h1, 2026-10-25, 2026-10-26
-    Admin MainFrame & Quản lý User     :h2, 2026-10-27, 2026-10-29
+    Admin MainView & Quản lý User      :h2, 2026-10-27, 2026-10-29
     Login History, Spam & Nhóm chat    :h3, 2026-10-30, 2026-10-31
     Thống kê FOF, Hoạt động & Biểu đồ  :h4, 2026-11-01, 2026-11-02
     section GĐ 2: Minh (feat/user-ui)
@@ -71,24 +72,24 @@ gantt
 ## 3. Chi tiết Phân công Công việc Từng Thành viên
 
 ### 3.1 Thành viên A — Hải (Nhánh `feat/admin-db`)
-*Mục tiêu: Hoàn tất 11 màn hình Swing + FlatLaf với dữ liệu mẫu đẹp mắt, script CSDL sạch và tối thiểu 8–10 commits.*
+*Mục tiêu: Hoàn tất 11 màn hình JavaFX + CSS với dữ liệu mẫu đẹp mắt, script CSDL sạch và tối thiểu 8–10 commits.*
 
 | STT | Tên Commit dự kiến | Màn hình / Thành phần UI | Mô tả chi tiết & Dummy Data cần có | Hạn chót |
 | :---: | :--- | :--- | :--- | :---: |
 | **H1** | `feat(db): finalize script/database.sql and ERD diagram` | `script/database.sql` | 13 bảng PostgreSQL đã test 100% PASS, xuất ảnh ERD diagram độ phân giải cao đưa vào thư mục docs/báo cáo. | 26/10 |
-| **H2** | `feat(admin-ui): create AdminMainFrame and navigation sidebar` | `AdminMainFrame` | Cửa sổ 1000x700, FlatLaf Dark/Light, thanh Sidebar trái với menu 9 chức năng và Header thông tin Admin. | 27/10 |
+| **H2** | `feat(admin-ui): create AdminMainView and navigation sidebar` | `AdminApplication`, `AdminMainView` | Cửa sổ JavaFX 1000x700, CSS sáng/tối, thanh Sidebar trái với menu 9 chức năng và Header thông tin Admin. | 27/10 |
 | **H3** | `feat(admin-ui): implement UserManagementPanel and UserDetailDialog` | `UserManagementPanel`, `UserDetailDialog` | Bảng danh sách User (10 dòng mẫu), lọc tên/username/status, sắp xếp; các nút Thêm/Sửa/Xóa/Khóa/ResetPass; Dialog xem login history & friend list. | 29/10 |
 | **H4** | `feat(admin-ui): implement GlobalLoginHistoryPanel` | `GlobalLoginHistoryPanel` | Bảng hiển thị lịch sử đăng nhập chung (thời gian, username, họ tên), lọc theo thời gian. | 30/10 |
 | **H5** | `feat(admin-ui): implement GroupManagementPanel and GroupDetailDialog` | `GroupManagementPanel` | Bảng danh sách nhóm chat (sắp xếp tên/ngày tạo, lọc tên), Dialog xem danh sách thành viên và danh sách Admin nhóm. | 31/10 |
 | **H6** | `feat(admin-ui): implement SpamReportPanel with action dialogs` | `SpamReportPanel` | Bảng báo cáo spam (thời gian, người gửi báo cáo, người bị báo cáo, lý do), sắp xếp/lọc thời gian/username, nút Khóa tài khoản vi phạm. | 31/10 |
 | **H7** | `feat(admin-ui): implement NewUsersPanel and FriendStatisticsPanel` | `NewUsersPanel`, `FriendStatisticsPanel` | - Màn hình đăng ký mới: Date Picker khoảng thời gian.<br>- Màn hình FOF: Cột bạn trực tiếp, bạn của bạn; ComboBox toán tử (`=`, `<`, `>`) và ô nhập số lượng bạn. | 01/11 |
 | **H8** | `feat(admin-ui): implement ActiveUsersPanel with filter criteria` | `ActiveUsersPanel` | Bảng thống kê hoạt động (Mở app, Chat bao nhiêu người, Chat bao nhiêu nhóm), bộ lọc khoảng thời gian và lọc số lượng hoạt động (`=`, `<`, `>`). | 02/11 |
-| **H9** | `feat(admin-ui): implement RegistrationChartPanel and ActivityChartPanel` | `RegistrationChartPanel`, `ActivityChartPanel` | 2 biểu đồ cột mẫu (dùng JFreeChart hoặc vẽ JPanel Bar Chart) có ComboBox chọn năm, trục hoành 12 tháng, trục tung số lượng. | 02/11 |
+| **H9** | `feat(admin-ui): implement RegistrationChartPanel and ActivityChartPanel` | `RegistrationChartPanel`, `ActivityChartPanel` | 2 biểu đồ cột mẫu JavaFX `BarChart` có ComboBox chọn năm, trục hoành 12 tháng, trục tung số lượng. | 02/11 |
 
 ---
 
 ### 3.2 Thành viên B — Minh (Nhánh `feat/user-ui`)
-*Mục tiêu: Hoàn tất 13 màn hình/dialog User Swing + FlatLaf với dummy chat data sống động, khung báo cáo và tối thiểu 8–10 commits.*
+*Mục tiêu: Hoàn tất 13 màn hình/dialog User JavaFX + CSS với dummy chat data sống động, khung báo cáo và tối thiểu 8–10 commits.*
 
 | STT | Tên Commit dự kiến | Màn hình / Thành phần UI | Mô tả chi tiết & Dummy Data cần có | Hạn chót |
 | :---: | :--- | :--- | :--- | :---: |
@@ -109,7 +110,7 @@ gantt
 
 1. **Merge code & Kiểm thử biên dịch (03/11/2026):**
    - Tạo Pull Request từ `feat/admin-db` và `feat/user-ui` vào `main`.
-   - Vì Hải chỉ làm trong `src/admin` và Minh chỉ làm trong `src/user`, quá trình merge cam kết không bị xung đột.
+   - Hải làm trong `src/main/java/com/chatapp/admin`, Minh làm trong `src/main/java/com/chatapp/user`; tài nguyên UI đặt theo package trong `src/main/resources`. `pom.xml` và phần dùng chung cần review A–B, không mặc định merge sẽ không có xung đột.
    - Chạy lệnh biên dịch thử: bảo đảm không có lỗi `compile error`.
 2. **Minh chứng Git (04/11/2026):**
    - Vào GitHub repository, lọc commit của Hải -> Chụp màn hình lưu vào `git/commits_Hai.png`.
@@ -132,5 +133,5 @@ Sau khi cán đích mốc 20% vào ngày 05/11/2026, nhóm sẽ có **trọn v�
 - **Tuần 2 (14/11 - 21/11):** Tích hợp Database pgJDBC, Connection Pool, Login/Register BCrypt, Phân quyền Admin/User.
 - **Tuần 3 (22/11 - 29/11):** Chat 1-1 realtime/offline, Watermark xóa tin, Quản lý bạn bè, Block, Báo cáo Spam.
 - **Tuần 4 (30/11 - 06/12):** Chat nhóm mã hóa Server-side AES-GCM, Jakarta Mail reset pass, Java 21 HttpClient gọi LLM API.
-- **Tuần 5 (07/12 - 12/12):** JFreeChart thống kê Admin, Đóng gói 2 file JAR (`Admin.jar`, `User.jar`) kèm file cấu hình DB, Quay video demo Youtube và hoàn tất báo cáo cuối kỳ.
+- **Tuần 5 (07/12 - 12/12):** JavaFX Charts thống kê Admin, Đóng gói 2 file JAR (`Admin.jar`, `User.jar`) kèm file cấu hình DB, Quay video demo Youtube và hoàn tất báo cáo cuối kỳ.
 

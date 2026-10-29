@@ -1,6 +1,6 @@
 # TECH STACK — JAVA CHAT SYSTEM (TÀI LIỆU DÙNG CHUNG)
 
-> **Phiên bản tài liệu:** 2.0 — chỉnh cách diễn đạt để dùng chung cho hai thành viên và mọi trợ lý AI, 16/10/2026. **Không thay đổi stack đã thống nhất.**  
+> **Phiên bản tài liệu:** 2.1 — Hải và Minh đồng ý chuyển Swing + FlatLaf sang JavaFX, 29/10/2026. Các thành phần ngoài UI giữ nguyên.
 > **Phạm vi:** Đồ án cuối kỳ môn Lập trình ứng dụng Java, nhóm 2 người  
 > **Trạng thái:** **Tech stack đã thống nhất.** Các lựa chọn kiến trúc/bảo mật còn mở được đánh dấu riêng bên dưới.  
 > **Nguồn quyết định:** Thảo luận và xác nhận giữa thành viên A và B; yêu cầu chính thức `Final Project.pdf`; bản thiết kế/feedback `Feedback 2 ben`. Việc nhóm dùng các trợ lý AI khác nhau **không ảnh hưởng các quyết định kỹ thuật**.
@@ -11,13 +11,13 @@
 |---|---|---|
 | Ngôn ngữ | **Java 21 LTS** | Viết ứng dụng desktop, Server và nghiệp vụ. |
 | Build/dependencies | **Apache Maven** | Quản lý dependency, biên dịch, kiểm thử và đóng gói JAR. |
-| Desktop GUI | **Java Swing** | Dựng giao diện Admin và User. |
-| Look & Feel | **FlatLaf** | Giao diện Swing hiện đại, đồng nhất giữa hai phân hệ. |
+| Desktop GUI | **JavaFX 21** | Dựng giao diện Admin và User; tương thích JDK 21. Maven preview dùng OpenJFX 21.0.13. |
+| Giao diện / theme | **JavaFX CSS** | Bố cục hiện tại viết bằng Java, CSS cho sáng/tối. FXML là tùy chọn khi cần, chưa thêm dependency khi chưa dùng. |
 | Database | **PostgreSQL local** | DB quan hệ chính, tái tạo bằng SQL script trên máy khác. |
 | Kết nối DB | **JDBC với pgJDBC** | Server truy vấn PostgreSQL; tránh phát credential DB đặc quyền trong client. |
 | Client–Server / realtime | **Java Socket (TCP)** | Kết nối Client ↔ Server, truyền tin và trạng thái online. |
 | Dữ liệu qua Socket | **Gson (JSON)** | Serialize/deserialize các message/DTO theo giao thức chung. |
-| Biểu đồ | **JFreeChart** | Hai biểu đồ Admin: người đăng ký mới và người hoạt động theo tháng. |
+| Biểu đồ | **JavaFX Charts (`BarChart`)** | Hai biểu đồ Admin: người đăng ký mới và người hoạt động theo tháng; dùng control JavaFX thay cho JFreeChart/Swing. |
 | Email | **Jakarta Mail** | Chức năng gửi email khi khởi tạo lại mật khẩu. Có thể dùng runtime implementation như Angus Mail. |
 | Mật khẩu | **BCrypt** | Chỉ lưu `password_hash`, không lưu mật khẩu thô. |
 | Mã hóa nhóm | **Java Cryptography API (`javax.crypto`) / AES-GCM** | Cơ chế mã hóa dự kiến; **E2EE hay mã hóa phía Server chưa được thầy xác nhận**. |
@@ -33,13 +33,13 @@
 ### Những lựa chọn KHÔNG nằm trong stack chính
 
 - **Không dùng Supabase**: PostgreSQL chạy local là phương án của nhóm. Việc nộp SQL script vốn cũng có thể thực hiện trên Supabase, nhưng nhóm chủ động loại dịch vụ Cloud để giảm phụ thuộc.
-- **Không chọn JavaFX**, **không chọn Jackson** (chọn Swing + FlatLaf và Gson).
+- **Không tiếp tục Swing + FlatLaf** sau quyết định A–B ngày 29/10/2026; **không chọn Jackson** (giữ Gson).
 - **Không chọn Spring Boot** hay ORM làm stack chính. Nếu muốn thêm framework về sau, hai thành viên phải thống nhất trước; không để bất kỳ trợ lý AI nào tự áp dụng.
 
 ## 2. Kiến trúc triển khai dự kiến
 
 ```text
-    Admin.jar (Swing + FlatLaf)       User.jar (Swing + FlatLaf)
+    Admin.jar (JavaFX + CSS)          User.jar (JavaFX + CSS)
                  \                          /
                   \--- TCP Socket + JSON ---/
                               |
@@ -65,7 +65,7 @@
 
 ```text
 JavaChatProject/
-├── pom.xml                         # B khởi tạo; sửa chung phải phối hợp
+├── pom.xml                         # Maven JavaFX tối thiểu; thay đổi chung cần A–B review
 ├── src/
 │   └── main/
 │       └── java/
@@ -97,7 +97,7 @@ JavaChatProject/
 
 | Phiên bản 1 — 20% | Phiên bản 2 — 80% |
 |---|---|
-| Swing + FlatLaf: toàn bộ giao diện Admin/User, chưa bắt buộc gắn sự kiện | Gắn sự kiện, triển khai nghiệp vụ thực tế |
+| JavaFX + CSS: toàn bộ giao diện Admin/User, chưa bắt buộc gắn sự kiện | Gắn sự kiện, triển khai nghiệp vụ thực tế |
 | PostgreSQL: ERD + `script/database.sql` chạy từ DB rỗng | JDBC/pgJDBC, transaction, dữ liệu thật |
 | Maven + cấu trúc package, repo và commit minh chứng | Java Socket TCP + JSON/Gson, chat realtime/offline |
 | Dữ liệu giao diện mẫu phục vụ chụp hình | Email, LLM, mã hóa, thống kê, kiểm thử, phát hành JAR |
@@ -127,11 +127,11 @@ JavaChatProject/
 
 - Đây là **tài liệu quyết định kỹ thuật dùng chung**, không phải prompt dành riêng cho Codex, ChatGPT, Gemini hay công cụ nào khác.
 - Thành viên A và B đều dùng cùng một baseline ở Mục 1. Chỉ thay đổi stack sau khi **cả hai thành viên đồng ý** và cập nhật tài liệu này; các gợi ý của AI không tự có hiệu lực.
-- **Không tự thay Swing bằng JavaFX, Gson bằng Jackson, PostgreSQL bằng Supabase, hay tự thêm Spring Boot/ORM**.
+- **Giữ JavaFX theo quyết định A–B ngày 29/10/2026; không tự đổi GUI toolkit, Gson bằng Jackson, PostgreSQL bằng Supabase, hay tự thêm Spring Boot/ORM**.
 - Các mục trong **Mục 6 là quyết định còn mở**. AI chỉ được đưa ra đề xuất và nêu tác động, không trình bày chúng thành yêu cầu đã chốt.
 - Đối chiếu `docs/Project_Context.md` và `Final Project.pdf` khi thiết kế database/chức năng. Dùng bộ Database chính thức đã kiểm thử SQL; không suy rộng thành đã hoàn thành nghiệp vụ Server.
 - Mọi thay đổi ảnh hưởng `server/`, `shared/`, giao thức JSON/Socket hoặc `pom.xml` cần được hai thành viên review, dù AI nào đề xuất thay đổi.
 
 ## 8. Phân biệt công nghệ sản phẩm với công cụ hỗ trợ lập trình
 
-**Công nghệ sản phẩm (bắt buộc theo quyết định nhóm)**: Java/Maven/Swing/PostgreSQL/Socket/Gson/... ở Mục 1. **Công cụ cá nhân (không bắt buộc đồng nhất)**: IDE, AI coding assistant, cách viết prompt, extension. A có thể dùng Codex CLI; B dùng AI khác mà vẫn tuân thủ cùng source of truth. Không đưa quy định "chỉ người A được sửa code" vào tài liệu tech stack; việc chia trách nhiệm nằm trong `Project_Context.md` và phân quyền Git của nhóm.
+**Công nghệ sản phẩm (bắt buộc theo quyết định nhóm)**: Java/Maven/JavaFX/PostgreSQL/Socket/Gson/... ở Mục 1. **Công cụ cá nhân (không bắt buộc đồng nhất)**: IDE, AI coding assistant, cách viết prompt, extension. A có thể dùng Codex CLI; B dùng AI khác mà vẫn tuân thủ cùng source of truth. Không đưa quy định "chỉ người A được sửa code" vào tài liệu tech stack; việc chia trách nhiệm nằm trong `Project_Context.md` và phân quyền Git của nhóm.

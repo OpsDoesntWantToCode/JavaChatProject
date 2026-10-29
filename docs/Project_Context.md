@@ -1,6 +1,6 @@
 # PROJECT CONTEXT — JAVA CHAT SYSTEM (DÙNG CHUNG CHO A VÀ B)
 
-> **Phiên bản tài liệu:** 2.0, 16/10/2026. **Dành chung cho cả hai thành viên và mọi trợ lý AI**, không chỉ Codex.  
+> **Phiên bản tài liệu:** 2.1, 29/10/2026 — cập nhật quyết định A–B chuyển UI sang JavaFX. **Dành chung cho cả hai thành viên và mọi trợ lý AI**, không chỉ Codex.
 > **Nguồn:** Yêu cầu gốc `Final Project.pdf`, trao đổi/chốt quyết định A–B, các phiên bản `Feedback 2 ben`.  
 > **Mục tiêu:** Lưu yêu cầu đề bài, quyết định chung, trách nhiệm từng người, các đề xuất chưa duyệt và tình trạng dự án. Không trộn lẫn các mức xác nhận.
 
@@ -51,6 +51,7 @@
 - **Phân công theo phân hệ (Cách 1)**: A phụ trách Admin UI, ERD, PostgreSQL và `script/database.sql`; B phụ trách User UI, Maven/repository và báo cáo. ERD cùng duyệt.
 - **Một GitHub repository**; quy ước branch: `main` tích hợp chung; `feat/admin-db` dành cho A (Admin UI, ERD, PostgreSQL và `script/database.sql`); `feat/user-ui` dành cho B (User UI, Maven/repository và báo cáo).
 - **Maven gốc `pom.xml`**; Java package `com.chatapp.admin`, `com.chatapp.user`, `com.chatapp.server`, `com.chatapp.shared` tương ứng.
+- **UI JavaFX 21 + CSS**: Hải và Minh đồng ý chuyển từ Swing + FlatLaf ngày 29/10/2026, phục vụ đồ án và seminar JavaFX. H2 dùng `AdminMainView`; biểu đồ dùng JavaFX Charts. FXML tùy chọn, không bắt buộc. Database và kiến trúc Server giữ nguyên.
 - **`shared` và `server`** là phần cùng sở hữu; không tự sửa phá giao thức mà không phối hợp.
 - **Server trung gian** kết nối PostgreSQL, xử lý nghiệp vụ, phân quyền, phiên online, Socket; không đặt credential DB có quyền cao hoặc API key trên client.
 - **Local DB**: A và B có thể chạy mỗi người một PostgreSQL local để phát triển, dùng cùng schema; khi tích hợp, cùng một Server và một nguồn dữ liệu.
@@ -89,7 +90,7 @@ Suite SQL lần cuối **202 PASS, 0 FAIL**: cấu trúc, PK/FK/UNIQUE/CHECK/NOT
 1. Nhận từ B repository và xác nhận branch làm việc `feat/admin-db` (không tự thay tên branch khi repo đã tồn tại).
 2. Cùng B review ERD cuối: tất cả 13 bảng, kiểu PostgreSQL, NULL/NOT NULL, PK/FK/UNIQUE/CHECK, chỉ mục và chính sách ON DELETE.
 3. Viết `script/database.sql` sao cho có thể chạy lại từ database rỗng; kiểm thử trường hợp sai (username trùng, trạng thái sai, FK vô hiệu, lời mời PENDING trùng/đảo chiều, cặp bạn bè đảo ID...); xuất ERD.
-4. Xây dựng khung Admin Swing + FlatLaf, 9 nhóm màn hình Admin; màn hình có thể dùng dummy data ở mốc 20%.
+4. Xây dựng khung Admin JavaFX + CSS, 9 nhóm màn hình Admin; màn hình có thể dùng dummy data ở mốc 20%.
 5. Chụp minh chứng GUI và commit của A; gửi B phần giải thích DB/ERD + màn hình Admin để tổng hợp báo cáo.
 6. A tránh tự ý sửa `com.chatapp.user`; B tránh tự ý sửa `com.chatapp.admin` và `script/database.sql`. Thay đổi `server`, `shared`, `pom.xml` hoặc API/DTO dùng chung phải phối hợp và review chéo.
 
@@ -103,7 +104,7 @@ Suite SQL lần cuối **202 PASS, 0 FAIL**: cấu trúc, PK/FK/UNIQUE/CHECK/NOT
 
 ## 7. Các điều không nên làm
 
-- Không thay đổi tech stack đã thống nhất chỉ vì thói quen hoặc đề xuất mặc định của bất kỳ AI assistant nào (không JavaFX/Spring Boot/Supabase/Jackson khi chưa được hai bên duyệt).
+- Không thay đổi tech stack đã thống nhất chỉ vì thói quen hoặc đề xuất mặc định của bất kỳ AI assistant nào. JavaFX đã được hai bên duyệt ngày 29/10/2026; không tự thêm Spring Boot/Supabase/Jackson hoặc thay GUI toolkit khi chưa được hai bên duyệt.
 - Không viết lại kiến trúc hoặc sinh toàn bộ dự án chỉ từ một prompt khổng lồ mà không có review và test.
 - Không khẳng định 13 bảng đã hoàn chỉnh chỉ vì đã có tên/cột.
 - Không lưu plaintext password, khóa AES gốc, database credentials hoặc LLM API keys trong source/client.
