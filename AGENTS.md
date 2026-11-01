@@ -7,7 +7,8 @@
 
 ## 1. Vai trò Thành viên & Phạm vi Trách nhiệm
 
-- **Dự án:** Java Chat System (Ứng dụng chat desktop Java Swing + FlatLaf, CSDL PostgreSQL, TCP Socket).
+- **Dự án:** Java Chat System (Ứng dụng chat desktop JavaFX 21 + CSS, CSDL PostgreSQL, TCP Socket).
+- **Quyết định công nghệ GUI:** Hải và Minh đã thống nhất chuyển từ Swing sang **JavaFX 21 + CSS** ngày 29/10/2026.
 - **Thành viên A (Lưu Chí Hải - MSSV: 24127030):**
   - Nhánh làm việc: `feat/admin-db`
   - Phạm vi: Giao diện Admin (`src/admin/`), CSDL PostgreSQL (`script/database.sql`), sơ đồ ERD, phần Admin trong báo cáo.
@@ -16,7 +17,7 @@
   - Phạm vi: Giao diện User (`src/user/`), cấu hình Maven (`pom.xml`), phần User và tổng hợp Báo cáo (`BaoCao.pdf`).
 - **Phần sở hữu chung (BẮT BUỘC review chéo trước khi chỉnh sửa):** `server/`, `shared/` (DTO, giao thức Socket), `pom.xml`, `docs/plan.md`.
 - **Các mốc tiến độ:**
-  - Mốc 20% (Mục tiêu: 05/11/2026 — Hạn chót chính thức: 22/11/2026): Toàn bộ UI tĩnh Swing + FlatLaf có dữ liệu mẫu, script CSDL hoàn chỉnh, minh chứng Git và Báo cáo PDF.
+  - Mốc 20% (Mục tiêu: 05/11/2026 — Hạn chót chính thức: 22/11/2026): Toàn bộ UI tĩnh JavaFX có dữ liệu mẫu, script CSDL hoàn chỉnh, minh chứng Git và Báo cáo PDF.
   - Mốc 80% (Hạn chót toàn đồ án: 12/12/2026): Toàn bộ hệ thống chạy thực tế (Socket realtime/offline, pgJDBC, AES-GCM, Mail SMTP, LLM API, đóng gói 2 file JAR: `Admin.jar` & `User.jar`).
 
 ---
@@ -70,9 +71,9 @@ Mọi tệp tin, thư mục và thành phần mã nguồn trong dự án BẮT B
 
 ## 5. Quy tắc Lập trình & Kiến trúc
 
-- **Tiêu chuẩn Giao diện (Window Java — Swing + FlatLaf):**
-  - BẮT BUỘC dùng Java Swing với thư viện giao diện **FlatLaf** (ứng dụng desktop cửa sổ trên Windows, kích thước chuẩn ~1000x700, đóng gói 2 file JAR độc lập; TUYỆT ĐỐI KHÔNG làm ứng dụng Web/HTML).
-  - BẮT BUỘC đổ sẵn dữ liệu mẫu sống động vào `JTable`, danh sách bạn bè và bong bóng chat phục vụ chụp ảnh báo cáo mốc 20%.
+- **Tiêu chuẩn Giao diện (Window Java — JavaFX 21 + CSS):**
+  - BẮT BUỘC dùng **JavaFX 21** với stylesheet **CSS** (ứng dụng desktop cửa sổ trên Windows, kích thước chuẩn ~1000x700, đóng gói 2 file JAR độc lập; TUYỆT ĐỐI KHÔNG làm ứng dụng Web/HTML).
+  - BẮT BUỘC đổ sẵn dữ liệu mẫu sống động vào TableView, danh sách bạn bè và bong bóng chat phục vụ chụp ảnh báo cáo mốc 20%.
 - **Hệ thống Máy chủ (Backend Java):**
   - BẮT BUỘC lập trình hoàn toàn bằng Java 21 LTS thuần túy (Java Server đa luồng), quản lý các phiên kết nối online/offline, điều phối nghiệp vụ và kết nối PostgreSQL qua JDBC (`pgJDBC`).
 - **Giao tiếp Mạng (TCP Socket — Không phải WebSocket):**
@@ -103,9 +104,9 @@ Mọi tệp tin, thư mục và thành phần mã nguồn trong dự án BẮT B
   - Khi làm việc cho Minh: CHỈ sửa mã nguồn trong `src/user/`, cấu hình Maven và tài liệu User.
   - TUYỆT ĐỐI KHÔNG sửa mã nguồn chung (`server/`, `shared/`) khi chưa có sự thống nhất rõ ràng giữa hai bạn.
 - **NGHIÊM CẤM tự ý đưa vào các framework ngoài danh mục:**
-  - TUYỆT ĐỐI KHÔNG thêm Spring Boot, Hibernate/JPA, JavaFX, Jackson, Lombok hoặc Supabase.
+  - TUYỆT ĐỐI KHÔNG thêm Spring Boot, Hibernate/JPA, Jackson, Lombok hoặc Supabase.
   - TUYỆT ĐỐI KHÔNG dùng WebSocket, Socket.io, HTTP Servlet hoặc công nghệ Web làm nền tảng chat; BẮT BUỘC dùng Java TCP Socket thuần và Window Java Desktop UI.
-  - CHỈ sử dụng các thư viện đã được phê duyệt trong `docs/tech-stack.md` (Swing, FlatLaf, pgJDBC, Gson, JFreeChart, Jakarta Mail, BCrypt, HttpClient).
+  - CHỈ sử dụng các thư viện đã được phê duyệt trong `docs/tech-stack.md` (JavaFX 21, pgJDBC, Gson, Jakarta Mail, BCrypt, HttpClient).
 - **TUYỆT ĐỐI KHÔNG sử dụng đường dẫn tệp tuyệt đối của máy cá nhân:**
   - LUÔN LUÔN dùng đường dẫn tương đối lấy thư mục gốc của repository làm chuẩn (ví dụ: `docs/plan.md`, `script/database.sql`).
 

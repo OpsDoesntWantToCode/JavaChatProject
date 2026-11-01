@@ -23,9 +23,9 @@
   ├── git/            # Ảnh chụp màn hình git log / commit của Hải và Minh
   └── BaoCao.pdf      # Báo cáo nhóm đầy đủ 5 phần bắt buộc
   ```
-- **Quy chuẩn UI (Swing + FlatLaf):**
+- **Quy chuẩn UI (JavaFX 21 + CSS):**
   - Kích thước cửa sổ chính: Chuẩn 1000x700 px (hoặc tỷ lệ tương đương, có khả năng co giãn responsive).
-  - Look & Feel: FlatLaf (hỗ trợ Light / Dark theme), font chữ hệ thống rõ ràng (`Segoe UI` / `Inter`).
+  - Look & Feel: JavaFX CSS (hỗ trợ Light / Dark theme), font chữ hệ thống rõ ràng (`Segoe UI` / `Inter`).
   - Dữ liệu mẫu (Dummy data): Bắt buộc đổ sẵn vài dòng dữ liệu sống động vào bảng `JTable`, danh sách bạn bè và khung chat để phục vụ chụp hình báo cáo.
 
 ---
@@ -43,7 +43,7 @@
 
 ### 3.1 Khởi tạo & Cơ sở Dữ liệu (Dùng chung)
 - [x] **Setup Repository & Cấu trúc thư mục** *(Hoàn thành: 22/10/2026)*: Khởi tạo Git repo, tạo các thư mục chuẩn `src/admin`, `src/user`, `script`, `git`, `docs`.
-- [x] **Thống nhất Công nghệ & Quy tắc AI** *(Hoàn thành: 22/10/2026)*: Chốt Java 21, Swing + FlatLaf, PostgreSQL local, Gson, `AGENTS.md`, `docs/tech-stack.md`.
+- [x] **Thống nhất Công nghệ & Quy tắc AI** *(Hoàn thành: 22/10/2026, cập nhật 29/10/2026)*: Chốt Java 21, chuyển sang JavaFX 21 + CSS, PostgreSQL local, Gson, `AGENTS.md`, `docs/tech-stack.md`.
 - [x] **Thiết kế & Hoàn thiện CSDL 13 bảng** *(Hoàn thành: 23/10/2026)*: Hoàn tất `docs/database/schema.md` (tích hợp 13 bảng, sơ đồ Mermaid ERD và cẩm nang vận hành CSDL: UUID phiên, Watermark xóa tin, mã hóa nhóm).
 - [x] **Viết Script Tạo CSDL Chính thức** *(Hoàn thành: 23/10/2026)*: Hoàn tất `script/database.sql` (chạy độc lập trên database rỗng, 100% ràng buộc và triggers).
 - [x] **Tích hợp Sơ đồ ERD & Cẩm nang vào Schema** *(Hoàn thành: 24/10/2026)*: Nhúng sơ đồ ERD Mermaid trực tiếp vào `docs/database/schema.md`, xóa bỏ các file ảnh và context trùng lặp để tài liệu CSDL đạt chuẩn nguồn chân lý duy nhất.

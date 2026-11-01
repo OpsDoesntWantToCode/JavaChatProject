@@ -2,6 +2,8 @@
 
 Dự án Java Chat Application phục vụ đồ án môn Lập trình ứng dụng Java.
 
+Giao diện ứng dụng dùng **JavaFX 21 + CSS** trên JDK 21 (quyết định Hải–Minh ngày 29/10/2026); đóng gói bằng Maven.
+
 ## 1. Thành viên Nhóm
 
 | STT | Họ và Tên | MSSV | Vai trò & Phân công | Nhánh làm việc |
@@ -24,12 +26,13 @@ Dự án Java Chat Application phục vụ đồ án môn Lập trình ứng d�
 
 ```text
 JavaChatProject/
+├── pom.xml          # Cấu hình Maven + JavaFX 21
 ├── docs/            # Tài liệu thiết kế, kế hoạch và CSDL
-├── script/          # Chứa duy nhất file database.sql tạo CSDL
+├── script/          # Chứa database.sql tạo CSDL PostgreSQL
 ├── src/
-│   ├── admin/       # Lưu Chí Hải phụ trách Admin UI
-│   └── user/        # Trần Nguyễn Tuấn Minh phụ trách User UI
-├── git/             # Nơi lưu ảnh chụp commit / git log của 2 người lúc nộp bài
+│   ├── admin/       # Lưu Chí Hải phụ trách Admin UI (JavaFX)
+│   └── user/        # Trần Nguyễn Tuấn Minh phụ trách User UI (JavaFX)
+├── git/             # Nơi lưu ảnh chụp commit / git log lúc nộp bài
 ├── AGENTS.md        # Bản chỉ dẫn toàn diện cho AI coding assistants
 └── README.md
 ```
