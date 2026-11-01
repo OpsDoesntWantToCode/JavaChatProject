@@ -1,0 +1,189 @@
+/* ==========================================================================
+   DISCORD AUTHENTIC THEME FOR JAVAFX
+   Palette: Background (#2B2D31), Card (#313338), Input (#1E1F22)
+   Accent: Discord Blurple (#5865F2), Link (#00A8FC), Error (#FA777C)
+   ========================================================================== */
+
+.root {
+    -fx-font-family: "Segoe UI", "Inter", sans-serif;
+    -fx-focus-color: transparent;
+    -fx-faint-focus-color: transparent;
+}
+
+/* Ambient Canvas Background with Radial Depth */
+.ambient-canvas {
+    -fx-background-color: radial-gradient(center 25% 15%, radius 95%, #383F7E 0%, #23252B 45%, #18191C 100%);
+}
+
+/* Discord Elevated Card */
+.discord-card {
+    -fx-background-color: #313338;
+    -fx-background-radius: 8px;
+    -fx-border-color: #3E4047;
+    -fx-border-radius: 8px;
+    -fx-border-width: 1px;
+    -fx-effect: dropshadow(three-pass-box, rgba(0, 0, 0, 0.45), 18, 0, 0, 6);
+    -fx-padding: 32px;
+}
+
+/* Typography */
+.header-title {
+    -fx-font-size: 22px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #F2F3F5;
+}
+
+.header-subtitle {
+    -fx-font-size: 13px;
+    -fx-text-fill: #949BA4;
+}
+
+.field-label {
+    -fx-font-size: 11px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #B5BAC1;
+}
+
+.required-star {
+    -fx-font-size: 11px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #FA777C;
+}
+
+.discord-link {
+    -fx-font-size: 12px;
+    -fx-text-fill: #00A8FC;
+    -fx-cursor: hand;
+    -fx-underline: false;
+}
+.discord-link:hover {
+    -fx-underline: true;
+}
+
+.text-muted {
+    -fx-font-size: 12px;
+    -fx-text-fill: #949BA4;
+}
+
+/* Input Fields */
+.text-field, .password-field {
+    -fx-background-color: #1E1F22;
+    -fx-background-radius: 6px;
+    -fx-border-color: #1E1F22;
+    -fx-border-radius: 6px;
+    -fx-border-width: 1px;
+    -fx-text-fill: #F2F3F5;
+    -fx-prompt-text-fill: #80848E;
+    -fx-font-size: 13px;
+    -fx-pref-height: 38px;
+    -fx-padding: 6px 12px;
+}
+
+.text-field:focused, .password-field:focused {
+    -fx-border-color: #5865F2;
+    -fx-effect: dropshadow(three-pass-box, rgba(88, 101, 242, 0.25), 6, 0, 0, 0);
+}
+
+.input-error {
+    -fx-border-color: #FA777C !important;
+    -fx-effect: dropshadow(three-pass-box, rgba(250, 119, 124, 0.35), 8, 0, 0, 0) !important;
+}
+
+/* ComboBox */
+.combo-box {
+    -fx-background-color: #1E1F22;
+    -fx-background-radius: 6px;
+    -fx-border-color: #1E1F22;
+    -fx-border-radius: 6px;
+    -fx-border-width: 1px;
+    -fx-pref-height: 38px;
+}
+.combo-box .list-cell {
+    -fx-text-fill: #F2F3F5;
+    -fx-font-size: 13px;
+    -fx-padding: 6px 10px;
+}
+.combo-box:focused {
+    -fx-border-color: #5865F2;
+}
+.combo-box .arrow-button {
+    -fx-background-color: transparent;
+}
+.combo-box .arrow {
+    -fx-background-color: #949BA4;
+}
+.combo-box-popup .list-view {
+    -fx-background-color: #2B2D31;
+    -fx-border-color: #3E4047;
+    -fx-border-radius: 6px;
+    -fx-background-radius: 6px;
+}
+.combo-box-popup .list-cell:hover {
+    -fx-background-color: #383A40;
+}
+.combo-box-popup .list-cell:filled:selected {
+    -fx-background-color: #5865F2;
+}
+
+/* Primary Button (Discord Blurple) */
+.btn-primary {
+    -fx-background-color: #5865F2;
+    -fx-background-radius: 6px;
+    -fx-text-fill: #FFFFFF;
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+    -fx-pref-height: 42px;
+    -fx-cursor: hand;
+    -fx-border-width: 0;
+}
+.btn-primary:hover {
+    -fx-background-color: #4752C4;
+}
+.btn-primary:pressed {
+    -fx-background-color: #3C45A5;
+}
+.btn-primary:disabled {
+    -fx-background-color: #3C45A5;
+    -fx-opacity: 0.65;
+    -fx-cursor: wait;
+}
+
+/* Password Strength Bar */
+.progress-bar {
+    -fx-pref-height: 4px;
+    -fx-background-radius: 4px;
+}
+.progress-bar .track {
+    -fx-background-color: #23252B;
+    -fx-background-radius: 4px;
+}
+.strength-weak .bar {
+    -fx-background-color: #FA777C;
+    -fx-background-radius: 4px;
+}
+.strength-medium .bar {
+    -fx-background-color: #F0B232;
+    -fx-background-radius: 4px;
+}
+.strength-strong .bar {
+    -fx-background-color: #23A55A;
+    -fx-background-radius: 4px;
+}
+
+/* Micro-hint labels */
+.strength-label-weak {
+    -fx-font-size: 10px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #FA777C;
+}
+.strength-label-medium {
+    -fx-font-size: 10px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #F0B232;
+}
+.strength-label-strong {
+    -fx-font-size: 10px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #23A55A;
+}
+
