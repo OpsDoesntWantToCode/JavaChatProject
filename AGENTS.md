@@ -16,9 +16,7 @@
   - Nhánh làm việc: `feat/user-ui`
   - Phạm vi: Giao diện User (`src/user/`), cấu hình Maven (`pom.xml`), phần User và tổng hợp Báo cáo (`BaoCao.pdf`).
 - **Phần sở hữu chung (BẮT BUỘC review chéo trước khi chỉnh sửa):** `server/`, `shared/` (DTO, giao thức Socket), `pom.xml`, `docs/plan.md`.
-- **Các mốc tiến độ:**
-  - Mốc 20% (Mục tiêu: 05/11/2026 — Hạn chót chính thức: 22/11/2026): Toàn bộ UI tĩnh JavaFX có dữ liệu mẫu, script CSDL hoàn chỉnh, minh chứng Git và Báo cáo PDF.
-  - Mốc 80% (Hạn chót toàn đồ án: 12/12/2026): Toàn bộ hệ thống chạy thực tế (Socket realtime/offline, pgJDBC, AES-GCM, Mail SMTP, LLM API, đóng gói 2 file JAR: `Admin.jar` & `User.jar`).
+- **Tiến độ và thời hạn:** BẮT BUỘC tra cứu `docs/plan.md`; không lưu lặp lịch trình trong tệp này.
 
 ---
 
@@ -87,10 +85,11 @@ Mọi tệp tin, thư mục và thành phần mã nguồn trong dự án BẮT B
 - **Bảo mật & Mạng:**
   - TUYỆT ĐỐI KHÔNG lưu mật khẩu dạng văn bản thô. LUÔN LUÔN băm bằng BCrypt (`BCrypt.hashpw`).
   - TUYỆT ĐỐI KHÔNG hardcode mật khẩu kết nối CSDL, khóa mã hóa chủ (KEK), thông tin email SMTP hoặc API key LLM trong ứng dụng Client hoặc đẩy lên Git.
-  - BẮT BUỘC dùng Java Cryptography API cho mã hóa AES-GCM phía Server (mỗi nhóm 1 khóa DEK, IV ngẫu nhiên 12 byte Base64).
+  - BẮT BUỘC dùng Java Cryptography API khi triển khai phương án AES-GCM phía Server (mỗi nhóm 1 khóa DEK, IV ngẫu nhiên 12 byte Base64). PHẢI giữ trạng thái chờ giảng viên xác nhận mức đáp ứng yêu cầu mã hóa; không tuyên bố đây là E2EE.
 - **Mẫu Kiến trúc Chuẩn (Golden Patterns):**
-  - Khung điều khiển (Dashboard): Dùng `CardLayout` cho thanh điều hướng sidebar.
-  - Khung Chat: Tách riêng panel danh sách hội thoại, panel bong bóng chat (`JScrollPane`), và vùng nhập tin nhắn.
+  - Khung điều khiển: BẮT BUỘC dùng bố cục JavaFX, chẳng hạn `BorderPane` với thanh điều hướng và vùng nội dung thay đổi; có thể dùng `StackPane` để chứa các trang.
+  - Khung chat: PHẢI tách vùng danh sách hội thoại, vùng bong bóng chat trong `ScrollPane` và vùng nhập tin nhắn bằng các thành phần JavaFX.
+  - Bảng và biểu đồ: BẮT BUỘC dùng `TableView` và JavaFX Charts (`BarChart`); không dùng thành phần Swing/AWT hoặc JFreeChart.
   - Giao thức Socket: Tuân thủ định dạng gói JSON Gson chuẩn (`action`, `session_id`, `payload`, `status`, `error`).
 
 ---

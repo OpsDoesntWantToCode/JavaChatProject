@@ -11,8 +11,8 @@
 |---|---|---|
 | Ngôn ngữ | **Java 21 LTS** | Viết ứng dụng desktop, Server và nghiệp vụ. |
 | Build/dependencies | **Apache Maven** | Quản lý dependency, biên dịch, kiểm thử và đóng gói JAR. |
-| Desktop GUI | **JavaFX 21** | Dựng giao diện Admin và User; tương thích JDK 21. Maven preview dùng OpenJFX 21.0.13. |
-| Giao diện / theme | **JavaFX CSS** | Bố cục hiện tại viết bằng Java, CSS cho sáng/tối. FXML là tùy chọn khi cần, chưa thêm dependency khi chưa dùng. |
+| Desktop GUI | **JavaFX 21** | Dựng giao diện Admin và User; `pom.xml` hiện cấu hình OpenJFX **21.0.5**, chưa có kết quả chạy UI. |
+| Giao diện / theme | **JavaFX CSS** | Dự kiến bố cục viết bằng Java, CSS cho sáng/tối. POM đã có `javafx-fxml`, nhưng chưa có FXML hoặc mã giao diện; sử dụng FXML là tùy chọn. |
 | Database | **PostgreSQL local** | DB quan hệ chính, tái tạo bằng SQL script trên máy khác. |
 | Kết nối DB | **JDBC với pgJDBC** | Server truy vấn PostgreSQL; tránh phát credential DB đặc quyền trong client. |
 | Client–Server / realtime | **Java Socket (TCP)** | Kết nối Client ↔ Server, truyền tin và trạng thái online. |
@@ -32,7 +32,7 @@
 
 ### Những lựa chọn KHÔNG nằm trong stack chính
 
-- **Không dùng WebSocket**: BẮT BUỘC dùng **Java TCP Socket thuần** (\java.net.Socket\, \java.net.ServerSocket\ trên tầng Transport/OS mạng). Tuyệt đối không dùng WebSocket (\ws://\), Socket.io hay công nghệ Web.
+- **Không dùng WebSocket**: BẮT BUỘC dùng **Java TCP Socket thuần** (`java.net.Socket`, `java.net.ServerSocket`). Không dùng WebSocket (`ws://`, `wss://`), Socket.io hoặc giao thức Web làm nền tảng chat. `HttpClient` chỉ phục vụ tích hợp LLM theo thiết kế.
 - **Không làm ứng dụng Web/HTML**: Giao diện BẮT BUỘC là **Window Java Desktop** (JavaFX 21 + CSS) đóng gói thành các file `.jar`.
 - **Không dùng Supabase**: PostgreSQL chạy local là phương án của nhóm. Việc nộp SQL script vốn cũng có thể thực hiện trên Supabase, nhưng nhóm chủ động loại dịch vụ Cloud để giảm phụ thuộc.
 - **Không tiếp tục Swing + FlatLaf** sau quyết định A–B ngày 29/10/2026; **không chọn Jackson** (giữ Gson).
@@ -63,19 +63,16 @@
 
 ## 3. Cấu trúc mã nguồn và người phụ trách
 
-**Phương án một Maven project / `pom.xml` ở gốc đã thống nhất; cách đóng gói nhiều JAR vẫn cần cấu hình/kiểm thử thực tế.**
+**Đã có `pom.xml` ở gốc:** Java 21, JavaFX 21.0.5, `sourceDirectory=src`; tài nguyên CSS/FXML/ảnh/properties cũng lấy từ `src`. Cách đóng gói nhiều JAR vẫn cần cấu hình/kiểm thử thực tế. Cây dưới là hướng triển khai trong nguồn `src`, không phải mã Java đã tồn tại.
 
 ```text
 JavaChatProject/
 ├── pom.xml                         # Maven JavaFX tối thiểu; thay đổi chung cần A–B review
 ├── src/
-│   └── main/
-│       └── java/
-│           └── com/chatapp/
-│               ├── admin/          # A sở hữu
-│               ├── user/           # B sở hữu
-│               ├── server/         # chung, cần review
-│               └── shared/         # chung: model/DTO/protocol, cần review
+│   ├── admin/                      # A sở hữu; hiện chỉ có .gitkeep
+│   ├── user/                       # B sở hữu; hiện chỉ có .gitkeep
+│   ├── server/                     # dự kiến, chung, cần review
+│   └── shared/                     # dự kiến, model/DTO/protocol, cần review
 ├── script/
 │   └── database.sql                # A phụ trách
 ├── git/                             # ảnh minh chứng commit từng người
@@ -87,6 +84,8 @@ JavaChatProject/
 - `main`: branch tích hợp chung.
 - `feat/admin-db`: thành viên A, phụ trách Admin UI, ERD, PostgreSQL và `script/database.sql`.
 - `feat/user-ui`: thành viên B, phụ trách User UI, Maven/repository và báo cáo.
+
+POM hiện chọn `user.UserLoginApp` làm entrypoint, nhưng class này chưa tồn tại. Đề xuất Admin đặt `src/admin/AdminApplication.java` với package `admin`, CSS tại `src/admin/admin.css` (resource classpath `/admin/admin.css`). Đây là cấu trúc Admin dự kiến, chưa triển khai; cách chạy entrypoint Admin cần phối hợp với B, không ghi đè launcher User. `groupId=com.chatapp` không tự quy định package Java. Không tạo thêm cây `src/main/java` song song với nguồn đang cấu hình.
 
 ### Sản phẩm cuối kỳ (phiên bản 80%)
 
@@ -120,8 +119,8 @@ JavaChatProject/
 ## 6. Các quyết định CÒN MỞ — không được tự suy diễn thành đã chốt
 
 - **Mã hóa nhóm:** chọn Server-side AES-GCM PROVISIONAL, mode bất biến, một DEK/nhóm và KEK ngoài DB. Không dùng encrypted_group_key hoặc key_version trong schema hiện hành. Cần giảng viên xác nhận mô hình có đáp ứng yêu cầu; chưa gọi là E2EE.
-- **Tích hợp Database/Server:** SQL 13 bảng/65 cột đã PASS trên PostgreSQL 18.6; quyền service, transaction/concurrency và hiệu năng chưa được kiểm thử ở Java. Nguồn chính thức: [Schema](database/Database_Schema.md), [Decisions](database/Database_Decisions.md), [test results](database/TEST_RESULTS.md).
-- **Giao diện:** kích thước cửa sổ, bảng màu, font chữ chi tiết chưa chốt.
+- **Tích hợp Database/Server:** schema có 13 bảng/65 cột; kết quả SQL PASS PostgreSQL 18.6 là thông tin lịch sử, không phải lần chạy mới. Quyền service, transaction/concurrency và hiệu năng chưa được kiểm thử ở Java. Tài liệu hiện hành: [schema và cẩm nang](database/schema.md), [DDL](../script/database.sql).
+- **Giao diện:** kích thước định hướng khoảng 1000×700 theo kế hoạch; bảng màu, font chữ chi tiết cần phối hợp A–B.
 - **LLM:** nhà cung cấp và endpoint cụ thể chưa chọn; gọi API qua HttpClient là hướng đã thống nhất.
 - **Build nhiều JAR / chạy Server:** cần cấu hình Maven và kiểm chứng trên máy khác.
 
