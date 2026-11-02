@@ -2,7 +2,7 @@
 
 > **Phiên bản:** 3.1 (Unified Architecture & Implementation Guide).  
 > **Hệ quản trị CSDL:** PostgreSQL 16+ (Local port 5432).  
-> **Quy mô:** 13 bảng, 65 cột, 21 khóa ngoại (FK), 6 chỉ mục (Index) tường minh, 11 ràng buộc CHECK, 2 triggers bảo vệ tính toàn vẹn.  
+> **Quy mô:** 13 bảng, 65 cột, 21 khóa ngoại (FK), 17 chỉ mục (Index) tường minh, 31 ràng buộc CHECK, 2 triggers bảo vệ tính toàn vẹn.
 > **Tệp DDL thực thi:** `script/database.sql` (Chạy tạo CSDL từ database rỗng).
 
 ---
@@ -22,7 +22,7 @@ erDiagram
         TEXT address "NULL"
         DATE dob "NULL"
         VARCHAR(10) gender "NULL"
-        VARCHAR(100) email UK "NN"
+        VARCHAR(100) email "NN; unique when not DELETED"
         VARCHAR(20) status "NN; default 'ACTIVE'"
         VARCHAR(10) role "NN; default 'USER'; USER or ADMIN"
         TIMESTAMPTZ last_seen_at "NULL"
@@ -157,7 +157,7 @@ erDiagram
 | `address` | `TEXT` | `NULL` | | Địa chỉ |
 | `dob` | `DATE` | `NULL` | | Ngày sinh |
 | `gender` | `VARCHAR(10)` | `NULL` | `CHECK (gender IN ('MALE', 'FEMALE', 'OTHER'))` | Giới tính |
-| `email` | `VARCHAR(100)` | `NOT NULL` | `UNIQUE` | Email duy nhất (nhận mật khẩu ngẫu nhiên) |
+| `email` | `VARCHAR(100)` | `NOT NULL` | Unique partial index `uq_users_email_not_deleted`, `WHERE status <> 'DELETED'` | Email chuẩn hóa, duy nhất giữa các tài khoản `ACTIVE`/`LOCKED` |
 | `status` | `VARCHAR(20)` | `NOT NULL` | `DEFAULT 'ACTIVE'`, `CHECK (status IN ('ACTIVE', 'LOCKED', 'DELETED'))` | Trạng thái tài khoản |
 | `role` | `VARCHAR(10)` | `NOT NULL` | `DEFAULT 'USER'`, `CHECK (role IN ('USER', 'ADMIN'))` | Phân quyền truy cập UI |
 | `last_seen_at` | `TIMESTAMPTZ` | `NULL` | | Thời điểm hoạt động cuối |
@@ -300,12 +300,25 @@ erDiagram
 ## 3. Danh sách Chỉ mục (Indexes) & Triggers
 
 ### 3.1 Chỉ mục Tường minh hỗ trợ Tối ưu Truy vấn
+- `uq_users_email_not_deleted`: `users(email) WHERE status <> 'DELETED'` — Một email chỉ thuộc tối đa một tài khoản chưa xóa; các hồ sơ `DELETED` có thể cùng email.
 - `idx_login_history_time`: `login_history(login_time DESC)` — Xem lịch sử đăng nhập theo thời gian.
+- `idx_login_history_user_time`: `login_history(user_id, login_time DESC)` — Lịch sử đăng nhập của người dùng được chọn.
+- `idx_activity_time_user`: `activity_logs(created_at, user_id)` — Lọc hoạt động theo thời gian.
+- `idx_activity_user_time`: `activity_logs(user_id, created_at)` — Hoạt động của từng người dùng.
 - `uq_pending_friend_pair`: `friend_requests(LEAST(sender_id, receiver_id), GREATEST(sender_id, receiver_id)) WHERE status = 'PENDING'` — Chống lặp lời mời kết bạn 2 chiều.
+- `idx_friend_requests_inbox`: `friend_requests(receiver_id, created_at DESC) WHERE status = 'PENDING'` — Lời mời đang chờ xử lý.
+- `idx_friendships_second`: `friendships(user_id_2, user_id_1)` — Tra cứu bạn bè từ đầu thứ hai của quan hệ.
 - `idx_dm_pair_id`: `direct_messages(LEAST(sender_id, receiver_id), GREATEST(sender_id, receiver_id), id)` — Tải lịch sử chat 1-1 cực nhanh theo mốc watermark.
-- `idx_group_messages_time`: `group_messages(group_id, created_at)` — Tải lịch sử chat nhóm theo thời gian.
+- `idx_dm_sender_time`: `direct_messages(sender_id, created_at, receiver_id)` — Thống kê tin nhắn gửi đi.
+- `idx_dm_receiver_id`: `direct_messages(receiver_id, id)` — Tra cứu tin nhắn nhận.
+- `idx_group_members_user`: `group_members(user_id, group_id)` — Nhóm có người dùng tham gia.
+- `idx_group_messages_time`: `group_messages(group_id, created_at, id)` — Tải lịch sử chat nhóm theo thời gian.
+- `idx_group_messages_sender_time`: `group_messages(sender_id, created_at, group_id)` — Thống kê tin nhắn nhóm đã gửi.
 - `uq_group_message_iv`: `group_messages(group_id, iv) WHERE iv IS NOT NULL` — Chống tái sử dụng Nonce AES-GCM.
 - `idx_spam_reports_time`: `spam_reports(created_at DESC)` — Admin xem báo cáo spam mới nhất.
+- `idx_users_created_at`: `users(created_at)` — Lọc và thống kê thời gian đăng ký.
+
+Ngoài 17 chỉ mục tường minh, 13 khóa chính và 3 ràng buộc `UNIQUE` (`username`, `session_id`, cặp báo cáo spam) tạo thêm 16 chỉ mục; tổng cộng 33 chỉ mục trên các bảng ứng dụng.
 
 ### 3.2 Triggers Bảo vệ Toàn vẹn Dữ liệu
 1. `trg_group_mode_immutable`: Ngăn chặn tuyệt đối việc thay đổi cờ `is_encrypted` của nhóm sau khi tạo.
@@ -454,3 +467,36 @@ SELECT COUNT(*) FROM users WHERE role = 'ADMIN' AND status = 'ACTIVE';
 -- NẾU count < 1: Thực thi ROLLBACK và trả lỗi "Không thể khóa/hạ quyền Admin hoạt động cuối cùng của hệ thống!"
 -- NẾU count >= 1: Thực thi COMMIT;
 ```
+
+### 4.7 Email và Xóa mềm Tài khoản
+
+- Email được chuẩn hóa thành chữ thường, bỏ khoảng trắng đầu/cuối; giữ các ràng buộc `NOT NULL`, không rỗng và ASCII trong DDL.
+- `uq_users_email_not_deleted` bảo đảm tối đa một tài khoản `ACTIVE` hoặc `LOCKED` giữ một email. Không dùng `UNIQUE(email)` trên toàn bộ bảng.
+- Hồ sơ `DELETED` giữ nguyên ID, username, email và ngày tạo; có thể có nhiều hồ sơ đã xóa cùng email. Username vẫn duy nhất trên toàn bảng, kể cả hồ sơ đã xóa.
+- Xóa mềm chỉ đổi trạng thái, không xóa bản ghi hoặc chuyển lịch sử sang người dùng khác. Tài khoản mới luôn có ID mới.
+- Admin A2 mô phỏng cùng quy tắc email trong bộ nhớ. Đây chưa phải luồng đăng ký hoặc khôi phục tài khoản chạy qua Server/PostgreSQL.
+- Đăng nhập và quên mật khẩu phải chọn tài khoản đủ điều kiện `status = 'ACTIVE'`; nếu tìm bằng email, không lấy tùy ý bản ghi đầu tiên. Sau khi chọn, cập nhật theo ID và kiểm tra lại trạng thái/email phù hợp trong thao tác cập nhật. Không khôi phục hoặc mở khóa ngầm qua luồng quên mật khẩu.
+- Kiểm tra email ở Client chỉ hỗ trợ phản hồi; Server phải xử lý lỗi duy nhất SQLSTATE `23505` do DB trả về. Không dùng riêng `SELECT` rồi `INSERT` để thay thế ràng buộc duy nhất, và không dùng `ON CONFLICT (email)` như khi có ràng buộc duy nhất toàn bảng.
+- `DELETED` vẫn là trạng thái kết thúc trong nghiệp vụ hiện tại: không sửa hồ sơ, không khôi phục. DDL không tự thi hành quy tắc kết thúc hay thu hồi phiên; đây là trách nhiệm của Server.
+
+### 4.8 Kiểm thử Ràng buộc Email
+
+[`script/tests/email-uniqueness.sql`](../../script/tests/email-uniqueness.sql) kiểm tra hành vi email trên PostgreSQL, chỉ nhận database dùng riêng có tên dạng `java_chat_email_test_` nối với 12 ký tự hex và bảng `users` rỗng. Kiểm thử chạy trong transaction rồi `ROLLBACK`; không chạy trên database ứng dụng đang sử dụng.
+
+Tạo database kiểm thử mới bằng công cụ PostgreSQL, áp dụng DDL từ gốc repository rồi chạy:
+
+```powershell
+psql -X -w -v ON_ERROR_STOP=1 -d java_chat_email_test_0123456789ab -f script/database.sql
+psql -X -w -v ON_ERROR_STOP=1 -d java_chat_email_test_0123456789ab -f script/tests/email-uniqueness.sql
+```
+
+Điều chỉnh host/port/user theo môi trường; dùng cơ chế xác thực PostgreSQL cục bộ, không ghi mật khẩu vào lệnh hay repository. Chỉ xóa database kiểm thử do mình vừa tạo sau khi kiểm tra tên đích. `script/database.sql` chỉ dành cho database rỗng, không dùng để nâng cấp database đã có dữ liệu. Khi đóng gói bài nộp, `script/` của gói nộp chỉ lấy `database.sql`; bộ kiểm thử phục vụ phát triển.
+
+**Minh chứng ngày 02/11/2026:** áp dụng toàn bộ `database.sql` trên database kiểm thử mới bằng PostgreSQL 18.6; **25 kiểm tra SQL PASS**, dữ liệu kiểm thử rollback và database kiểm thử đã được dọn. Bộ `src/admin/check-users.ps1` **45 PASS**, Maven compile thành công. Đây là kết quả kiểm tra ràng buộc SQL và store mẫu, chưa phải kiểm thử đăng ký/quên mật khẩu qua Server; không áp dụng DDL vào database ứng dụng hiện có.
+
+## 5. Tính năng Có thể Phát triển trong Tương lai
+
+Các mục dưới đây không phải chức năng bắt buộc trong PDF và chưa được triển khai thành luồng hoàn chỉnh:
+
+- **Khôi phục tài khoản đã xóa:** thao tác riêng theo ID, kiểm tra email chưa bị tài khoản `ACTIVE`/`LOCKED` khác sử dụng; cần quy tắc phân quyền, mật khẩu, phiên và quan hệ cũ trước khi triển khai.
+- **Luồng đăng ký lại bằng email của tài khoản đã xóa:** ràng buộc DB và dữ liệu mẫu Admin đã cho phép giải phóng email; giao diện User, Server, xử lý xung đột và kiểm thử đầu cuối của luồng này là phần phát triển tiếp theo. Không gộp lịch sử hoặc quyền của các ID khác nhau.

@@ -122,8 +122,8 @@ public final class AdminUserStore {
             if (row.username().equals(username)) {
                 throw new IllegalArgumentException("Username đã được sử dụng, kể cả ở tài khoản đã xóa.");
             }
-            if (row.email().equals(email)) {
-                throw new IllegalArgumentException("Email đã được sử dụng, kể cả ở tài khoản đã xóa.");
+            if (row.status() != UserRow.Status.DELETED && row.email().equals(email)) {
+                throw new IllegalArgumentException("Email đang được sử dụng bởi tài khoản hoạt động hoặc bị khóa.");
             }
         }
         String address = clean(draft.address());

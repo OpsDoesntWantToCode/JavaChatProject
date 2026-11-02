@@ -55,7 +55,32 @@ public class AdminUserStoreCheck {
         rejected(() -> store.changeStatus(row.id(), UserRow.Status.ACTIVE), "no undelete");
         rejected(() -> store.update(row.id(), draft("restored", "Restored", "restored@example.test")), "no deleted edit");
         rejected(() -> store.add(draft("test.changed", "Another", "another@example.test")), "deleted username reserved");
-        rejected(() -> store.add(draft("another.user", "Another", "updated@example.test")), "deleted email reserved");
+        AdminUserStore emailStore = new AdminUserStore(clock);
+        UserRow firstOwner = emailStore.add(draft("email.first", "First owner", " DUNG.DO@EXAMPLE.TEST "));
+        check(firstOwner.id() == 11 && firstOwner.email().equals("dung.do@example.test"), "deleted email reusable and normalized");
+        rejected(() -> emailStore.add(draft("email.duplicate", "Duplicate", "dung.do@example.test")), "active email reserved");
+        rejected(() -> emailStore.add(draft("email.locked", "Locked duplicate", "ngoc.vo@example.test")), "locked email reserved");
+        rejected(() -> emailStore.update(2, draft("minh.dev", "Another owner", "dung.do@example.test")), "edit cannot claim active email");
+        rejected(() -> emailStore.update(2, draft("minh.dev", "Another owner", "ngoc.vo@example.test")), "edit cannot claim locked email");
+        emailStore.changeStatus(firstOwner.id(), UserRow.Status.LOCKED);
+        rejected(() -> emailStore.add(draft("email.duplicate", "Duplicate", "dung.do@example.test")), "locking keeps email reserved");
+        emailStore.changeStatus(firstOwner.id(), UserRow.Status.DELETED);
+        UserRow nextOwner = emailStore.add(draft("email.next", "Next owner", "dung.do@example.test"));
+        check(nextOwner.id() != firstOwner.id(), "reused email gets a new identity");
+        check(emailStore.users().stream().filter(u -> u.email().equals("dung.do@example.test")
+            && u.status() == UserRow.Status.DELETED).count() == 2, "multiple deleted email owners retained");
+        check(emailStore.users().stream().filter(u -> u.email().equals("dung.do@example.test")
+            && u.status() != UserRow.Status.DELETED).count() == 1, "one non-deleted email owner");
+        rejected(() -> emailStore.changeStatus(firstOwner.id(), UserRow.Status.ACTIVE), "email release does not enable restore");
+        UserRow changedEmail = emailStore.update(2, draft("minh.dev", "Updated owner", "unused.owner@example.test"));
+        check(changedEmail.id() == 2 && changedEmail.email().equals("unused.owner@example.test"), "profile email can change without changing identity");
+        UserRow oldEmailOwner = emailStore.add(draft("email.previous", "Previous email", "minh.dev@example.test"));
+        check(oldEmailOwner.email().equals("minh.dev@example.test"), "changing profile email releases previous value");
+        UserRow sameEmail = emailStore.update(changedEmail.id(), draft("minh.dev", "Updated again", changedEmail.email()));
+        check(sameEmail.email().equals(changedEmail.email()), "profile can retain its own email");
+        emailStore.changeStatus(nextOwner.id(), UserRow.Status.DELETED);
+        UserRow editedToDeletedEmail = emailStore.update(2, draft("minh.dev", "Updated owner", "dung.do@example.test"));
+        check(editedToDeletedEmail.email().equals("dung.do@example.test"), "profile can use email held only by deleted rows");
         rejected(() -> store.add(draft("x", "Name", "a@example.test")), "short username");
         rejected(() -> store.add(draft("invalid name", "Name", "a@example.test")), "invalid username");
         rejected(() -> store.add(draft("valid.user", "  ", "a@example.test")), "blank full name");
