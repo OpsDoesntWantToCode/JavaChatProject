@@ -1,3 +1,4 @@
+/* JavaFX 21 looked-up colors; see docs/admin/admin-design-system.md. */
 .admin-root, .admin-dialog {
     -fx-font-family: "Segoe UI";
     -fx-font-size: 13px;
@@ -5,9 +6,36 @@
     -admin-surface: #ffffff;
     -admin-text: #19263d;
     -admin-muted: #637087;
-    -admin-border: #e0e6ef;
+    -admin-border: #dce3ed;
+    -admin-control-border: #7b8798;
     -admin-soft: #f7f9fc;
     -admin-accent: #2558c9;
+    -admin-primary: #2558c9;
+    -admin-primary-hover: #1e48a6;
+    -admin-on-primary: #ffffff;
+    -admin-selection: #2558c9;
+    -admin-on-selection: #ffffff;
+    -admin-danger: #b02a20;
+    -admin-success-bg: #def3e8;
+    -admin-success-text: #175b3c;
+    -admin-warning-bg: #fff0cc;
+    -admin-warning-text: #805211;
+    -admin-danger-bg: #fce5e1;
+    -admin-danger-text: #984136;
+    -admin-sidebar: #12213b;
+    -admin-nav-hover: #213452;
+    -admin-nav-selected: #2e5cc4;
+    -admin-nav-text: #d5deec;
+    -admin-nav-muted: #adbbd2;
+    -admin-nav-focus: #b8d0ff;
+    -fx-base: -admin-surface;
+    -fx-control-inner-background: -admin-surface;
+    -fx-control-inner-background-alt: -admin-soft;
+    -fx-accent: -admin-selection;
+    -fx-focus-color: -admin-accent;
+    -fx-faint-focus-color: transparent;
+    -fx-selection-bar: -admin-selection;
+    -fx-selection-bar-non-focused: -admin-selection;
     -fx-background-color: -admin-bg;
     -fx-text-background-color: -admin-text;
 }
@@ -17,63 +45,163 @@
     -admin-text: #edf2fa;
     -admin-muted: #b3bfd1;
     -admin-border: #3a4960;
+    -admin-control-border: #7d8ba3;
     -admin-soft: #28354a;
     -admin-accent: #9dbdff;
+    -admin-primary: #9dbdff;
+    -admin-primary-hover: #bfd3ff;
+    -admin-on-primary: #142444;
+    -admin-selection: #b8ceff;
+    -admin-on-selection: #142444;
+    -admin-danger: #ffb4ab;
+    -admin-success-bg: #203e35;
+    -admin-success-text: #a2e5c1;
+    -admin-warning-bg: #493a22;
+    -admin-warning-text: #ffdb92;
+    -admin-danger-bg: #482c32;
+    -admin-danger-text: #ffb4ab;
 }
 .label { -fx-text-fill: -admin-text; }
 .admin-sidebar {
-    -fx-background-color: #12213b;
-    -fx-padding: 24 12 18 12;
-    -fx-spacing: 5;
+    -fx-background-color: -admin-sidebar;
+    -fx-padding: 24 12 16 12;
+    -fx-spacing: 4;
 }
-.brand-block { -fx-padding: 0 12 25 12; }
+.brand-block { -fx-padding: 0 12 24 12; }
 .brand { -fx-text-fill: #ffffff; -fx-font-size: 21px; -fx-font-weight: bold; }
-.brand-subtitle { -fx-text-fill: #adbbd2; -fx-font-size: 12px; }
-.nav-section { -fx-text-fill: #93a7c6; -fx-font-size: 10px; -fx-font-weight: bold; -fx-padding: 0 12 10 12; }
+.brand-subtitle { -fx-text-fill: -admin-nav-muted; -fx-font-size: 12px; }
+.nav-section { -fx-text-fill: -admin-nav-muted; -fx-font-size: 11px; -fx-font-weight: bold; -fx-padding: 0 12 8 12; }
 .nav-button {
     -fx-background-color: transparent;
     -fx-background-radius: 7;
-    -fx-text-fill: #d5deec;
-    -fx-padding: 10 10;
+    -fx-text-fill: -admin-nav-text;
+    -fx-border-color: transparent;
+    -fx-border-width: 2;
+    -fx-border-radius: 7;
+    -fx-padding: 8;
     -fx-graphic-text-gap: 10;
     -fx-cursor: hand;
     -fx-font-size: 12px;
 }
-.nav-number { -fx-text-fill: #94a9c9; -fx-font-size: 11px; -fx-min-width: 20; }
-.nav-button:hover { -fx-background-color: #213452; }
-.nav-button:selected { -fx-background-color: #2e5cc4; -fx-text-fill: white; -fx-font-weight: bold; }
+.nav-number { -fx-text-fill: -admin-nav-muted; -fx-font-size: 11px; -fx-min-width: 20; }
+.nav-button:hover { -fx-background-color: -admin-nav-hover; }
+.nav-button:selected { -fx-background-color: -admin-nav-selected; -fx-text-fill: white; -fx-font-weight: bold; }
 .nav-button:selected .nav-number { -fx-text-fill: #e1ebff; }
-.nav-button:focused { -fx-border-color: #b8d0ff; -fx-border-radius: 7; -fx-border-width: 1; }
-.sidebar-footer { -fx-text-fill: #a6b6ce; -fx-font-size: 11px; -fx-line-spacing: 5; -fx-padding: 20 12 0 12; }
+.nav-button:focused { -fx-border-color: -admin-nav-focus; }
+.sidebar-footer { -fx-text-fill: -admin-nav-muted; -fx-font-size: 11px; -fx-line-spacing: 4; -fx-padding: 20 12 0 12; }
 .admin-header { -fx-background-color: -admin-surface; -fx-padding: 18 24; -fx-border-color: transparent transparent -admin-border transparent; }
-.breadcrumb { -fx-text-fill: -admin-muted; -fx-font-size: 10px; -fx-font-weight: bold; }
-.avatar { -fx-background-color: #e4edff; -fx-text-fill: #2558c9; -fx-background-radius: 18; -fx-min-width: 36; -fx-min-height: 36; -fx-alignment: center; -fx-font-weight: bold; -fx-font-size: 16px; }
+.breadcrumb { -fx-text-fill: -admin-muted; -fx-font-size: 11px; -fx-font-weight: bold; }
+.avatar { -fx-background-color: -admin-soft; -fx-text-fill: -admin-accent; -fx-background-radius: 18; -fx-min-width: 36; -fx-min-height: 36; -fx-alignment: center; -fx-font-weight: bold; -fx-font-size: 16px; }
 .identity-name { -fx-font-weight: bold; }
-.muted { -fx-text-fill: -admin-muted; -fx-font-size: 11px; }
-.secondary-button {
+.muted { -fx-text-fill: -admin-muted; -fx-font-size: 12px; }
+.secondary-button, .admin-dialog .button {
     -fx-background-color: -admin-surface;
-    -fx-border-color: -admin-border;
+    -fx-border-color: -admin-control-border;
+    -fx-border-width: 2;
     -fx-border-radius: 6;
     -fx-background-radius: 6;
     -fx-text-fill: -admin-text;
-    -fx-padding: 8 12;
+    -fx-padding: 7 10;
+    -fx-min-height: 36;
     -fx-cursor: hand;
 }
-.secondary-button:hover, .secondary-button:selected { -fx-background-color: -admin-soft; }
-.secondary-button:focused { -fx-border-color: -admin-accent; }
-.page-heading { -fx-padding: 28 26 22 26; }
+.secondary-button:hover, .secondary-button:selected, .admin-dialog .button:hover { -fx-background-color: -admin-soft; }
+.secondary-button:pressed, .admin-dialog .button:pressed { -fx-background-color: -admin-border; }
+.secondary-button:focused, .admin-dialog .button:focused { -fx-border-color: -admin-accent; }
+.page-heading { -fx-padding: 24; }
 .page-title { -fx-font-size: 25px; -fx-font-weight: bold; }
 .page-description { -fx-text-fill: -admin-muted; -fx-font-size: 13px; -fx-line-spacing: 4; }
-.page-content { -fx-padding: 0 26 24 26; }
+.page-content { -fx-padding: 0 24 24 24; }
 .content-scroll, .content-scroll > .viewport { -fx-background-color: transparent; }
 .content-scroll { -fx-padding: 0; -fx-border-width: 0; -fx-background-insets: 0; }
-.preview-card { -fx-background-color: -admin-surface; -fx-background-radius: 12; -fx-border-color: -admin-border; -fx-border-radius: 12; -fx-padding: 26; }
-.preview-badge { -fx-text-fill: -admin-accent; -fx-background-color: -admin-soft; -fx-background-radius: 5; -fx-padding: 6 10; -fx-font-size: 10px; -fx-font-weight: bold; }
+.preview-card { -fx-background-color: -admin-surface; -fx-background-radius: 12; -fx-border-color: -admin-border; -fx-border-radius: 12; -fx-padding: 24; }
+.preview-badge { -fx-text-fill: -admin-accent; -fx-background-color: -admin-soft; -fx-background-radius: 5; -fx-padding: 6 10; -fx-font-size: 11px; -fx-font-weight: bold; }
 .preview-title { -fx-font-size: 21px; -fx-font-weight: bold; }
-.feature-heading { -fx-text-fill: -admin-muted; -fx-font-size: 10px; -fx-font-weight: bold; -fx-padding: 8 0 0 0; }
+.feature-heading { -fx-text-fill: -admin-muted; -fx-font-size: 11px; -fx-font-weight: bold; -fx-padding: 8 0 0 0; }
 .feature-row { -fx-background-color: -admin-soft; -fx-padding: 12; -fx-background-radius: 7; }
 .feature-number { -fx-text-fill: -admin-accent; -fx-font-weight: bold; -fx-min-width: 22; }
-.preview-note { -fx-text-fill: -admin-muted; -fx-font-size: 11px; -fx-padding: 5 0 0 0; }
+.preview-note { -fx-text-fill: -admin-muted; -fx-font-size: 12px; -fx-padding: 4 0 0 0; }
 .admin-dialog { -fx-background-color: -admin-surface; }
 .admin-dialog > .content.label, .admin-dialog > .header-panel .label { -fx-text-fill: -admin-text; }
 .admin-dialog > .header-panel { -fx-background-color: -admin-soft; }
+.admin-dialog > .header-panel .label { -fx-font-size: 17px; -fx-font-weight: bold; }
+.admin-dialog .button:default { -fx-background-color: -admin-primary; -fx-text-fill: -admin-on-primary; }
+.admin-dialog .button:default:hover { -fx-background-color: -admin-primary-hover; }
+.admin-dialog .button:default:focused { -fx-border-color: -admin-text; }
+.user-management .table-view {
+    -fx-background-color: -admin-surface;
+    -fx-border-color: -admin-border;
+    -fx-border-width: 2;
+    -fx-background-radius: 8;
+    -fx-border-radius: 8;
+    -fx-padding: 0;
+    -fx-table-cell-border-color: -admin-border;
+    -fx-control-inner-background: -admin-surface;
+    -fx-control-inner-background-alt: -admin-soft;
+    -fx-selection-bar: -admin-selection;
+    -fx-selection-bar-non-focused: -admin-selection;
+}
+.user-management .table-view:focused { -fx-border-color: -admin-accent; -fx-border-width: 2; }
+.user-management .column-header-background, .user-management .column-header,
+.user-management .filler { -fx-background-color: -admin-soft; }
+.user-management .column-header { -fx-size: 38; -fx-border-color: transparent transparent -admin-border transparent; }
+.user-management .table-row-cell { -fx-cell-size: 38; }
+.user-management .table-cell { -fx-text-fill: -admin-text; -fx-alignment: center-left; -fx-padding: 8; }
+.user-management .table-row-cell:selected { -fx-background-color: -admin-selection; }
+.user-management .table-row-cell:selected .table-cell { -fx-text-fill: -admin-on-selection; }
+.user-management .column-header .label { -fx-font-weight: bold; }
+.user-management .text-field, .admin-dialog .text-field, .admin-dialog .text-area,
+.user-management .combo-box, .admin-dialog .combo-box, .admin-dialog .date-picker {
+    -fx-background-color: -admin-surface;
+    -fx-text-fill: -admin-text;
+    -fx-prompt-text-fill: -admin-muted;
+    -fx-highlight-fill: -admin-selection;
+    -fx-highlight-text-fill: -admin-on-selection;
+    -fx-border-color: -admin-control-border;
+    -fx-border-width: 2;
+    -fx-border-radius: 5;
+    -fx-background-radius: 5;
+    -fx-min-height: 32;
+}
+.admin-dialog .text-area .content { -fx-background-color: -admin-surface; }
+.user-management .text-field:focused, .admin-dialog .text-field:focused,
+.admin-dialog .text-area:focused, .user-management .combo-box:focused,
+.admin-dialog .combo-box:focused, .admin-dialog .date-picker:focused { -fx-border-color: -admin-accent; }
+.admin-dialog .date-picker > .text-field { -fx-border-width: 0; -fx-min-height: 28; }
+.admin-dialog .date-picker > .arrow-button { -fx-background-color: -admin-soft; }
+.admin-dialog .date-picker-popup { -fx-background-color: -admin-surface; }
+.admin-dialog .date-picker-popup > .month-year-pane { -fx-background-color: -admin-soft; }
+.admin-dialog .date-picker-popup .day-cell { -fx-background-color: -admin-surface; -fx-text-fill: -admin-text; }
+.admin-dialog .date-picker-popup .day-cell:hover { -fx-background-color: -admin-soft; }
+.admin-dialog .date-picker-popup .day-cell.selected { -fx-background-color: -admin-selection; -fx-text-fill: -admin-on-selection; }
+.admin-dialog .date-picker-popup .previous-month,
+.admin-dialog .date-picker-popup .next-month { -fx-text-fill: -admin-muted; }
+.admin-dialog .date-picker-popup .day-name-cell,
+.admin-dialog .date-picker-popup .week-number-cell { -fx-background-color: -admin-soft; -fx-text-fill: -admin-muted; }
+.admin-dialog .date-picker-popup .day-cell:focused { -fx-border-color: -admin-accent; }
+.admin-dialog .date-picker-popup .spinner .button .left-arrow,
+.admin-dialog .date-picker-popup .spinner .button .right-arrow { -fx-background-color: -admin-text; -fx-background-insets: 0; -fx-effect: null; }
+.user-management .combo-box .list-cell, .admin-dialog .combo-box .list-cell { -fx-text-fill: -admin-text; -fx-background-color: -admin-surface; }
+.user-management .combo-box-popup .list-cell:hover, .admin-dialog .combo-box-popup .list-cell:hover { -fx-background-color: -admin-soft; }
+.user-management .combo-box-popup .list-cell:filled:selected,
+.admin-dialog .combo-box-popup .list-cell:filled:selected { -fx-background-color: -admin-selection; -fx-text-fill: -admin-on-selection; }
+.filter-label { -fx-text-fill: -admin-muted; -fx-font-size: 12px; }
+.primary-button { -fx-background-color: -admin-primary; -fx-text-fill: -admin-on-primary; -fx-border-color: -admin-primary; }
+.primary-button:hover { -fx-background-color: -admin-primary-hover; -fx-border-color: -admin-primary-hover; }
+.primary-button:pressed { -fx-background-color: -admin-accent; }
+.primary-button:focused { -fx-border-color: -admin-text; }
+.danger-button { -fx-text-fill: -admin-danger; }
+.secondary-button:disabled, .admin-dialog .button:disabled { -fx-opacity: 0.45; -fx-cursor: default; }
+.status-badge { -fx-font-size: 11px; -fx-padding: 3 6; -fx-background-radius: 4; }
+.status-active { -fx-text-fill: -admin-success-text; -fx-background-color: -admin-success-bg; }
+.status-locked { -fx-text-fill: -admin-warning-text; -fx-background-color: -admin-warning-bg; }
+.status-deleted { -fx-text-fill: -admin-danger-text; -fx-background-color: -admin-danger-bg; }
+.demo-note { -fx-text-fill: -admin-muted; -fx-font-size: 12px; -fx-background-color: -admin-soft; -fx-padding: 12; -fx-background-radius: 5; }
+.validation-message { -fx-text-fill: -admin-danger; -fx-font-size: 12px; -fx-padding: 8; -fx-border-width: 2; -fx-border-color: transparent; -fx-border-radius: 5; }
+.validation-message:focused { -fx-border-color: -admin-danger; }
+.empty-state { -fx-padding: 24; }
+.empty-state-title { -fx-text-fill: -admin-muted; -fx-font-size: 13px; }
+.admin-root .scroll-bar, .admin-dialog .scroll-bar { -fx-background-color: -admin-soft; }
+.admin-root .scroll-bar .thumb, .admin-dialog .scroll-bar .thumb { -fx-background-color: -admin-control-border; -fx-background-radius: 5; }
+.admin-root .scroll-bar .increment-arrow, .admin-root .scroll-bar .decrement-arrow,
+.admin-dialog .scroll-bar .increment-arrow, .admin-dialog .scroll-bar .decrement-arrow { -fx-background-color: -admin-muted; }

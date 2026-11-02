@@ -19,11 +19,12 @@ import javafx.scene.layout.Region;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 
-/** Khung A1; các trang hiện là bản xem trước, chưa có xử lý tài khoản thật. */
+/** Khung Admin: quản lý user mẫu ở A2, các trang còn lại là bản xem trước. */
 public final class AdminMainView extends BorderPane {
     private final Label pageTitle = new Label();
     private final Label pageDescription = new Label();
     private final StackPane content = new StackPane();
+    private final AdminUserStore userStore = new AdminUserStore();
     private final Map<AdminNavigation.Page, Node> pages =
             new EnumMap<>(AdminNavigation.Page.class);
 
@@ -64,6 +65,7 @@ public final class AdminMainView extends BorderPane {
         VBox titles = new VBox(6, pageTitle, pageDescription);
         HBox.setHgrow(titles, Priority.ALWAYS);
         ToggleButton theme = new ToggleButton("Giao diện tối");
+        theme.setAccessibleHelp("Chuyển giữa giao diện sáng và tối cho không gian Admin.");
         theme.setId("theme-toggle");
         theme.getStyleClass().add("secondary-button");
         theme.setMinWidth(116);
@@ -86,7 +88,8 @@ public final class AdminMainView extends BorderPane {
     private void showPage(AdminNavigation.Page page) {
         pageTitle.setText(page.title());
         pageDescription.setText(page.description());
-        content.getChildren().setAll(pages.computeIfAbsent(page, this::createPreview));
+        content.getChildren().setAll(pages.computeIfAbsent(page, selected ->
+                selected == AdminNavigation.Page.USERS ? new UserManagementView(userStore) : createPreview(selected)));
     }
 
     private Node createPreview(AdminNavigation.Page page) {
