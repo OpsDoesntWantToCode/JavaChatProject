@@ -1,0 +1,79 @@
+.admin-root, .admin-dialog {
+    -fx-font-family: "Segoe UI";
+    -fx-font-size: 13px;
+    -admin-bg: #f3f5f9;
+    -admin-surface: #ffffff;
+    -admin-text: #19263d;
+    -admin-muted: #637087;
+    -admin-border: #e0e6ef;
+    -admin-soft: #f7f9fc;
+    -admin-accent: #2558c9;
+    -fx-background-color: -admin-bg;
+    -fx-text-background-color: -admin-text;
+}
+.admin-root.theme-dark, .admin-dialog.theme-dark {
+    -admin-bg: #161d2b;
+    -admin-surface: #202b3d;
+    -admin-text: #edf2fa;
+    -admin-muted: #b3bfd1;
+    -admin-border: #3a4960;
+    -admin-soft: #28354a;
+    -admin-accent: #9dbdff;
+}
+.label { -fx-text-fill: -admin-text; }
+.admin-sidebar {
+    -fx-background-color: #12213b;
+    -fx-padding: 24 12 18 12;
+    -fx-spacing: 5;
+}
+.brand-block { -fx-padding: 0 12 25 12; }
+.brand { -fx-text-fill: #ffffff; -fx-font-size: 21px; -fx-font-weight: bold; }
+.brand-subtitle { -fx-text-fill: #adbbd2; -fx-font-size: 12px; }
+.nav-section { -fx-text-fill: #93a7c6; -fx-font-size: 10px; -fx-font-weight: bold; -fx-padding: 0 12 10 12; }
+.nav-button {
+    -fx-background-color: transparent;
+    -fx-background-radius: 7;
+    -fx-text-fill: #d5deec;
+    -fx-padding: 10 10;
+    -fx-graphic-text-gap: 10;
+    -fx-cursor: hand;
+    -fx-font-size: 12px;
+}
+.nav-number { -fx-text-fill: #94a9c9; -fx-font-size: 11px; -fx-min-width: 20; }
+.nav-button:hover { -fx-background-color: #213452; }
+.nav-button:selected { -fx-background-color: #2e5cc4; -fx-text-fill: white; -fx-font-weight: bold; }
+.nav-button:selected .nav-number { -fx-text-fill: #e1ebff; }
+.nav-button:focused { -fx-border-color: #b8d0ff; -fx-border-radius: 7; -fx-border-width: 1; }
+.sidebar-footer { -fx-text-fill: #a6b6ce; -fx-font-size: 11px; -fx-line-spacing: 5; -fx-padding: 20 12 0 12; }
+.admin-header { -fx-background-color: -admin-surface; -fx-padding: 18 24; -fx-border-color: transparent transparent -admin-border transparent; }
+.breadcrumb { -fx-text-fill: -admin-muted; -fx-font-size: 10px; -fx-font-weight: bold; }
+.avatar { -fx-background-color: #e4edff; -fx-text-fill: #2558c9; -fx-background-radius: 18; -fx-min-width: 36; -fx-min-height: 36; -fx-alignment: center; -fx-font-weight: bold; -fx-font-size: 16px; }
+.identity-name { -fx-font-weight: bold; }
+.muted { -fx-text-fill: -admin-muted; -fx-font-size: 11px; }
+.secondary-button {
+    -fx-background-color: -admin-surface;
+    -fx-border-color: -admin-border;
+    -fx-border-radius: 6;
+    -fx-background-radius: 6;
+    -fx-text-fill: -admin-text;
+    -fx-padding: 8 12;
+    -fx-cursor: hand;
+}
+.secondary-button:hover, .secondary-button:selected { -fx-background-color: -admin-soft; }
+.secondary-button:focused { -fx-border-color: -admin-accent; }
+.page-heading { -fx-padding: 28 26 22 26; }
+.page-title { -fx-font-size: 25px; -fx-font-weight: bold; }
+.page-description { -fx-text-fill: -admin-muted; -fx-font-size: 13px; -fx-line-spacing: 4; }
+.page-content { -fx-padding: 0 26 24 26; }
+.content-scroll, .content-scroll > .viewport { -fx-background-color: transparent; }
+.content-scroll { -fx-padding: 0; -fx-border-width: 0; -fx-background-insets: 0; }
+.preview-card { -fx-background-color: -admin-surface; -fx-background-radius: 12; -fx-border-color: -admin-border; -fx-border-radius: 12; -fx-padding: 26; }
+.preview-badge { -fx-text-fill: -admin-accent; -fx-background-color: -admin-soft; -fx-background-radius: 5; -fx-padding: 6 10; -fx-font-size: 10px; -fx-font-weight: bold; }
+.preview-title { -fx-font-size: 21px; -fx-font-weight: bold; }
+.feature-heading { -fx-text-fill: -admin-muted; -fx-font-size: 10px; -fx-font-weight: bold; -fx-padding: 8 0 0 0; }
+.feature-row { -fx-background-color: -admin-soft; -fx-padding: 12; -fx-background-radius: 7; }
+.feature-number { -fx-text-fill: -admin-accent; -fx-font-weight: bold; -fx-min-width: 22; }
+.preview-note { -fx-text-fill: -admin-muted; -fx-font-size: 11px; -fx-padding: 5 0 0 0; }
+.admin-dialog { -fx-background-color: -admin-surface; }
+.admin-dialog > .content.label, .admin-dialog > .header-panel .label { -fx-text-fill: -admin-text; }
+.admin-dialog > .header-panel { -fx-background-color: -admin-soft; }
