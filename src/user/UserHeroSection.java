@@ -60,15 +60,12 @@ public final class UserHeroSection {
 
         titleBox.getChildren().addAll(lblTitle, lblSubtitle);
 
-        // 3. Danh sách 3 Thẻ tính năng với Icon Badge tương phản cao (Không bị chìm vào nền)
+        // 3. Danh sách 3 Thẻ tính năng với Icon Vector đơn sắc trắng thuần túy (Minimalist, không màu mè)
         VBox featuresBox = new VBox(10);
         featuresBox.getChildren().addAll(
-            createFeatureChip(SVG_LOCK, "#5B8DF8", "rgba(78, 107, 242, 0.16)", "rgba(78, 107, 242, 0.32)",
-                "Mã hóa AES-GCM", "Khóa riêng từng phiên chat, an toàn dữ liệu."),
-            createFeatureChip(SVG_ZAP, "#F0B232", "rgba(240, 178, 50, 0.16)", "rgba(240, 178, 50, 0.32)",
-                "TCP Socket thuần", "Độ trễ thấp, kết nối liên tục không gián đoạn."),
-            createFeatureChip(SVG_USERS, "#23A55A", "rgba(35, 165, 90, 0.16)", "rgba(35, 165, 90, 0.32)",
-                "Quản lý hội thoại", "Nhắn tin trực tiếp, nhóm chat và danh bạ trực tuyến.")
+            createFeatureChip(SVG_LOCK, "Mã hóa AES-GCM", "Khóa riêng từng phiên chat, an toàn dữ liệu."),
+            createFeatureChip(SVG_ZAP, "TCP Socket thuần", "Độ trễ thấp, kết nối liên tục không gián đoạn."),
+            createFeatureChip(SVG_USERS, "Quản lý hội thoại", "Nhắn tin trực tiếp, nhóm chat và danh bạ trực tuyến.")
         );
 
         // 4. Footer Credit
@@ -79,21 +76,22 @@ public final class UserHeroSection {
         return hero;
     }
 
-    private static HBox createFeatureChip(String svgPathData, String iconColor, String bgTint, String borderTint, String title, String description) {
+    private static HBox createFeatureChip(String svgPathData, String title, String description) {
         HBox chip = new HBox(14);
         chip.getStyleClass().add("feature-chip");
         chip.setAlignment(Pos.CENTER_LEFT);
 
-        // Hộp chứa Icon Badge bo góc 8px với màu nền bán trong suốt và viền sắc nét
+        // Hộp chứa Icon Badge bo góc 8px với màu nền tối giản trung tính, không màu mè
         StackPane iconBadge = new StackPane();
         iconBadge.setPrefSize(38, 38);
         iconBadge.setMinSize(38, 38);
         iconBadge.setMaxSize(38, 38);
-        iconBadge.setStyle("-fx-background-color: " + bgTint + "; -fx-border-color: " + borderTint + "; -fx-border-radius: 8px; -fx-background-radius: 8px; -fx-border-width: 1px;");
+        iconBadge.setStyle("-fx-background-color: rgba(255, 255, 255, 0.05); -fx-border-color: rgba(255, 255, 255, 0.08); -fx-border-radius: 8px; -fx-background-radius: 8px; -fx-border-width: 1px;");
 
+        // Icon Vector thuần sắc trắng (Pure White), lấy từ thư viện Lucide/Feather
         SVGPath svg = new SVGPath();
         svg.setContent(svgPathData);
-        svg.setFill(Color.web(iconColor));
+        svg.setFill(Color.WHITE);
         iconBadge.getChildren().add(svg);
 
         VBox textBox = new VBox(3);
