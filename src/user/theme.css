@@ -214,7 +214,7 @@ Text, .text {
     -fx-background-color: -text-muted;
 }
 
-/* Dropdown Popup Window */
+/* Dropdown Popup Window (Lơ lửng, đệm 6px, bo góc 8px) */
 .combo-box-popup {
     -fx-background-color: transparent;
 }
@@ -223,17 +223,17 @@ Text, .text {
     -fx-background-color: -bg-input;
     -fx-control-inner-background: -bg-input;
     -fx-background-insets: 0;
-    -fx-padding: 4px;
+    -fx-padding: 6px;
     -fx-border-color: -border-subtle;
     -fx-border-width: 1px;
     -fx-border-radius: 8px;
     -fx-background-radius: 8px;
-    -fx-effect: dropshadow(three-pass-box, rgba(0, 0, 0, 0.50), 16, 0, 0, 6);
+    -fx-effect: dropshadow(three-pass-box, rgba(0, 0, 0, 0.55), 18, 0, 0, 8);
 }
 .combo-box-popup > .list-view > .virtual-flow > .clipped-container > .sheet > .list-cell,
 .combo-box-popup .list-cell {
     -fx-background-color: transparent;
-    -fx-text-fill: #DBDEE1;
+    -fx-text-fill: -text-normal;
     -fx-font-size: 14.5px;
     -fx-padding: 8px 12px;
     -fx-background-radius: 6px;

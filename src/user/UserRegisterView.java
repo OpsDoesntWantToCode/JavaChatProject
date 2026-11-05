@@ -12,6 +12,7 @@ import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.control.*;
+import javafx.scene.control.skin.ComboBoxListViewSkin;
 import javafx.scene.layout.*;
 import javafx.util.Duration;
 import javafx.util.StringConverter;
@@ -219,17 +220,35 @@ public class UserRegisterView {
     }
 
     private void setupComboBox(ComboBox<String> combo) {
-        // Custom cell factory bảo đảm tuyệt đối 100% theme tối, không bị lộ nền trắng/chữ trắng của Modena
+        // Custom cell factory bảo đảm tuyệt đối 100% theme tối, phân tách rõ ràng từng ô, không bị trùng màu khi hover
         combo.setCellFactory(lv -> new ListCell<String>() {
+            {
+                setPadding(new Insets(8, 12, 8, 12));
+                selectedProperty().addListener((obs, oldV, isSel) -> updateCellVisuals());
+                hoverProperty().addListener((obs, oldV, isHov) -> updateCellVisuals());
+            }
+
             @Override
             protected void updateItem(String item, boolean empty) {
                 super.updateItem(item, empty);
                 if (empty || item == null) {
                     setText(null);
                     setGraphic(null);
+                    setStyle("-fx-background-color: transparent;");
                 } else {
                     setText(item);
-                    setStyle("-fx-text-fill: #DBDEE1; -fx-padding: 8px 12px; -fx-font-size: 14.5px;");
+                    updateCellVisuals();
+                }
+            }
+
+            private void updateCellVisuals() {
+                if (getItem() == null || isEmpty()) return;
+                if (isSelected()) {
+                    setStyle("-fx-background-color: #4E6BF2; -fx-text-fill: #FFFFFF; -fx-font-weight: bold; -fx-background-radius: 6px; -fx-padding: 8px 12px; -fx-font-size: 14.5px;");
+                } else if (isHover()) {
+                    setStyle("-fx-background-color: #262932; -fx-text-fill: #FFFFFF; -fx-font-weight: normal; -fx-background-radius: 6px; -fx-padding: 8px 12px; -fx-font-size: 14.5px;");
+                } else {
+                    setStyle("-fx-background-color: transparent; -fx-text-fill: #EDEDED; -fx-font-weight: normal; -fx-background-radius: 6px; -fx-padding: 8px 12px; -fx-font-size: 14.5px;");
                 }
             }
         });
@@ -242,26 +261,32 @@ public class UserRegisterView {
                     setText(null);
                 } else {
                     setText(item);
-                    setStyle("-fx-text-fill: #F2F3F5; -fx-font-size: 15px;");
+                    setStyle("-fx-text-fill: #EDEDED; -fx-font-size: 15px; -fx-background-color: transparent;");
                 }
             }
         });
 
-        // Hoạt ảnh Dropdown Animation: Mở trượt nhẹ xuống (Slide Down 6px) & Fade In trong 120ms
+        // Hoạt ảnh Dropdown Animation: Truy xuất trực tiếp getPopupContent từ skin, mở trượt xuống 8px và Fade In trong 150ms
         combo.showingProperty().addListener((obs, wasShowing, isShowing) -> {
             if (isShowing) {
                 Platform.runLater(() -> {
-                    Node popup = combo.lookup(".combo-box-popup");
+                    Node popup = null;
+                    if (combo.getSkin() instanceof ComboBoxListViewSkin<?> skin) {
+                        popup = skin.getPopupContent();
+                    }
+                    if (popup == null) {
+                        popup = combo.lookup(".combo-box-popup");
+                    }
                     if (popup != null) {
                         popup.setOpacity(0.0);
-                        popup.setTranslateY(-6);
+                        popup.setTranslateY(-8);
 
-                        FadeTransition ft = new FadeTransition(Duration.millis(120), popup);
+                        FadeTransition ft = new FadeTransition(Duration.millis(150), popup);
                         ft.setFromValue(0.0);
                         ft.setToValue(1.0);
 
-                        TranslateTransition tt = new TranslateTransition(Duration.millis(120), popup);
-                        tt.setFromY(-6);
+                        TranslateTransition tt = new TranslateTransition(Duration.millis(150), popup);
+                        tt.setFromY(-8);
                         tt.setToY(0);
 
                         ParallelTransition pt = new ParallelTransition(ft, tt);

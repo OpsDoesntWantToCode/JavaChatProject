@@ -95,6 +95,10 @@ Hệ thống giao diện được tổ chức theo chuẩn **Three-Layer Token A
 *   **Hiệu ứng Aura Gradient nhẹ nhàng:** Vầng sáng Aura khuếch tán diện rộng nằm độc lập ở hậu cảnh (`RadialGradient` với dải màu `rgba(78, 107, 242, 0.08)` đến trong suốt), bao phủ êm ái quanh form, không dùng viền neon sáng chói.
 *   `.hero-brand-section`: Khung thông tin tối giản thanh lịch cột trái khi Fullscreen (chiều rộng cửa sổ ≥ 1000px). Bỏ hoàn toàn các box hình oval/pill (loại bỏ biểu hiện AI slop). Cỡ chữ được chuẩn hóa tương đương bên Đăng ký / Đăng nhập: Tiêu đề **`26px`** bold, Phụ đề **`14px`**, Tiêu đề tính năng **`14.5px`** bold, Nội dung tính năng **`13.5px`**. Nội dung rút gọn cô đọng, sắc nét, tương phản chuẩn WCAG AAA.
 *   `.feature-chip`: Thẻ thông tin phẳng hình chữ nhật bo góc **`10px`** (chuẩn phong cách Developer Tooling), nền `#1E2026`, viền mỏng `1px solid #2D313A`, đệm `12px 16px`. Chữ trắng sáng `#EDEDED` và xám sáng `#A0A5B0` tương phản rõ ràng trên nền tối.
+    *   **Vector SVG Icon Badges (Khắc phục triệt để lỗi icon chìm vào nền):** Tuyệt đối không dùng emoji hệ thống (bị render màu xám xỉn chìm vào nền). Thay vào đó, sử dụng các vector `SVGPath` sắc nét đặt trong hộp chứa **`36x36px`** bo góc `8px`, nền bán trong suốt `rgba(..., 0.12)` và màu vector rực rỡ nổi bật:
+        *   Mã hóa AES-GCM: Vector Khóa bảo mật màu Sapphire Blue `#5B8DF8` (hộp nền `rgba(78, 107, 242, 0.14)`).
+        *   TCP Socket thuần: Vector Tia sét màu Vàng Hổ Phách `#F0B232` (hộp nền `rgba(240, 178, 50, 0.14)`).
+        *   Quản lý hội thoại: Vector Nhóm người dùng màu Xanh Lục `#23A55A` (hộp nền `rgba(35, 165, 90, 0.14)`).
 *   `.input-error`: Viền đỏ cảnh báo `-status-danger` (`#FA777C`), không lạm dụng hiệu ứng nhấp nháy neon.
 *   `.strength-bar`: Thanh đo độ mạnh mật khẩu **4 phân đoạn (4-Segment Segmented Meter)**, mỗi phân đoạn cao **`5px`**, bo góc `2.5px`, cách nhau `4px`.
     *   Trạng thái 0%: Cả 4 phân đoạn màu track `#1E2026`.
@@ -103,7 +107,9 @@ Hệ thống giao diện được tổ chức theo chuẩn **Three-Layer Token A
     *   Trạng thái Khá (70-89%): Phân đoạn 1, 2, 3 màu Sapphire Blue `#4E6BF2`, phân đoạn 4 `#1E2026`.
     *   Trạng thái Rất an toàn (≥ 90%): Cả 4 phân đoạn màu xanh lá `#23A55A`.
 *   `.strength-label`: Nhãn mô tả độ mạnh cỡ **`12.5px`**, đồng bộ màu với các phân đoạn.
-*   `.combo-box-popup`: Menu danh sách thả xuống Matte Dark triệt để: Nền cố định `#0F1013`, viền `1px solid #2A2D35`, bo góc **`8px`**, bóng đổ độ sâu `dropshadow(three-pass-box, rgba(0, 0, 0, 0.45), 14, 0, 0, 6)`. Chữ các mục có màu `#DBDEE1` (hover `#FFFFFF` trên `#22252C`, selected `#FFFFFF` trên nền `#4E6BF2`). Tích hợp hoạt ảnh thả xuống mềm mại (Fade In + Slide Down trong 120ms).
+*   `.combo-box-popup`: Menu danh sách thả xuống Matte Dark triệt để: Nền cố định `#0F1013`, viền `1px solid #2A2D35`, bo góc **`8px`**, bóng đổ độ sâu `dropshadow(three-pass-box, rgba(0, 0, 0, 0.45), 14, 0, 0, 6)`.
+    *   **Khắc phục lỗi trùng lặp khi hover:** Sử dụng cơ chế lắng nghe trạng thái `hoverProperty()` và `selectedProperty()` của từng ô `ListCell` độc lập, bảo đảm khi hover ô sẽ highlight viền hộp bo góc 6px với nền `#262932` và chữ `#FFFFFF`, khi không hover trả về trong suốt (chữ `#EDEDED`), khi selected mang nền `#4E6BF2` đậm nét; các lựa chọn phân tách rõ rệt, không bị chồng chéo hay xung đột màu.
+    *   **Hoạt ảnh Dropdown chuẩn xác:** Truy xuất trực tiếp `ComboBoxListViewSkin.getPopupContent()`, kích hoạt hoạt ảnh `FadeTransition` (0.0 ➔ 1.0) kết hợp `TranslateTransition` trượt nhẹ xuống `8px` trong `150ms` mượt mà 60fps khi người dùng bấm mở menu.
 
 ---
 
