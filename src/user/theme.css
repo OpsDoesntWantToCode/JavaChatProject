@@ -1,0 +1,422 @@
+/* ==========================================================================
+   JAVA CHAT SYSTEM — MODERN OBSIDIAN DARK THEME (TREE LAYER ARCHITECTURE)
+   Bản sắc thiết kế độc lập kết hợp Developer Tooling & Deep Obsidian Surface
+   Tầng 1: Primitive Tokens (Màu thô & Kích thước)
+   Tầng 2: Semantic Tokens (Ngữ nghĩa & Vai trò)
+   Tầng 3: Component-level Tokens & States (Thẻ, Nút, Input, DatePicker)
+   ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   TẦNG 1 & TẦNG 2: ROOT DESIGN TOKENS
+   -------------------------------------------------------------------------- */
+.root {
+    -fx-font-family: "Segoe UI";
+    -fx-focus-color: transparent;
+    -fx-faint-focus-color: transparent;
+
+    /* Tầng 2: Semantic Tokens gán màu độc bản */
+    -bg-canvas: #141619;
+    -bg-card: #1B1D22;
+    -bg-input: #0F1013;
+    -bg-nav-rail: #0F1013;
+    -accent-primary: #4E6BF2;
+    -accent-hover: #3D5AE0;
+    -accent-active: #2E48C7;
+    -status-online: #23A55A;
+    -status-offline: #80848E;
+    -status-danger: #FA777C;
+    -status-warning: #F0B232;
+    -text-normal: #EDEDED;
+    -text-muted: #8E929B;
+    -text-link: #4E6BF2;
+    -border-subtle: #2A2D35;
+}
+
+/* Áp dụng khử răng cưa Subpixel LCD ClearType trực tiếp lên các node văn bản */
+Text, .text {
+    -fx-font-smoothing-type: lcd;
+}
+
+/* --------------------------------------------------------------------------
+   TẦNG 3: KHUNG NỀN & THẺ CARD
+   -------------------------------------------------------------------------- */
+.ambient-canvas {
+    -fx-background-color: -bg-canvas;
+}
+
+/* Thẻ Card chính: Bo góc thanh lịch 14px, viền mỏng 1px #2A2D35
+   TUYỆT ĐỐI KHÔNG gán dropshadow/effect để tránh rasterize texture làm bể/mờ font chữ */
+.auth-card {
+    -fx-background-color: -bg-card;
+    -fx-background-radius: 14px;
+    -fx-border-color: -border-subtle;
+    -fx-border-radius: 14px;
+    -fx-border-width: 1px;
+    -fx-padding: 36px 40px;
+}
+
+/* --------------------------------------------------------------------------
+   HERO SPLIT-SCREEN (CHO FULLSCREEN / EXPANDED MODE)
+   Phong cách Developer Tooling UI: Bo góc 10px, tương phản cao chuẩn WCAG AAA
+   -------------------------------------------------------------------------- */
+.hero-brand-section {
+    -fx-alignment: center-left;
+    -fx-padding: 24px 36px;
+}
+
+.hero-logo-box {
+    -fx-background-color: -accent-primary;
+    -fx-background-radius: 10px;
+    -fx-pref-width: 44px;
+    -fx-pref-height: 44px;
+    -fx-alignment: center;
+}
+
+.hero-title {
+    -fx-font-size: 26px;
+    -fx-font-weight: bold;
+    -fx-text-fill: -text-normal;
+}
+
+.hero-subtitle {
+    -fx-font-size: 14px;
+    -fx-text-fill: -text-muted;
+}
+
+.feature-chip {
+    -fx-background-color: #1E2026;
+    -fx-border-color: #2D313A;
+    -fx-border-radius: 10px;
+    -fx-background-radius: 10px;
+    -fx-border-width: 1px;
+    -fx-padding: 12px 16px;
+}
+.feature-chip:hover {
+    -fx-background-color: #262932;
+    -fx-border-color: #383D48;
+}
+
+.feature-chip-title {
+    -fx-font-size: 14.5px;
+    -fx-font-weight: bold;
+    -fx-text-fill: -text-normal;
+}
+
+.feature-chip-desc {
+    -fx-font-size: 13.5px;
+    -fx-text-fill: -text-muted;
+}
+
+/* --------------------------------------------------------------------------
+   TYPOGRAPHY
+   -------------------------------------------------------------------------- */
+.header-title {
+    -fx-font-size: 26px;
+    -fx-font-weight: bold;
+    -fx-text-fill: -text-normal;
+}
+
+.header-subtitle {
+    -fx-font-size: 14px;
+    -fx-text-fill: -text-muted;
+}
+
+.field-label {
+    -fx-font-size: 12.5px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #A0A5B0;
+}
+
+.required-star {
+    -fx-font-size: 12.5px;
+    -fx-font-weight: bold;
+    -fx-text-fill: -status-danger;
+}
+
+.link-action {
+    -fx-font-size: 13.5px;
+    -fx-text-fill: -text-link;
+    -fx-cursor: hand;
+    -fx-underline: false;
+}
+.link-action:hover {
+    -fx-underline: true;
+}
+
+.text-muted {
+    -fx-font-size: 13.5px;
+    -fx-text-fill: -text-muted;
+}
+
+/* --------------------------------------------------------------------------
+   INPUT FIELDS (BO GÓC MỀM 9PX THEO THIẾT KẾ HIỆN ĐẠI & EYE TOGGLE)
+   -------------------------------------------------------------------------- */
+.text-field, .password-field {
+    -fx-background-color: -bg-input;
+    -fx-background-radius: 9px;
+    -fx-border-color: -border-subtle;
+    -fx-border-radius: 9px;
+    -fx-border-width: 1px;
+    -fx-text-fill: -text-normal;
+    -fx-prompt-text-fill: #686C75;
+    -fx-font-size: 15px;
+    -fx-pref-height: 44px;
+    -fx-padding: 8px 14px;
+}
+
+.text-field:focused, .password-field:focused {
+    -fx-border-color: -accent-primary;
+    -fx-effect: dropshadow(three-pass-box, rgba(78, 107, 242, 0.35), 8, 0, 0, 0);
+}
+
+.btn-eye-toggle {
+    -fx-background-color: transparent;
+    -fx-text-fill: -text-muted;
+    -fx-font-size: 16px;
+    -fx-cursor: hand;
+    -fx-padding: 4px 8px;
+    -fx-border-width: 0;
+}
+.btn-eye-toggle:hover {
+    -fx-text-fill: -text-normal;
+}
+
+.input-error, .input-error .text-field, .input-error .password-field {
+    -fx-border-color: -status-danger !important;
+    -fx-effect: dropshadow(three-pass-box, rgba(250, 119, 124, 0.35), 8, 0, 0, 0) !important;
+}
+
+/* --------------------------------------------------------------------------
+   COMBOBOX & POPUP (MATTE DARK OBSIDIAN, BO GÓC 9PX & 8PX)
+   Tuyệt đối loại bỏ nền trắng chữ trắng của Modena
+   -------------------------------------------------------------------------- */
+.combo-box {
+    -fx-background-color: -bg-input;
+    -fx-background-radius: 9px;
+    -fx-border-color: -border-subtle;
+    -fx-border-radius: 9px;
+    -fx-border-width: 1px;
+    -fx-pref-height: 44px;
+}
+.combo-box .list-cell {
+    -fx-background-color: transparent;
+    -fx-text-fill: -text-normal;
+    -fx-font-size: 15px;
+    -fx-padding: 8px 14px;
+}
+.combo-box:focused {
+    -fx-border-color: -accent-primary;
+}
+.combo-box .arrow-button {
+    -fx-background-color: transparent;
+}
+.combo-box .arrow {
+    -fx-background-color: -text-muted;
+}
+
+/* Dropdown Popup Window */
+.combo-box-popup {
+    -fx-background-color: transparent;
+}
+.combo-box-popup > .list-view,
+.combo-box-popup .list-view {
+    -fx-background-color: -bg-input;
+    -fx-control-inner-background: -bg-input;
+    -fx-background-insets: 0;
+    -fx-padding: 4px;
+    -fx-border-color: -border-subtle;
+    -fx-border-width: 1px;
+    -fx-border-radius: 8px;
+    -fx-background-radius: 8px;
+    -fx-effect: dropshadow(three-pass-box, rgba(0, 0, 0, 0.50), 16, 0, 0, 6);
+}
+.combo-box-popup > .list-view > .virtual-flow > .clipped-container > .sheet > .list-cell,
+.combo-box-popup .list-cell {
+    -fx-background-color: transparent;
+    -fx-text-fill: #DBDEE1;
+    -fx-font-size: 14.5px;
+    -fx-padding: 8px 12px;
+    -fx-background-radius: 6px;
+}
+.combo-box-popup > .list-view > .virtual-flow > .clipped-container > .sheet > .list-cell:hover,
+.combo-box-popup .list-cell:hover {
+    -fx-background-color: #22252C;
+    -fx-text-fill: #FFFFFF;
+}
+.combo-box-popup > .list-view > .virtual-flow > .clipped-container > .sheet > .list-cell:filled:selected,
+.combo-box-popup .list-cell:filled:selected {
+    -fx-background-color: -accent-primary;
+    -fx-text-fill: #FFFFFF;
+    -fx-font-weight: bold;
+}
+
+/* --------------------------------------------------------------------------
+   DATE PICKER (DARK OBSIDIAN, BO GÓC 9PX)
+   -------------------------------------------------------------------------- */
+.date-picker {
+    -fx-background-color: transparent;
+    -fx-pref-height: 44px;
+}
+.date-picker > .text-field {
+    -fx-background-color: -bg-input;
+    -fx-background-radius: 9px 0 0 9px;
+    -fx-border-color: -border-subtle;
+    -fx-border-radius: 9px 0 0 9px;
+    -fx-border-width: 1px;
+    -fx-text-fill: -text-normal;
+    -fx-font-size: 15px;
+    -fx-pref-height: 44px;
+    -fx-padding: 8px 14px;
+}
+.date-picker > .arrow-button {
+    -fx-background-color: -bg-input;
+    -fx-background-radius: 0 9px 9px 0;
+    -fx-border-color: -border-subtle;
+    -fx-border-radius: 0 9px 9px 0;
+    -fx-border-width: 1px;
+    -fx-cursor: hand;
+    -fx-pref-height: 44px;
+}
+.date-picker > .arrow-button > .arrow {
+    -fx-background-color: -text-muted;
+}
+.date-picker:focused > .text-field,
+.date-picker:focused > .arrow-button {
+    -fx-border-color: -accent-primary;
+}
+
+/* DatePicker Popup Calendar */
+.date-picker-popup {
+    -fx-background-color: -bg-card;
+    -fx-border-color: -border-subtle;
+    -fx-border-radius: 10px;
+    -fx-background-radius: 10px;
+    -fx-effect: dropshadow(three-pass-box, rgba(0, 0, 0, 0.5), 14, 0, 0, 6);
+}
+.date-picker-popup > .month-year-pane {
+    -fx-background-color: -bg-input;
+    -fx-background-radius: 10px 10px 0 0;
+    -fx-padding: 8px;
+}
+.date-picker-popup > .month-year-pane > .label {
+    -fx-text-fill: -text-normal;
+    -fx-font-weight: bold;
+    -fx-font-size: 13px;
+}
+.date-picker-popup > .month-year-pane > .spinner > .button {
+    -fx-background-color: transparent;
+    -fx-cursor: hand;
+}
+.date-picker-popup > .month-year-pane > .spinner > .button > .left-arrow,
+.date-picker-popup > .month-year-pane > .spinner > .button > .right-arrow {
+    -fx-background-color: -text-muted;
+}
+.date-picker-popup > .calendar-grid {
+    -fx-background-color: -bg-card;
+    -fx-padding: 8px;
+}
+.date-picker-popup .day-name-cell {
+    -fx-text-fill: -text-muted;
+    -fx-font-size: 11px;
+    -fx-font-weight: bold;
+}
+.date-picker-popup .day-cell {
+    -fx-background-color: transparent;
+    -fx-text-fill: -text-normal;
+    -fx-font-size: 12px;
+    -fx-alignment: CENTER;
+    -fx-padding: 4px;
+    -fx-background-radius: 6px;
+}
+.date-picker-popup .day-cell:hover {
+    -fx-background-color: #22252C;
+    -fx-cursor: hand;
+}
+.date-picker-popup .day-cell.selected {
+    -fx-background-color: -accent-primary;
+    -fx-text-fill: #FFFFFF;
+}
+.date-picker-popup .previous-month,
+.date-picker-popup .next-month {
+    -fx-text-fill: #5E6269;
+}
+
+/* --------------------------------------------------------------------------
+   PRIMARY CTA BUTTON (BO GÓC 8PX HIỆN ĐẠI TACTILE)
+   -------------------------------------------------------------------------- */
+.btn-primary {
+    -fx-background-color: -accent-primary;
+    -fx-background-radius: 8px;
+    -fx-text-fill: #FFFFFF;
+    -fx-font-size: 15px;
+    -fx-font-weight: bold;
+    -fx-pref-height: 44px;
+    -fx-cursor: hand;
+    -fx-border-width: 0;
+}
+.btn-primary:hover {
+    -fx-background-color: -accent-hover;
+}
+.btn-primary:pressed {
+    -fx-background-color: -accent-active;
+}
+.btn-primary:disabled {
+    -fx-background-color: -accent-active;
+    -fx-opacity: 0.65;
+    -fx-cursor: wait;
+}
+
+/* --------------------------------------------------------------------------
+   PASSWORD STRENGTH METER (4-SEGMENT SEGMENTED METER 5PX, BO GÓC 2.5PX)
+   -------------------------------------------------------------------------- */
+.strength-meter {
+    -fx-pref-height: 5px;
+    -fx-min-height: 5px;
+    -fx-max-height: 5px;
+}
+.strength-segment {
+    -fx-background-color: #1E2026;
+    -fx-background-radius: 2.5px;
+    -fx-pref-height: 5px;
+    -fx-min-height: 5px;
+    -fx-max-height: 5px;
+}
+.strength-segment-weak {
+    -fx-background-color: #FA777C;
+}
+.strength-segment-medium {
+    -fx-background-color: #F0B232;
+}
+.strength-segment-good {
+    -fx-background-color: #4E6BF2;
+}
+.strength-segment-strong {
+    -fx-background-color: #23A55A;
+}
+
+.strength-label {
+    -fx-font-size: 12.5px;
+    -fx-font-weight: bold;
+    -fx-padding: 3px 0 0 0;
+}
+
+/* --------------------------------------------------------------------------
+   INDETERMINATE PROGRESS BAR & STATUS MESSAGES
+   -------------------------------------------------------------------------- */
+.indeterminate-bar .bar {
+    -fx-background-color: linear-gradient(to right, -accent-primary, #8B5CF6, -accent-primary);
+    -fx-background-radius: 6px;
+}
+
+.status-message {
+    -fx-font-size: 12px;
+    -fx-text-fill: -text-muted;
+}
+.status-success {
+    -fx-text-fill: -status-online !important;
+    -fx-font-weight: bold;
+}
+.status-error {
+    -fx-text-fill: -status-danger !important;
+    -fx-font-weight: bold;
+}
