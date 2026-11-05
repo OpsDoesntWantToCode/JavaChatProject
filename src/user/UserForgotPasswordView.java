@@ -101,7 +101,9 @@ public class UserForgotPasswordView {
         formBox.getChildren().addAll(inputBlock, progressBar, lblStatus, btnSend, footerBox);
         card.getChildren().addAll(headerBox, formBox);
 
-        root.getChildren().add(card);
+        // Vầng sáng Ambient Aura phát xuất trực tiếp từ phía sau thẻ Card
+        Region cardAura = JavaFXTheme.createCardAmbientAura(card);
+        root.getChildren().addAll(cardAura, card);
     }
 
     private void handleResetPassword() {

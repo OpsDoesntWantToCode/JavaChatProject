@@ -191,7 +191,10 @@ public class UserRegisterView {
         footerBox.getChildren().addAll(lblHasAccount, lblLogin);
 
         card.getChildren().addAll(headerBox, grid, btnRegister, footerBox);
-        root.getChildren().add(card);
+
+        // Vầng sáng Ambient Aura phát xuất trực tiếp từ phía sau thẻ Card
+        Region cardAura = JavaFXTheme.createCardAmbientAura(card);
+        root.getChildren().addAll(cardAura, card);
     }
 
     private void setupDatePicker(DatePicker picker) {

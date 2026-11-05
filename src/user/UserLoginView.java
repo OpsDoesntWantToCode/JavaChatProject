@@ -110,7 +110,9 @@ public class UserLoginView {
         formBox.getChildren().addAll(userBox, passBox, btnLogin, footerBox);
         card.getChildren().addAll(headerBox, formBox);
 
-        root.getChildren().add(card);
+        // Vầng sáng Ambient Aura phát xuất trực tiếp từ phía sau thẻ Card
+        Region cardAura = JavaFXTheme.createCardAmbientAura(card);
+        root.getChildren().addAll(cardAura, card);
     }
 
     private void handleLogin() {

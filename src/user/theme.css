@@ -55,6 +55,13 @@ Text, .text {
     -fx-padding: 36px 40px;
 }
 
+/* Vầng sáng Ambient Aura phát xuất trực tiếp từ sau thẻ Card (Login / Register / Forgot Password) */
+.card-ambient-aura {
+    -fx-background-color: radial-gradient(center 50% 50%, radius 65%, rgba(78, 107, 242, 0.22) 0%, rgba(78, 107, 242, 0.08) 50%, transparent 100%);
+    -fx-background-radius: 26px;
+    -fx-effect: gaussian-blur(24);
+}
+
 /* --------------------------------------------------------------------------
    HERO SPLIT-SCREEN (CHO FULLSCREEN / EXPANDED MODE)
    Phong cách Developer Tooling UI: Bo góc 10px, tương phản cao chuẩn WCAG AAA
@@ -105,6 +112,13 @@ Text, .text {
 .feature-chip-desc {
     -fx-font-size: 13.5px;
     -fx-text-fill: -text-muted;
+}
+
+.feature-chip-icon,
+.feature-chip SVGPath,
+.hero-logo-box SVGPath,
+.hero-logo-icon {
+    -fx-fill: #FFFFFF !important;
 }
 
 /* --------------------------------------------------------------------------

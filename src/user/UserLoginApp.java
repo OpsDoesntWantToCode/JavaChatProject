@@ -12,11 +12,6 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
-import javafx.scene.paint.Color;
-import javafx.scene.paint.CycleMethod;
-import javafx.scene.paint.RadialGradient;
-import javafx.scene.paint.Stop;
-import javafx.scene.shape.Circle;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 
@@ -51,10 +46,7 @@ public class UserLoginApp extends Application {
         masterRoot = new StackPane();
         masterRoot.getStyleClass().add("ambient-canvas");
 
-        // 1. Các đốm sáng Ambient Glow Orbs mờ ảo phía sau nền
-        setupAmbientBackgroundOrbs();
-
-        // 2. Khung Split-Screen HBox
+        // Khung Split-Screen HBox (Vầng sáng Ambient Aura được neo trực tiếp sau thẻ form card của từng View)
         splitBox = new HBox(40);
         splitBox.setAlignment(Pos.CENTER);
         splitBox.setPadding(new Insets(24, 48, 24, 48));
@@ -94,19 +86,6 @@ public class UserLoginApp extends Application {
         stage.setMinHeight(560);
         stage.centerOnScreen();
         stage.show();
-    }
-
-    private void setupAmbientBackgroundOrbs() {
-        // Vầng sáng Aura khuếch tán cực nhẹ (~8% opacity) màu Sapphire Tech, êm dịu, không neon
-        Circle ambientAura = new Circle(380);
-        ambientAura.setFill(new RadialGradient(0, 0, 0.5, 0.5, 0.5, true, CycleMethod.NO_CYCLE,
-            new Stop(0.0, Color.rgb(78, 107, 242, 0.08)),
-            new Stop(0.6, Color.rgb(78, 107, 242, 0.02)),
-            new Stop(1.0, Color.TRANSPARENT)));
-        StackPane.setAlignment(ambientAura, Pos.CENTER);
-        ambientAura.setMouseTransparent(true);
-
-        masterRoot.getChildren().add(ambientAura);
     }
 
     private void updateResponsiveLayout(double windowWidth) {

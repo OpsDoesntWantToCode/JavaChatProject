@@ -42,6 +42,7 @@ public final class UserHeroSection {
         SVGPath logoSvg = new SVGPath();
         logoSvg.setContent(SVG_CHAT);
         logoSvg.setFill(Color.WHITE);
+        logoSvg.getStyleClass().add("hero-logo-icon");
         logoBox.getChildren().add(logoSvg);
 
         Label lblTag = new Label("DESKTOP CLIENT • JAVA 21 & POSTGRESQL");
@@ -86,12 +87,13 @@ public final class UserHeroSection {
         iconBadge.setPrefSize(38, 38);
         iconBadge.setMinSize(38, 38);
         iconBadge.setMaxSize(38, 38);
-        iconBadge.setStyle("-fx-background-color: rgba(255, 255, 255, 0.05); -fx-border-color: rgba(255, 255, 255, 0.08); -fx-border-radius: 8px; -fx-background-radius: 8px; -fx-border-width: 1px;");
+        iconBadge.setStyle("-fx-background-color: rgba(255, 255, 255, 0.08); -fx-border-color: rgba(255, 255, 255, 0.12); -fx-border-radius: 8px; -fx-background-radius: 8px; -fx-border-width: 1px;");
 
         // Icon Vector thuần sắc trắng (Pure White), lấy từ thư viện Lucide/Feather
         SVGPath svg = new SVGPath();
         svg.setContent(svgPathData);
         svg.setFill(Color.WHITE);
+        svg.getStyleClass().add("feature-chip-icon");
         iconBadge.getChildren().add(svg);
 
         VBox textBox = new VBox(3);

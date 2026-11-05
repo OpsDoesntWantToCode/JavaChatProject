@@ -7,16 +7,37 @@ import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
+import javafx.scene.layout.Region;
 import javafx.scene.layout.StackPane;
 import javafx.util.Duration;
 
 /**
  * Lớp tiện ích giao diện chuẩn hóa cho JavaFX 21 (Theme & Micro-interactions)
- * Hỗ trợ các tương tác mượt mà: Password Toggle Eye, Shake on Error, Strength Meter.
+ * Hỗ trợ các tương tác mượt mà: Password Toggle Eye, Shake on Error, Strength Meter, Card Ambient Aura.
  */
 public final class JavaFXTheme {
 
     private JavaFXTheme() {}
+
+    /**
+     * Tạo lớp đệm vầng sáng Ambient Aura phát xuất trực tiếp từ phía sau thẻ Card (Login / Register / Forgot Password)
+     * Vầng sáng tự động đồng bộ kích thước và vị trí theo viền thẻ (+80px bề rộng và chiều cao).
+     */
+    public static Region createCardAmbientAura(Region card) {
+        Region aura = new Region();
+        aura.getStyleClass().add("card-ambient-aura");
+        aura.setMouseTransparent(true);
+
+        // Mở rộng viền hào quang phát xuất từ 4 cạnh của thẻ Card (40px mỗi cạnh)
+        aura.prefWidthProperty().bind(card.widthProperty().add(80));
+        aura.prefHeightProperty().bind(card.heightProperty().add(80));
+        aura.minWidthProperty().bind(aura.prefWidthProperty());
+        aura.minHeightProperty().bind(aura.prefHeightProperty());
+        aura.maxWidthProperty().bind(aura.prefWidthProperty());
+        aura.maxHeightProperty().bind(aura.prefHeightProperty());
+
+        return aura;
+    }
 
     /**
      * Tạo nhãn Field Label kèm dấu sao đỏ bắt buộc theo chuẩn UX
