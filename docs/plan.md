@@ -86,13 +86,13 @@
   - *Mô tả:* Dialog quên mật khẩu: nhập email để nhận mật khẩu ngẫu nhiên. Dialog thông tin cá nhân: cập nhật họ tên, địa chỉ, ngày sinh, giới tính; tab hoặc vùng riêng để thực hiện Đổi mật khẩu (mật khẩu cũ, mật khẩu mới, xác nhận mật khẩu mới).
 - [x] **Task U3 — Khung không gian làm việc chính (`UserMainWorkspace`)** *(Hoàn thành: 28/10/2026)*:
   - *Mô tả:* Cửa sổ chính 1000x700 chia layout 3 vùng: Cột trái (Thanh tìm kiếm, Tabs chuyển đổi Bạn bè / Nhóm chat), Vùng giữa (Khung chat hội thoại), Vùng phải (Thông tin người đang chat / danh sách thành viên nhóm).
-- [ ] **Task U4 — Danh sách bạn bè & Quản lý quan hệ (`FriendListPanel`)** *(Hạn chót: 29/10/2026)*:
+- [x] **Task U4 — Danh sách bạn bè & Quản lý quan hệ (`FriendsManagementView`)** *(Hoàn thành: 29/10/2026)*:
   - *Mô tả:* Danh sách hiển thị bạn bè có avatar/tên, chấm màu trạng thái Online (xanh) / Offline (xám). Ô lọc bạn bè theo tên. Menu ngữ cảnh (chuột phải) hoặc nút thao tác: "Hủy kết bạn", "Chặn người dùng (Block)" (kèm thông báo sau khi block sẽ không thể tìm thấy hoặc gửi kết bạn lại).
-- [ ] **Task U5 — Danh sách yêu cầu kết bạn (`FriendRequestDialog`)** *(Hạn chót: 29/10/2026)*:
+- [x] **Task U5 — Danh sách yêu cầu kết bạn (`FriendsManagementView` Tab 3)** *(Hoàn thành: 29/10/2026)*:
   - *Mô tả:* Danh sách các lời mời kết bạn đang chờ (`PENDING`), có ô lọc theo tên người gửi. Mỗi dòng có nút "Đồng ý" (Accept) và nút "Từ chối" (Reject).
-- [ ] **Task U6 — Tab Bạn bè đang Online (`OnlineFriendsPanel`)** *(Hạn chót: 30/10/2026)*:
+- [x] **Task U6 — Tab Bạn bè đang Online (`FriendsManagementView` Tab 1)** *(Hoàn thành: 30/10/2026)*:
   - *Mô tả:* Danh sách lọc riêng những bạn bè đang có trạng thái Online. Có ô lọc tên, nút "Chat ngay" để mở nhanh khung chat, nút "Tạo nhóm" với người đó.
-- [ ] **Task U7 — Tìm kiếm người dùng hệ thống (`UserSearchDialog`)** *(Hạn chót: 30/10/2026)*:
+- [x] **Task U7 — Tìm kiếm người dùng hệ thống (`FriendsManagementView` Tab 4)** *(Hoàn thành: 30/10/2026)*:
   - *Mô tả:* Ô tìm kiếm theo tên đăng nhập hoặc họ tên. Bảng hiển thị kết quả (tự động ẩn những người đã chặn mình). Trên từng kết quả có nút: "Gửi yêu cầu kết bạn", "Chat nhanh", hoặc "Tạo group".
 - [ ] **Task U8 — Khung chat 1-1 & Lịch sử tin nhắn (`ChatPanel1on1`)** *(Hạn chót: 31/10/2026)*:
   - *Mô tả:* Vùng hiển thị tin nhắn dạng bong bóng (chat bubbles: tin mình gửi bên phải màu xanh, tin đối phương bên trái màu xám). Thanh tiêu đề trên cùng gồm: Tên/Avatar, trạng thái online/offline, nút "Báo cáo Spam", nút "Xóa toàn bộ lịch sử chat", ô tìm kiếm tin nhắn trong hội thoại. Phía dưới là ô nhập tin nhắn, nút "Gửi", nút "Gợi ý AI (LLM)".

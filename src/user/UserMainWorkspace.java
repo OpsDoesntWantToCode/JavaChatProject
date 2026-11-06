@@ -59,9 +59,8 @@ public class UserMainWorkspace extends BorderPane {
     private final ScrollPane drawerScrollPane = new ScrollPane();
     private boolean isDrawerOpen = true;
 
-    // Danh sách bạn bè phục vụ Chế độ Danh bạ (Mode Friends)
-    private final VBox friendsContainer = new VBox(12);
-    private final ScrollPane friendsScrollPane = new ScrollPane();
+    // View Quản lý Bạn bè chuyên dụng (Task U4, U5, U6, U7)
+    private FriendsManagementView friendsManagementView;
 
     // Dữ liệu cuộc hội thoại đang chọn
     private String currentChatId = "group_project";
@@ -177,7 +176,20 @@ public class UserMainWorkspace extends BorderPane {
             lblSidebarTitle.setText("Danh bạ");
             txtSearch.setPromptText("🔍 Tìm bạn bè theo tên...");
             buildFriendsSidebarList();
-            buildFriendsCenterView("all");
+            if (friendsManagementView == null) {
+                friendsManagementView = new FriendsManagementView(primaryStage, userId -> {
+                    switchMode(true);
+                    loadConversation(userId);
+                }, userId -> {
+                    Alert a = new Alert(Alert.AlertType.INFORMATION);
+                    a.initOwner(primaryStage);
+                    a.setHeaderText("Tạo nhóm mới");
+                    a.setContentText("Tính năng tạo nhóm chat với thành viên này sẽ kết nối Socket ở mốc 80%.");
+                    a.showAndWait();
+                });
+            }
+            mainViewPane.setCenter(friendsManagementView);
+            mainViewPane.setBottom(null);
             rightDrawer.setVisible(false);
             rightDrawer.setManaged(false);
         }
@@ -372,7 +384,11 @@ public class UserMainWorkspace extends BorderPane {
             item.getChildren().add(cnt);
         }
 
-        item.setOnMouseClicked(e -> buildFriendsCenterView(catId));
+        item.setOnMouseClicked(e -> {
+            if (friendsManagementView != null) {
+                friendsManagementView.switchTab(catId);
+            }
+        });
         return item;
     }
 
@@ -719,109 +735,5 @@ public class UserMainWorkspace extends BorderPane {
         isDrawerOpen = !isDrawerOpen;
         rightDrawer.setVisible(isDrawerOpen);
         rightDrawer.setManaged(isDrawerOpen);
-    }
-
-    /* ==========================================================================
-       CHẾ ĐỘ DANH BẠ & QUẢN LÝ BẠN BÈ (FRIENDS CENTER)
-       ========================================================================== */
-    private void buildFriendsCenterView(String category) {
-        friendsContainer.getChildren().clear();
-        friendsContainer.setPadding(new Insets(20));
-
-        Label lblCatTitle = new Label("Trung tâm Quản lý Bạn bè & Danh bạ");
-        lblCatTitle.setStyle("-fx-font-size: 18px; -fx-font-weight: bold; -fx-text-fill: -text-normal;");
-
-        HBox filterBar = new HBox(8);
-        filterBar.setAlignment(Pos.CENTER_LEFT);
-        Button btnAll = new Button("Tất cả bạn bè (5)");
-        Button btnOnline = new Button("Đang Online (3)");
-        Button btnPending = new Button("Lời mời kết bạn (2)");
-        Button btnAddFriend = new Button("➕ Thêm bạn mới");
-
-        btnAll.getStyleClass().add("settings-tab-btn");
-        btnOnline.getStyleClass().add("settings-tab-btn");
-        btnPending.getStyleClass().add("settings-tab-btn");
-        btnAddFriend.getStyleClass().add("settings-tab-btn");
-
-        filterBar.getChildren().addAll(btnAll, btnOnline, btnPending, btnAddFriend);
-
-        VBox listCard = new VBox(8);
-        listCard.getStyleClass().add("friends-list-card");
-        listCard.setPadding(new Insets(12));
-
-        // Nạp dữ liệu bạn bè theo ma trận dummy-data-matrix.md
-        if ("pending".equals(category)) {
-            listCard.getChildren().addAll(
-                createFriendRow("Đặng Quốc Bảo", "@quoc_bao", "Gửi lời mời 10 phút trước", false, true),
-                createFriendRow("Trần Mỹ Duyên", "@my_duyen", "Gửi lời mời hôm qua", false, true)
-            );
-        } else {
-            listCard.getChildren().addAll(
-                createFriendRow("Lưu Chí Hải", "@chihai_2026", "Đang trực tuyến • Lưu Chí Hải (Admin)", true, false),
-                createFriendRow("Nguyễn Lan Anh", "@lananh_it", "Đang trực tuyến • Thành viên nhóm đồ án", true, false),
-                createFriendRow("Lê Hoàng Nam", "@nam_le", "Đang trực tuyến", true, false),
-                createFriendRow("Phạm Đức Huy", "@duc_huy", "Ngoại tuyến (Offline)", false, false),
-                createFriendRow("Vũ Thu Hà", "@thu_ha", "Ngoại tuyến (Offline)", false, false)
-            );
-        }
-
-        friendsContainer.getChildren().addAll(lblCatTitle, filterBar, new Separator(), listCard);
-        friendsScrollPane.setContent(friendsContainer);
-        friendsScrollPane.setFitToWidth(true);
-        friendsScrollPane.getStyleClass().add("transparent-scroll");
-
-        mainViewPane.setCenter(friendsScrollPane);
-        mainViewPane.setBottom(null);
-    }
-
-    private HBox createFriendRow(String name, String tag, String status, boolean isOnline, boolean isPending) {
-        HBox row = new HBox(12);
-        row.setAlignment(Pos.CENTER_LEFT);
-        row.getStyleClass().add("friend-row-item");
-        row.setPadding(new Insets(8, 12, 8, 12));
-
-        Circle avt = new Circle(18, isOnline ? Color.web("#23A55A") : Color.web("#4E6BF2"));
-        VBox meta = new VBox(2);
-        Label lblN = new Label(name + " (" + tag + ")");
-        lblN.setStyle("-fx-font-size: 13.5px; -fx-font-weight: bold; -fx-text-fill: -text-normal;");
-        Label lblS = new Label(status);
-        lblS.setStyle("-fx-font-size: 11.5px; -fx-text-fill: -text-muted;");
-        meta.getChildren().addAll(lblN, lblS);
-        HBox.setHgrow(meta, Priority.ALWAYS);
-
-        row.getChildren().addAll(avt, meta);
-
-        if (isPending) {
-            Button btnAccept = new Button("Đồng ý ✓");
-            btnAccept.getStyleClass().add("btn-primary");
-            Button btnReject = new Button("Từ chối ✕");
-            btnReject.getStyleClass().add("btn-secondary");
-            row.getChildren().addAll(btnAccept, btnReject);
-        } else {
-            Button btnChat = new Button("💬 Nhắn tin");
-            btnChat.getStyleClass().add("btn-secondary");
-            btnChat.setOnAction(e -> {
-                switchMode(true);
-                loadConversation("user_chihai");
-            });
-
-            Button btnUnfriend = new Button("Hủy kết bạn");
-            btnUnfriend.getStyleClass().add("btn-icon-subtle");
-
-            Button btnBlock = new Button("⛔ Chặn");
-            btnBlock.getStyleClass().add("btn-danger-subtle");
-            btnBlock.setOnAction(e -> {
-                Alert b = new Alert(Alert.AlertType.CONFIRMATION);
-                b.initOwner(primaryStage);
-                b.setTitle("Xác nhận chặn người dùng");
-                b.setHeaderText("Chặn " + name + " (Mục 6.c)");
-                b.setContentText("Sau khi chặn, người này sẽ không thể tìm thấy bạn hoặc gửi tin nhắn cho bạn.");
-                b.showAndWait();
-            });
-
-            row.getChildren().addAll(btnChat, btnUnfriend, btnBlock);
-        }
-
-        return row;
     }
 }

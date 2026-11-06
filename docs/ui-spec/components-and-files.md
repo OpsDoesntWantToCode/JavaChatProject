@@ -37,7 +37,7 @@ src/user/
 | `src/user/UserRegisterView.java` | Giao diện Đăng ký 7 trường chia GridPane 2 cột đối xứng, DatePicker và ComboBox Giới tính chuẩn Matte Dark có popup animation, thanh đo độ mạnh mật khẩu 4 khúc. | **Đã hoàn thiện & Kiểm thử** |
 | `src/user/UserForgotPasswordView.java` | Giao diện Khởi tạo lại mật khẩu, thẻ Card `460px` bo góc `14px`, thanh tiến trình `ProgressBar` giả lập kết nối SMTP. | **Đã hoàn thiện & Kiểm thử** |
 | `src/user/UserMainWorkspace.java` | Khung giao diện chính sau đăng nhập: Navigation Rail `60px`, Sub-Sidebar `280-320px`, Vùng chính co giãn, và Right Drawer `280px`. | **Đã hoàn thiện & Kiểm thử** |
-| `src/user/FriendsManagementView.java` | Trung tâm Bạn bè tích hợp 4 Tabs: Đang Online, Tất cả bạn bè, Lời mời kết bạn, và Thêm bạn/Tìm người lạ với đầy đủ 3 nút thao tác độc lập. | **Sẵn sàng triển khai** |
+| `src/user/FriendsManagementView.java` | Trung tâm Bạn bè tích hợp 4 Tabs: Đang Online, Tất cả bạn bè, Lời mời kết bạn, và Thêm bạn/Tìm người lạ với đầy đủ 3 nút thao tác độc lập. | **Đã hoàn thiện & Kiểm thử** |
 | `src/user/ChatConversationView.java` | Khung chat trực tiếp tối ưu hóa VirtualFlow `ListView<Message>`, hỗ trợ tìm kiếm tin nhắn tự động cuộn highlight vàng, chọn xóa nhiều tin nhắn, và hiển thị bot AI. | **Sẵn sàng triển khai** |
 | `src/user/GroupManagementDrawer.java` | Ngăn kéo Cột 4 quản lý nhóm chat, phân quyền Admin (chỉ Admin mới có nút xóa thành viên), đổi tên nhóm, và hiển thị Khóa bảo mật E2EE. | **Sẵn sàng triển khai** |
 | `src/user/UserSettingsDialog.java` | Hộp thoại Modal nổi mở từ Avatar người dùng, chia 2 Tab: Cập nhật hồ sơ cá nhân (Mục 2) và Đổi mật khẩu (Mục 4). | **Đã hoàn thiện & Kiểm thử** |
