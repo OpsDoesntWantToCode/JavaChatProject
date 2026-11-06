@@ -22,10 +22,16 @@ public class UserLoginView {
 
     private final Runnable onNavigateToRegister;
     private final Runnable onNavigateToForgotPassword;
+    private final Runnable onLoginSuccess;
 
     public UserLoginView(Runnable onNavigateToRegister, Runnable onNavigateToForgotPassword) {
+        this(onNavigateToRegister, onNavigateToForgotPassword, null);
+    }
+
+    public UserLoginView(Runnable onNavigateToRegister, Runnable onNavigateToForgotPassword, Runnable onLoginSuccess) {
         this.onNavigateToRegister = onNavigateToRegister;
         this.onNavigateToForgotPassword = onNavigateToForgotPassword;
+        this.onLoginSuccess = onLoginSuccess;
         initUI();
     }
 
@@ -110,9 +116,7 @@ public class UserLoginView {
         formBox.getChildren().addAll(userBox, passBox, btnLogin, footerBox);
         card.getChildren().addAll(headerBox, formBox);
 
-        // Vầng sáng Ambient Aura phát xuất trực tiếp từ phía sau thẻ Card
-        Region cardAura = JavaFXTheme.createCardAmbientAura(card);
-        root.getChildren().addAll(cardAura, card);
+        root.getChildren().add(card);
     }
 
     private void handleLogin() {
@@ -134,16 +138,20 @@ public class UserLoginView {
         btnLogin.setDisable(true);
         btnLogin.setText("Đang đăng nhập...");
 
-        PauseTransition delay = new PauseTransition(Duration.millis(600));
+        PauseTransition delay = new PauseTransition(Duration.millis(500));
         delay.setOnFinished(evt -> {
             btnLogin.setDisable(false);
             btnLogin.setText("Đăng nhập");
 
-            Alert alert = new Alert(Alert.AlertType.INFORMATION);
-            alert.setTitle("Thành công");
-            alert.setHeaderText(null);
-            alert.setContentText("✓ Đăng nhập thành công với tài khoản: " + user + "\n(Giao diện JavaFX 21 + CSS đạt chuẩn Discord & Linear)");
-            alert.showAndWait();
+            if (onLoginSuccess != null) {
+                onLoginSuccess.run();
+            } else {
+                Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                alert.setTitle("Thành công");
+                alert.setHeaderText(null);
+                alert.setContentText("✓ Đăng nhập thành công với tài khoản: " + user);
+                alert.showAndWait();
+            }
         });
         delay.play();
     }

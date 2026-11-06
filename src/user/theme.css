@@ -55,13 +55,6 @@ Text, .text {
     -fx-padding: 36px 40px;
 }
 
-/* Vầng sáng Ambient Aura phát xuất trực tiếp từ sau thẻ Card (Login / Register / Forgot Password) */
-.card-ambient-aura {
-    -fx-background-color: radial-gradient(center 50% 50%, radius 65%, rgba(78, 107, 242, 0.22) 0%, rgba(78, 107, 242, 0.08) 50%, transparent 100%);
-    -fx-background-radius: 26px;
-    -fx-effect: gaussian-blur(24);
-}
-
 /* --------------------------------------------------------------------------
    HERO SPLIT-SCREEN (CHO FULLSCREEN / EXPANDED MODE)
    Phong cách Developer Tooling UI: Bo góc 10px, tương phản cao chuẩn WCAG AAA
@@ -118,7 +111,7 @@ Text, .text {
 .feature-chip SVGPath,
 .hero-logo-box SVGPath,
 .hero-logo-icon {
-    -fx-fill: #FFFFFF !important;
+    -fx-fill: #FFFFFF;
 }
 
 /* --------------------------------------------------------------------------
@@ -196,8 +189,8 @@ Text, .text {
 }
 
 .input-error, .input-error .text-field, .input-error .password-field {
-    -fx-border-color: -status-danger !important;
-    -fx-effect: dropshadow(three-pass-box, rgba(250, 119, 124, 0.35), 8, 0, 0, 0) !important;
+    -fx-border-color: -status-danger;
+    -fx-effect: dropshadow(three-pass-box, rgba(250, 119, 124, 0.35), 8, 0, 0, 0);
 }
 
 /* --------------------------------------------------------------------------
@@ -427,10 +420,342 @@ Text, .text {
     -fx-text-fill: -text-muted;
 }
 .status-success {
-    -fx-text-fill: -status-online !important;
+    -fx-text-fill: -status-online;
     -fx-font-weight: bold;
 }
 .status-error {
-    -fx-text-fill: -status-danger !important;
+    -fx-text-fill: -status-danger;
     -fx-font-weight: bold;
+}
+
+/* --------------------------------------------------------------------------
+   WORKSPACE SHELL (4-COLUMN ARCHITECTURE) & DIALOGS
+   -------------------------------------------------------------------------- */
+.nav-rail {
+    -fx-background-color: -bg-nav-rail;
+    -fx-border-color: transparent -border-subtle transparent transparent;
+    -fx-border-width: 0 1px 0 0;
+}
+
+.nav-avatar-btn {
+    -fx-cursor: hand;
+}
+
+.nav-item-btn {
+    -fx-background-color: transparent;
+    -fx-text-fill: -text-muted;
+    -fx-font-size: 18px;
+    -fx-pref-width: 44px;
+    -fx-pref-height: 44px;
+    -fx-min-width: 44px;
+    -fx-min-height: 44px;
+    -fx-background-radius: 10px;
+    -fx-cursor: hand;
+    -fx-padding: 0;
+}
+.nav-item-btn:hover {
+    -fx-background-color: #1E2026;
+    -fx-text-fill: -text-normal;
+}
+.nav-item-btn-active {
+    -fx-background-color: #1E2026;
+    -fx-text-fill: #FFFFFF;
+    -fx-border-color: transparent transparent transparent -accent-primary;
+    -fx-border-width: 0 0 0 3px;
+    -fx-border-radius: 0;
+}
+
+.sub-sidebar {
+    -fx-background-color: -bg-card;
+    -fx-border-color: transparent -border-subtle transparent transparent;
+    -fx-border-width: 0 1px 0 0;
+}
+
+.sidebar-search-field {
+    -fx-background-color: -bg-input;
+    -fx-border-color: -border-subtle;
+    -fx-border-radius: 8px;
+    -fx-background-radius: 8px;
+    -fx-text-fill: -text-normal;
+    -fx-prompt-text-fill: -text-muted;
+    -fx-padding: 8px 12px;
+    -fx-font-size: 13px;
+}
+.sidebar-search-field:focused {
+    -fx-border-color: -accent-primary;
+}
+
+.conversation-item {
+    -fx-background-color: transparent;
+    -fx-background-radius: 8px;
+    -fx-padding: 10px 12px;
+    -fx-cursor: hand;
+}
+.conversation-item:hover {
+    -fx-background-color: #242730;
+}
+.conversation-item-selected {
+    -fx-background-color: #282C37;
+}
+
+.conversation-item-title {
+    -fx-font-size: 13.5px;
+    -fx-font-weight: bold;
+    -fx-text-fill: -text-normal;
+}
+
+.conversation-item-snippet {
+    -fx-font-size: 12px;
+    -fx-text-fill: -text-muted;
+}
+
+.unread-badge {
+    -fx-background-color: -status-danger;
+    -fx-text-fill: #FFFFFF;
+    -fx-font-size: 11px;
+    -fx-font-weight: bold;
+    -fx-background-radius: 10px;
+    -fx-padding: 1px 6px;
+}
+
+/* --------------------------------------------------------------------------
+   MAIN CHAT PANE & MESSAGES
+   -------------------------------------------------------------------------- */
+.main-chat-pane {
+    -fx-background-color: -bg-canvas;
+}
+
+.chat-header {
+    -fx-background-color: -bg-card;
+    -fx-border-color: transparent transparent -border-subtle transparent;
+    -fx-border-width: 0 0 1px 0;
+}
+
+.chat-bottom-bar {
+    -fx-background-color: -bg-card;
+    -fx-border-color: -border-subtle transparent transparent transparent;
+    -fx-border-width: 1px 0 0 0;
+}
+
+.chat-input-field {
+    -fx-background-color: -bg-input;
+    -fx-border-color: -border-subtle;
+    -fx-border-radius: 8px;
+    -fx-background-radius: 8px;
+    -fx-text-fill: -text-normal;
+    -fx-prompt-text-fill: -text-muted;
+    -fx-padding: 10px 14px;
+    -fx-font-size: 13.5px;
+    -fx-pref-height: 42px;
+}
+.chat-input-field:focused {
+    -fx-border-color: -accent-primary;
+}
+
+.smart-reply-chip {
+    -fx-background-color: #1F222A;
+    -fx-border-color: -border-subtle;
+    -fx-border-radius: 14px;
+    -fx-background-radius: 14px;
+    -fx-text-fill: #A0A5B0;
+    -fx-font-size: 12px;
+    -fx-padding: 4px 10px;
+    -fx-cursor: hand;
+}
+.smart-reply-chip:hover {
+    -fx-background-color: #282C37;
+    -fx-text-fill: -text-normal;
+    -fx-border-color: -accent-primary;
+}
+
+.btn-ai-suggest {
+    -fx-background-color: #2A1F45;
+    -fx-border-color: #6C47C7;
+    -fx-border-radius: 8px;
+    -fx-background-radius: 8px;
+    -fx-text-fill: #D8B4FE;
+    -fx-font-size: 13px;
+    -fx-font-weight: bold;
+    -fx-padding: 8px 12px;
+    -fx-cursor: hand;
+}
+.btn-ai-suggest:hover {
+    -fx-background-color: #382760;
+    -fx-border-color: #8B5CF6;
+}
+
+.e2ee-banner {
+    -fx-background-color: #121E36;
+    -fx-border-color: #1E3A6E;
+    -fx-border-radius: 8px;
+    -fx-background-radius: 8px;
+    -fx-border-width: 1px;
+}
+
+.chat-bubble-received {
+    -fx-background-color: #1E2128;
+    -fx-border-color: -border-subtle;
+    -fx-border-radius: 12px;
+    -fx-background-radius: 12px;
+    -fx-padding: 10px 14px;
+    -fx-text-fill: -text-normal;
+    -fx-font-size: 13.5px;
+}
+
+.chat-bubble-sent {
+    -fx-background-color: -accent-primary;
+    -fx-border-radius: 12px;
+    -fx-background-radius: 12px;
+    -fx-padding: 10px 14px;
+    -fx-text-fill: #FFFFFF;
+    -fx-font-size: 13.5px;
+}
+
+/* --------------------------------------------------------------------------
+   RIGHT DRAWER (CỘT 4)
+   -------------------------------------------------------------------------- */
+.right-drawer {
+    -fx-background-color: -bg-card;
+    -fx-border-color: transparent transparent transparent -border-subtle;
+    -fx-border-width: 0 0 0 1px;
+}
+
+.btn-icon-subtle {
+    -fx-background-color: transparent;
+    -fx-text-fill: -text-muted;
+    -fx-font-size: 14px;
+    -fx-background-radius: 6px;
+    -fx-cursor: hand;
+    -fx-padding: 6px 8px;
+}
+.btn-icon-subtle:hover {
+    -fx-background-color: #242730;
+    -fx-text-fill: -text-normal;
+}
+
+.btn-danger-outline {
+    -fx-background-color: transparent;
+    -fx-border-color: -status-danger;
+    -fx-border-radius: 8px;
+    -fx-background-radius: 8px;
+    -fx-text-fill: -status-danger;
+    -fx-font-size: 13px;
+    -fx-padding: 8px 12px;
+    -fx-cursor: hand;
+}
+.btn-danger-outline:hover {
+    -fx-background-color: rgba(250, 119, 124, 0.12);
+}
+
+.btn-danger-subtle {
+    -fx-background-color: transparent;
+    -fx-text-fill: -status-danger;
+    -fx-font-size: 12px;
+    -fx-background-radius: 6px;
+    -fx-cursor: hand;
+    -fx-padding: 5px 8px;
+}
+.btn-danger-subtle:hover {
+    -fx-background-color: rgba(250, 119, 124, 0.15);
+}
+
+/* --------------------------------------------------------------------------
+   FRIENDS VIEW & LIST
+   -------------------------------------------------------------------------- */
+.friends-list-card {
+    -fx-background-color: -bg-card;
+    -fx-border-color: -border-subtle;
+    -fx-border-radius: 10px;
+    -fx-background-radius: 10px;
+}
+
+.friend-row-item {
+    -fx-background-color: transparent;
+    -fx-background-radius: 8px;
+    -fx-border-color: transparent transparent #22252C transparent;
+    -fx-border-width: 0 0 1px 0;
+}
+.friend-row-item:hover {
+    -fx-background-color: #242730;
+}
+
+/* --------------------------------------------------------------------------
+   SETTINGS MODAL DIALOG
+   -------------------------------------------------------------------------- */
+.settings-dialog-card {
+    -fx-background-color: -bg-card;
+    -fx-border-color: -border-subtle;
+    -fx-border-radius: 14px;
+    -fx-background-radius: 14px;
+}
+
+.dialog-close-btn {
+    -fx-background-color: transparent;
+    -fx-text-fill: -text-muted;
+    -fx-font-size: 14px;
+    -fx-cursor: hand;
+    -fx-padding: 4px 8px;
+    -fx-background-radius: 6px;
+}
+.dialog-close-btn:hover {
+    -fx-background-color: #2E323D;
+    -fx-text-fill: #FFFFFF;
+}
+
+.settings-tab-bar {
+    -fx-background-color: -bg-input;
+    -fx-border-color: -border-subtle;
+    -fx-border-radius: 8px;
+    -fx-background-radius: 8px;
+    -fx-padding: 4px;
+}
+
+.settings-tab-btn {
+    -fx-background-color: transparent;
+    -fx-text-fill: -text-muted;
+    -fx-font-size: 13px;
+    -fx-font-weight: bold;
+    -fx-background-radius: 6px;
+    -fx-padding: 6px 14px;
+    -fx-cursor: hand;
+}
+.settings-tab-btn:hover {
+    -fx-text-fill: -text-normal;
+    -fx-background-color: #1C1E25;
+}
+.settings-tab-btn-active {
+    -fx-background-color: #262A35;
+    -fx-text-fill: #FFFFFF;
+}
+
+.settings-avatar-row {
+    -fx-background-color: #141619;
+    -fx-border-color: -border-subtle;
+    -fx-border-radius: 10px;
+    -fx-background-radius: 10px;
+    -fx-padding: 12px 16px;
+}
+
+.btn-secondary {
+    -fx-background-color: #252832;
+    -fx-border-color: -border-subtle;
+    -fx-border-radius: 8px;
+    -fx-background-radius: 8px;
+    -fx-text-fill: -text-normal;
+    -fx-font-size: 13px;
+    -fx-font-weight: bold;
+    -fx-padding: 8px 14px;
+    -fx-cursor: hand;
+}
+.btn-secondary:hover {
+    -fx-background-color: #303442;
+    -fx-border-color: #3E4354;
+}
+
+.transparent-scroll {
+    -fx-background-color: transparent;
+    -fx-background: transparent;
+}
+.transparent-scroll .viewport {
+    -fx-background-color: transparent;
 }

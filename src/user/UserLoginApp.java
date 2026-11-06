@@ -31,6 +31,7 @@ public class UserLoginApp extends Application {
     private UserLoginView loginView;
     private UserRegisterView registerView;
     private UserForgotPasswordView forgotPasswordView;
+    private UserMainWorkspace mainWorkspace;
 
     @Override
     public void start(Stage stage) {
@@ -38,7 +39,7 @@ public class UserLoginApp extends Application {
         stage.setTitle("Java Chat System — User Portal (JavaFX 21)");
 
         // Khởi tạo các Views với Navigation Callbacks
-        loginView = new UserLoginView(this::showRegisterView, this::showForgotPasswordView);
+        loginView = new UserLoginView(this::showRegisterView, this::showForgotPasswordView, this::showMainWorkspace);
         registerView = new UserRegisterView(this::showLoginView);
         forgotPasswordView = new UserForgotPasswordView(this::showLoginView);
 
@@ -46,7 +47,7 @@ public class UserLoginApp extends Application {
         masterRoot = new StackPane();
         masterRoot.getStyleClass().add("ambient-canvas");
 
-        // Khung Split-Screen HBox (Vầng sáng Ambient Aura được neo trực tiếp sau thẻ form card của từng View)
+        // Khung Split-Screen HBox (Bố cục 2 cột cân bằng: Hero Section 45% - Auth Card 55%)
         splitBox = new HBox(40);
         splitBox.setAlignment(Pos.CENTER);
         splitBox.setPadding(new Insets(24, 48, 24, 48));
@@ -104,11 +105,42 @@ public class UserLoginApp extends Application {
     }
 
     private void showLoginView() {
+        if (scene.getRoot() != masterRoot) {
+            scene.setRoot(masterRoot);
+            primaryStage.setTitle("Java Chat System — User Portal (JavaFX 21)");
+            primaryStage.setMinWidth(520);
+            primaryStage.setMinHeight(560);
+            primaryStage.setWidth(540);
+            primaryStage.setHeight(600);
+            primaryStage.centerOnScreen();
+        }
         switchViewSmooth(loginView.getView(), 540, 600);
     }
 
     private void showForgotPasswordView() {
         switchViewSmooth(forgotPasswordView.getView(), 540, 580);
+    }
+
+    /**
+     * Chuyển sang Khung Không gian Làm việc Chính (UserMainWorkspace — Task U3)
+     * Kích thước chuẩn 1000x700 responsive theo quy chuẩn đồ án
+     */
+    private void showMainWorkspace() {
+        mainWorkspace = new UserMainWorkspace(primaryStage, this::showLoginView);
+        mainWorkspace.setOpacity(0.0);
+
+        scene.setRoot(mainWorkspace);
+        primaryStage.setTitle("Java Chat System — Không gian làm việc (@tuanminh_2026)");
+        primaryStage.setMinWidth(960);
+        primaryStage.setMinHeight(640);
+        primaryStage.setWidth(1080);
+        primaryStage.setHeight(720);
+        primaryStage.centerOnScreen();
+
+        FadeTransition fadeIn = new FadeTransition(Duration.millis(180), mainWorkspace);
+        fadeIn.setFromValue(0.0);
+        fadeIn.setToValue(1.0);
+        fadeIn.play();
     }
 
     /**

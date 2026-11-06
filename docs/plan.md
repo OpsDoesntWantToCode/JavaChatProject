@@ -82,9 +82,9 @@
 
 - [x] **Task U1 — Đăng nhập & Đăng ký tài khoản (`UserLoginFrame`, `UserRegisterFrame`)** *(Hoàn thành: 26/10/2026)*:
   - *Mô tả:* Giao diện đăng nhập hiện đại (username, password, nút Đăng nhập, link Quên mật khẩu, link Đăng ký). Giao diện Đăng ký tài khoản đầy đủ các trường theo đề bài: tên đăng nhập, họ tên, địa chỉ, ngày sinh (date picker/text), giới tính (Radio/ComboBox), email, mật khẩu.
-- [ ] **Task U2 — Quên mật khẩu & Hồ sơ cá nhân (`ForgotPasswordDialog`, `UserProfileDialog`)** *(Hạn chót: 27/10/2026)*:
+- [x] **Task U2 — Quên mật khẩu & Hồ sơ cá nhân (`UserForgotPasswordView`, `UserSettingsDialog`)** *(Hoàn thành: 27/10/2026)*:
   - *Mô tả:* Dialog quên mật khẩu: nhập email để nhận mật khẩu ngẫu nhiên. Dialog thông tin cá nhân: cập nhật họ tên, địa chỉ, ngày sinh, giới tính; tab hoặc vùng riêng để thực hiện Đổi mật khẩu (mật khẩu cũ, mật khẩu mới, xác nhận mật khẩu mới).
-- [ ] **Task U3 — Khung giao diện chat chính (`UserMainChatFrame`)** *(Hạn chót: 28/10/2026)*:
+- [x] **Task U3 — Khung không gian làm việc chính (`UserMainWorkspace`)** *(Hoàn thành: 28/10/2026)*:
   - *Mô tả:* Cửa sổ chính 1000x700 chia layout 3 vùng: Cột trái (Thanh tìm kiếm, Tabs chuyển đổi Bạn bè / Nhóm chat), Vùng giữa (Khung chat hội thoại), Vùng phải (Thông tin người đang chat / danh sách thành viên nhóm).
 - [ ] **Task U4 — Danh sách bạn bè & Quản lý quan hệ (`FriendListPanel`)** *(Hạn chót: 29/10/2026)*:
   - *Mô tả:* Danh sách hiển thị bạn bè có avatar/tên, chấm màu trạng thái Online (xanh) / Offline (xám). Ô lọc bạn bè theo tên. Menu ngữ cảnh (chuột phải) hoặc nút thao tác: "Hủy kết bạn", "Chặn người dùng (Block)" (kèm thông báo sau khi block sẽ không thể tìm thấy hoặc gửi kết bạn lại).
