@@ -209,10 +209,11 @@ Các token ngữ nghĩa ánh xạ trực tiếp từ Primitive Tokens, đóng va
         *   **Cột Trái (Hero Branding Showcase — 45%):** Logo, tiêu đề thương hiệu, 3 thẻ tính năng chữ nhật bo góc `10px` với icon vector trắng.
         *   **Cột Phải (Form Container — 55%):** Thẻ xác thực căn giữa, bề mặt Gunmetal `-bg-card` nổi bật tự nhiên trên nền canvas.
 3.  **Khung Không Gian Làm Việc Chính (Main Workspace Shell — 4 Cột):**
-    *   **Cột 1 (Navigation Rail):** Cố định `60px`.
-    *   **Cột 2 (Sub-Sidebar):** Linh hoạt `280px – 320px`.
-    *   **Cột 3 (Main Content View):** Co giãn tự do (`Priority.ALWAYS`).
-    *   **Cột 4 (Right Drawer):** Cố định `280px` (trượt đóng/mở mượt mà trong `200ms`).
+    *   **Cột 1 (Navigation Rail):** Cố định `60px` (Chỉ vẽ viền phải: `-fx-border-color: transparent #2A2D35 transparent transparent;`).
+    *   **Cột 2 (Sub-Sidebar):** Linh hoạt `280px – 320px` (Chỉ vẽ viền phải: `-fx-border-color: transparent #2A2D35 transparent transparent;`).
+    *   **Cột 3 (Main Content View):** Co giãn tự do (`Priority.ALWAYS`), không vẽ viền ngoài. Header chỉ vẽ viền đáy, Thanh nhập liệu dưới đáy chỉ vẽ viền đỉnh.
+    *   **Cột 4 (Right Drawer):** Cố định `280px` (Chỉ vẽ viền trái: `-fx-border-color: transparent transparent transparent #2A2D35;`).
+    *   **Quy tắc Single Border Source:** Tuyệt đối không để hai component liền kề cùng vẽ đường viền tiếp giáp nhau (tránh viền kép 2px thô kệch).
 
 ---
 
