@@ -24,21 +24,21 @@ Nhằm tối ưu hóa hiệu năng render trên các cuộc trò chuyện có kh
     *   Icon ổ khóa `🔒` xanh lá nếu phiên trò chuyện thuộc nhóm có mã hóa AES-GCM.
 *   **Khối Công cụ Thao tác Nhanh:**
     1.  🔍 **Tìm kiếm trong hội thoại (Mục 11.f):** Mở thanh tìm kiếm nội bộ kèm 2 nút Lên/Xuống để duyệt tin nhắn khớp từ khóa.
-    2.  ⚠️ **Báo cáo Spam (Mục 10):** Icon cờ cảnh báo kèm micro-animation rung lắc khi hover. Click mở hộp thoại gửi nội dung tố cáo về Admin.
+    2.  ⚠️ **Báo cáo Spam (Mục 10):** Icon cờ cảnh báo kèm micro-animation rung lắc khi hover. Click mở hộp thoại `SpamReportDialog.java` gửi nội dung tố cáo về Admin.
     3.  ℹ️ **Thông tin hội thoại:** Đóng/mở Ngăn kéo Cột 4 (Right Drawer).
 
 ---
 
 ### 2.2 Luồng Bong Bóng Tin Nhắn (Chat Bubbles)
 
-| Thuộc tính UI | Tin nhắn của Mình (Sent) | Tin nhắn Đối phương (Received) |
-| :--- | :--- | :--- |
-| **Căn lề** | Căn phải (`Pos.CENTER_RIGHT`) | Căn trái (`Pos.CENTER_LEFT`) |
-| **Nền (Background)** | `-bubble-sent: #4E6BF2` | `-bubble-received: #252830` |
-| **Màu chữ** | `-text-white: #FFFFFF` | `-text-normal: #EDEDED` |
-| **Bo góc** | `12px` (Góc dưới phải: `3px`) | `12px` (Góc dưới trái: `3px`) |
-| **Khoảng đệm** | `10px 14px` (`space.2 space.3`) | `10px 14px` (`space.2 space.3`) |
-| **Timestamp** | `11px`, màu `rgba(255, 255, 255, 0.7)` | `11px`, màu `-text-muted: #8E929B` |
+| Thuộc tính UI | Tin nhắn của Mình (Sent) | Tin nhắn Đối phương (Received) | Tin nhắn Trợ lý AI (Bot) |
+| :--- | :--- | :--- | :--- |
+| **Căn lề** | Căn phải (`Pos.CENTER_RIGHT`) | Căn trái (`Pos.CENTER_LEFT`) | Căn trái (`Pos.CENTER_LEFT`) |
+| **Nền (Background)** | `-bubble-sent: #4E6BF2` | `-bubble-received: #252830` | `-bg-ai-bubble: #2B2738` (viền trái tím `3px solid #8B5CF6`) |
+| **Màu chữ** | `-text-white: #FFFFFF` | `-text-normal: #EDEDED` | `-text-normal: #EDEDED` |
+| **Bo góc** | `12px` (Góc dưới phải: `3px`) | `12px` (Góc dưới trái: `3px`) | `12px` (Góc dưới trái: `3px`) |
+| **Khoảng đệm** | `10px 14px` (`space.2 space.3`) | `10px 14px` (`space.2 space.3`) | `10px 14px` (`space.2 space.3`) |
+| **Timestamp & Tag** | `11px`, màu `rgba(255, 255, 255, 0.7)` | `11px`, màu `-text-muted: #8E929B` | `11px`, `-text-muted` kèm huy hiệu `[AI BOT]` tím |
 
 ---
 

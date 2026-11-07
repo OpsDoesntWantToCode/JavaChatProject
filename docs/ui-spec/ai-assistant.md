@@ -43,12 +43,12 @@ Trợ lý AI được thiết kế xuất hiện tự nhiên như một thành v
 ## 2. Đặc tả Thành phần Thị giác của Trợ lý AI
 
 ### 2.1 Bong bóng Tin nhắn Bot (AI Chat Bubble)
-*   **Avatar:** Biểu tượng Robot 🤖 hoặc Vòng tròn gradient 3D Meta AI.
-*   **Tên hiển thị:** `Trợ lý AI` kèm huy hiệu nổi bật `[AI BOT]` mang màu tím chuyển sắc (`#8B5CF6`).
+*   **Avatar:** Avatar tròn `36px` nền tối viền tím, biểu tượng Robot 🤖 hoặc icon vector Lucide Sparkles ✨ trắng.
+*   **Tên hiển thị:** `Trợ lý AI` kèm huy hiệu nổi bật `[AI BOT]` mang màu tím tinh tế (`-accent-ai: #8B5CF6`).
 *   **Phong cách Bong bóng:**
-    *   Bề mặt tối chuyên biệt: `#2B2738`.
-    *   Đường viền điểm nhấn ở mép trái: `border-left: 4px solid #8B5CF6`.
-    *   Bo góc: `12px` (Góc dưới trái: `3px`).
+    *   Bề mặt tối chuyên biệt: `-bg-ai-bubble: #2B2738`.
+    *   Đường viền điểm nhấn ở mép trái: `border-left: 3px solid #8B5CF6`.
+    *   Bo góc có chọn lọc: `12px` (Góc dưới trái: `3px`).
     *   Chữ hiển thị: Màu `-text-normal: #EDEDED`.
 *   **Hiệu ứng Gõ chữ Từng từ (Streaming Text):** Văn bản phản hồi từ LLM API được cập nhật dần từng từ thông qua JavaFX Service / Platform.runLater, tạo cảm giác phản hồi theo thời gian thực.
 
@@ -65,19 +65,19 @@ Trợ lý AI được thiết kế xuất hiện tự nhiên như một thành v
 ## 4. Khung Soạn thảo Kích hoạt AI & Smart Reply Chips
 
 ### 4.1 Dải Nút Gợi ý Nhanh (Smart Reply Chips)
-Bố trí ngay trên ô soạn thảo, gồm các nút bấm bo tròn (`radius: 16px`), nền `-bg-chip: #1E2026`:
+Bố trí ngay trên ô soạn thảo, gồm các nút bấm phẳng bo góc `8px` (`radius.md`), nền `-bg-chip: #1E2026`, viền `1px solid -border-subtle`:
 *   `✨ Tóm tắt đoạn chat`: Tự động gọi AI tóm tắt tin nhắn gần nhất.
 *   `💬 Gợi ý trả lời`: Đề xuất 3 phương án phản hồi nhanh.
 *   `❓ Hỏi đáp tự do`: Chuyển ô soạn thảo sang tương tác trực tiếp với bot.
 
 ### 4.2 Khung Nhập Kích hoạt AI (`.ai-active`)
-Khi gõ `/ai` hoặc bấm nút biểu tượng ✨ AI, ô soạn thảo áp dụng stylesheet:
+Khi gõ `/ai` hoặc bấm nút biểu tượng ✨ AI, ô soạn thảo áp dụng stylesheet tinh gọn chuẩn công nghệ:
 ```css
 .chat-input-box.ai-active {
-    -fx-border-color: linear-gradient(to right, #00C6FF, #7F00FF, #E100FF);
-    -fx-border-width: 1.5px;
+    -fx-border-color: #8B5CF6;
+    -fx-border-width: 1px;
     -fx-border-radius: 9px;
-    -fx-effect: dropshadow(gaussian, rgba(127, 0, 255, 0.35), 10, 0.2, 0, 0);
+    -fx-effect: dropshadow(three-pass-box, rgba(139, 92, 246, 0.25), 6, 0, 0, 0);
 }
 ```
 

@@ -32,7 +32,7 @@ Giao diện tích hợp quản trị thành viên tại Cột 4 (Right Drawer) v
 
 ## 2. Đặc tả Chi tiết Từng Yêu cầu Nghiệp vụ
 
-### 2.1 Hộp thoại Tạo Nhóm Chat Mới (Mục 12.a)
+### 2.1 Hộp thoại Tạo Nhóm Chat Mới (Mục 12.a — `GroupCreateDialog.java`)
 *   **Định dạng:** Modal Dialog bo góc `radius.2xl` (`14px`), nền `-bg-card` (`#1B1D22`).
 *   **Các thành phần:**
     1.  Ô nhập Tên nhóm: Chiều cao `44px`, bo góc `9px`.
@@ -42,7 +42,7 @@ Giao diện tích hợp quản trị thành viên tại Cột 4 (Right Drawer) v
 
 ---
 
-### 2.2 Quản trị Phân quyền Admin ở Ngăn kéo Cột 4 (Mục 12.b, 12.c, 12.d, 12.e)
+### 2.2 Quản trị Phân quyền Admin ở Ngăn kéo Cột 4 (Mục 12.b, 12.c, 12.d, 12.e — `GroupManagementDrawer.java`)
 Toàn bộ thao tác quản trị được gom gọn trong **Right Drawer** (`280px`):
 
 1.  **Đổi tên nhóm (Mục 12.b):** Nhấp vào icon bút `✏️` cạnh tên nhóm để mở trường chỉnh sửa trực tiếp.

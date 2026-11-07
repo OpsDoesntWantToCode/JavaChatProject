@@ -611,6 +611,32 @@ Text, .text {
     -fx-font-size: 13.5px;
 }
 
+.chat-bubble-ai {
+    -fx-background-color: #2B2738;
+    -fx-border-color: transparent transparent transparent #8B5CF6;
+    -fx-border-width: 0 0 0 3px;
+    -fx-border-radius: 12px;
+    -fx-background-radius: 12px;
+    -fx-padding: 10px 14px;
+    -fx-text-fill: -text-normal;
+    -fx-font-size: 13.5px;
+}
+
+.smart-reply-chip {
+    -fx-background-color: #1E2026;
+    -fx-border-color: -border-subtle;
+    -fx-border-radius: 8px;
+    -fx-background-radius: 8px;
+    -fx-text-fill: -text-normal;
+    -fx-font-size: 12px;
+    -fx-padding: 5px 10px;
+    -fx-cursor: hand;
+}
+.smart-reply-chip:hover {
+    -fx-background-color: #282C35;
+    -fx-border-color: #3E4354;
+}
+
 /* --------------------------------------------------------------------------
    RIGHT DRAWER (CỘT 4)
    -------------------------------------------------------------------------- */
