@@ -238,3 +238,27 @@ Nhằm đảm bảo sản phẩm mang bản sắc công cụ máy tính để b�
 6.  **Báo Lỗi Trực Quan Ngay Tại Nguồn (Inline Field Validation & Micro-Shake Feedback):**
     *   *Vấn đề AI slop:* Bật hộp thoại modal alert ngắt ngang trải nghiệm làm việc.
     *   *Chuẩn kỹ thuật:* Lỗi được gắn trực tiếp dưới trường nhập liệu với viền đỏ `-status-danger`, kết hợp hoạt ảnh rung lắc vi mô (`TranslateTransition ±8px` trong `320ms`) và tự động focus con trỏ vào trường lỗi đầu tiên.
+
+---
+
+## 7. Quy Chuẩn Vòng Lặp Phát Triển Nguyên Tử (Spec-First ➔ Anti-Slop Code ➔ Atomic Commit)
+
+Mọi hoạt động bổ sung hoặc sửa đổi giao diện phân hệ User BẮT BUỘC tuân thủ chu trình 3 bước khép kín:
+
+1. **Bước 1 — Spec-First & Spec Synchronization (Đặc tả đi trước mã nguồn):**
+   - BẮT BUỘC rà soát và chỉnh sửa tệp đặc tả chi tiết tương ứng trong `docs/ui-spec/*.md` TRƯỚC KHI viết code.
+   - Đảm bảo tên lớp (`Class`), phương thức (`Method`), cấu trúc phân cấp Node, class CSS và dữ liệu mẫu khớp 100% với hiện thực mã nguồn.
+   - Cập nhật đồng bộ danh mục tệp và trách nhiệm tại `components-and-files.md`.
+
+2. **Bước 2 — Anti-AI-Slop Code Implementation (Triển khai mã chống AI Slop):**
+   - **Màu sắc & Hiệu ứng:** CẤM màu neon chói lọi (`#00FFCC`, `#FF00FF`, `#00FFFF`), CẤM hiệu ứng phát quang lòe loẹt (glow/drop-shadow đa sắc). BẮT BUỘC dùng Deep Obsidian (`#0F1013`, `#141619`, `#1B1D22`), Tech Sapphire (`#4E6BF2`) và viền hairline `1px solid #2A2D35`.
+   - **Bo góc chọn lọc:** CẤM bo tròn viên thuốc (pill `999px`) bừa bãi cho thẻ Card, Panel, Dialog. CHỈ dùng bo tròn 50% cho Avatar.
+   - **Dữ liệu mẫu chân thực:** BẮT BUỘC sử dụng kịch bản dữ liệu mẫu từ `dummy-data-matrix.md` (Hải, Minh, Lan Anh, đồ án Java, script database.sql, AES-GCM Messenger).
+
+3. **Bước 3 — Atomic Verification & Conventional Commit (Kiểm thử & Lưu vết Git):**
+   - Kiểm tra `git diff` sạch sẽ, chạy thử giao diện qua `UserLauncher`.
+   - Thực hiện commit Git theo chuẩn Conventional Commits: `type(user-ui): concise message`.
+
+4. **Kỷ Luật Ngữ Cảnh Zero-Noise (Context Hygiene):**
+   - Mỗi chu trình chỉ nạp đúng 1 file spec liên quan và file code mục tiêu.
+   - Khuyến nghị thực hiện `/compact` sau mỗi vòng lặp nguyên tử để giải phóng bộ nhớ context trước khi chuyển sang task mới.

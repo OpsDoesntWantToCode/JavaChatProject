@@ -20,6 +20,8 @@ src/user/
 ├── FriendsManagementView.java  # Trung tâm Bạn bè 4 tabs hiện đại (Mục 6, 7, 8, 9)
 ├── ChatConversationView.java   # Khung chat 1-1 & nhóm ListView tối ưu, tin nhắn AI bot, highlight vàng (Mục 10, 11)
 ├── GroupManagementDrawer.java  # Ngăn kéo Cột 4 quản lý thành viên, đổi tên, mã hóa Messenger E2EE (Mục 12)
+├── GroupCreateDialog.java      # Hộp thoại Modal tạo nhóm mới, chọn thành viên và bật toggle E2EE (Mục 12.a)
+├── SpamReportDialog.java       # Hộp thoại Modal gửi báo cáo vi phạm/spam tới Admin (Mục 10)
 └── UserSettingsDialog.java     # Hộp thoại Modal 2 tab: Hồ sơ cá nhân & Đổi mật khẩu (Mục 2, 4)
 ```
 
@@ -40,4 +42,6 @@ src/user/
 | `src/user/FriendsManagementView.java` | Trung tâm Bạn bè tích hợp 4 Tabs: Đang Online, Tất cả bạn bè, Lời mời kết bạn, và Thêm bạn/Tìm người lạ với đầy đủ 3 nút thao tác độc lập. | **Đã hoàn thiện & Kiểm thử** |
 | `src/user/ChatConversationView.java` | Khung chat trực tiếp tối ưu hóa VirtualFlow `ListView<Message>`, hỗ trợ tìm kiếm tin nhắn tự động cuộn highlight vàng, chọn xóa nhiều tin nhắn, và hiển thị bot AI. | **Sẵn sàng triển khai** |
 | `src/user/GroupManagementDrawer.java` | Ngăn kéo Cột 4 quản lý nhóm chat, phân quyền Admin (chỉ Admin mới có nút xóa thành viên), đổi tên nhóm, và hiển thị Khóa bảo mật E2EE. | **Sẵn sàng triển khai** |
+| `src/user/GroupCreateDialog.java` | Hộp thoại Modal tạo nhóm mới, chọn thành viên từ danh bạ bạn bè, toggle kích hoạt mã hóa nhóm AES-GCM phong cách Messenger E2EE. | **Sẵn sàng triển khai** |
+| `src/user/SpamReportDialog.java` | Hộp thoại Modal báo cáo vi phạm, thu thập lý do spam/quấy rối và ghi nhận vào CSDL để Admin xử lý. | **Sẵn sàng triển khai** |
 | `src/user/UserSettingsDialog.java` | Hộp thoại Modal nổi mở từ Avatar người dùng, chia 2 Tab: Cập nhật hồ sơ cá nhân (Mục 2) và Đổi mật khẩu (Mục 4). | **Đã hoàn thiện & Kiểm thử** |

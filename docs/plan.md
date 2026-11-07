@@ -94,15 +94,15 @@
   - *Mô tả:* Danh sách lọc riêng những bạn bè đang có trạng thái Online. Có ô lọc tên, nút "Chat ngay" để mở nhanh khung chat, nút "Tạo nhóm" với người đó.
 - [x] **Task U7 — Tìm kiếm người dùng hệ thống (`FriendsManagementView` Tab 4)** *(Hoàn thành: 30/10/2026)*:
   - *Mô tả:* Ô tìm kiếm theo tên đăng nhập hoặc họ tên. Bảng hiển thị kết quả (tự động ẩn những người đã chặn mình). Trên từng kết quả có nút: "Gửi yêu cầu kết bạn", "Chat nhanh", hoặc "Tạo group".
-- [ ] **Task U8 — Khung chat 1-1 & Lịch sử tin nhắn (`ChatPanel1on1`)** *(Hạn chót: 31/10/2026)*:
+- [ ] **Task U8 — Khung chat 1-1 & Lịch sử tin nhắn (`ChatConversationView`)** *(Hạn chót: 31/10/2026)*:
   - *Mô tả:* Vùng hiển thị tin nhắn dạng bong bóng (chat bubbles: tin mình gửi bên phải màu xanh, tin đối phương bên trái màu xám). Thanh tiêu đề trên cùng gồm: Tên/Avatar, trạng thái online/offline, nút "Báo cáo Spam", nút "Xóa toàn bộ lịch sử chat", ô tìm kiếm tin nhắn trong hội thoại. Phía dưới là ô nhập tin nhắn, nút "Gửi", nút "Gợi ý AI (LLM)".
-- [ ] **Task U9 — Tìm kiếm tin nhắn trong hội thoại & toàn cục (`ChatSearchDialog`)** *(Hạn chót: 01/11/2026)*:
+- [ ] **Task U9 — Tìm kiếm tin nhắn trong hội thoại & Highlight (`ChatConversationView`)** *(Hạn chót: 01/11/2026)*:
   - *Mô tả:* (1) Thanh tìm kiếm trong cuộc trò chuyện 1 người có nút Lên / Xuống (Next/Prev) để cuộn màn hình nhảy đến đúng đoạn chat. (2) Hộp thoại tìm kiếm toàn cục: gõ từ khóa tìm kiếm xuyên suốt tất cả các cuộc hội thoại, click vào kết quả sẽ mở đúng hội thoại và nhảy tới vị trí tin nhắn đó.
-- [ ] **Task U10 — Xóa tin nhắn linh hoạt (`MessageContextMenu`)** *(Hạn chót: 01/11/2026)*:
+- [ ] **Task U10 — Xóa tin nhắn linh hoạt (`ChatConversationView` / Multi-Select)** *(Hạn chót: 01/11/2026)*:
   - *Mô tả:* Cho phép click chuột phải lên từng tin nhắn hoặc chọn nhiều tin để thực hiện: "Xóa tin nhắn phía tôi" (xóa lẻ 1 hoặc vài dòng lịch sử).
-- [ ] **Task U11 — Trợ lý gợi ý tin nhắn LLM (`LLMAssistPopup`)** *(Hạn chót: 02/11/2026)*:
+- [ ] **Task U11 — Trợ lý gợi ý tin nhắn LLM (`ChatConversationView` / Smart Reply)** *(Hạn chót: 02/11/2026)*:
   - *Mô tả:* Nút icon AI cạnh ô gõ tin nhắn. Khi bấm sẽ hiện popup/dialog gợi ý: chọn phong cách (Chỉnh sửa lịch sự hơn, Rút gọn, Mở rộng câu văn), hiển thị kết quả gợi ý từ AI kèm nút "Áp dụng vào ô chat".
-- [ ] **Task U12 — Tạo nhóm & Quản lý nhóm chat (`GroupChatPanel`, `GroupCreateDialog`)** *(Hạn chót: 02/11/2026)*:
+- [ ] **Task U12 — Tạo nhóm & Quản lý nhóm chat (`GroupManagementDrawer`, `GroupCreateDialog`)** *(Hạn chót: 02/11/2026)*:
   - *Mô tả:* Dialog tạo nhóm: nhập tên nhóm, chọn/nhập tối thiểu 1 username thành viên, checkbox "Bật mã hóa nhóm". Khung chat nhóm: Vùng hội thoại nhóm; Sidebar bên phải hiển thị tên nhóm (cho phép đổi tên), nút "Thêm thành viên", danh sách thành viên có huy hiệu "Admin nhóm". Nút "Gán Admin" cho thành viên và nút "Xóa khỏi nhóm" (chỉ hiển thị quyền xóa cho Admin nhóm).
 - [ ] **Task U13 — Hộp thoại Báo cáo Spam (`SpamReportDialog`)** *(Hạn chót: 02/11/2026)*:
   - *Mô tả:* Dialog bật lên từ thanh chat: hiển thị tên người bị báo cáo, ô nhập lý do spam/quấy rối, nút "Gửi báo cáo".
