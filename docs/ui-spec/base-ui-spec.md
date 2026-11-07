@@ -251,10 +251,9 @@ Mọi hoạt động bổ sung hoặc sửa đổi giao diện phân hệ User B
    - Đảm bảo tên lớp (`Class`), phương thức (`Method`), cấu trúc phân cấp Node, class CSS và dữ liệu mẫu khớp 100% với hiện thực mã nguồn.
    - Cập nhật đồng bộ danh mục tệp và trách nhiệm tại `components-and-files.md`.
 
-2. **Bước 2 — Anti-AI-Slop Code Implementation (Triển khai mã chống AI Slop):**
-   - **Màu sắc & Hiệu ứng:** CẤM màu neon chói lọi (`#00FFCC`, `#FF00FF`, `#00FFFF`), CẤM hiệu ứng phát quang lòe loẹt (glow/drop-shadow đa sắc). BẮT BUỘC dùng Deep Obsidian (`#0F1013`, `#141619`, `#1B1D22`), Tech Sapphire (`#4E6BF2`) và viền hairline `1px solid #2A2D35`.
-   - **Bo góc chọn lọc:** CẤM bo tròn viên thuốc (pill `999px`) bừa bãi cho thẻ Card, Panel, Dialog. CHỈ dùng bo tròn 50% cho Avatar.
-   - **Dữ liệu mẫu chân thực:** BẮT BUỘC sử dụng kịch bản dữ liệu mẫu từ `dummy-data-matrix.md` (Hải, Minh, Lan Anh, đồ án Java, script database.sql, AES-GCM Messenger).
+2. **Bước 2 — Anti-AI-Slop Code Implementation (Triển khai mã chuẩn mực):**
+   - Triển khai mã JavaFX 21 + CSS tuân thủ nghiêm ngặt 6 nguyên tắc Anti-Slop tại Mục 6 và Quy tắc Single Border Source tại Mục 5.3.
+   - Sử dụng 100% token từ `src/user/theme.css` và dữ liệu mẫu kịch bản từ `dummy-data-matrix.md`.
 
 3. **Bước 3 — Atomic Verification & Conventional Commit (Kiểm thử & Lưu vết Git):**
    - Kiểm tra `git diff` sạch sẽ, chạy thử giao diện qua `UserLauncher`.
