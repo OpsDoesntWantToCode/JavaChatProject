@@ -46,13 +46,7 @@ public class UserMainWorkspace extends BorderPane {
 
     // Cột 3: Main View
     private final BorderPane mainViewPane = new BorderPane();
-    private final HBox chatHeader = new HBox(12);
-    private final Label lblChatTitle = new Label();
-    private final Label lblChatSubtitle = new Label();
-    private final VBox messagesContainer = new VBox(12);
-    private final ScrollPane messagesScrollPane = new ScrollPane();
-    private final TextField txtMessageInput = new TextField();
-    private final HBox smartRepliesBar = new HBox(8);
+    private ChatConversationView chatConversationView;
 
     // Cột 4: Right Drawer
     private final VBox rightDrawer = new VBox(14);
@@ -165,8 +159,8 @@ public class UserMainWorkspace extends BorderPane {
             lblSidebarTitle.setText("Đoạn chat");
             txtSearch.setPromptText("🔍 Tìm kiếm cuộc trò chuyện...");
             conversationScrollPane.setContent(conversationListBox);
-            mainViewPane.setCenter(messagesScrollPane);
-            mainViewPane.setBottom(createChatInputBar());
+            mainViewPane.setCenter(chatConversationView);
+            mainViewPane.setBottom(null);
             rightDrawer.setVisible(isDrawerOpen);
             rightDrawer.setManaged(isDrawerOpen);
             loadConversation(currentChatId);
@@ -396,132 +390,15 @@ public class UserMainWorkspace extends BorderPane {
        CỘT 3: MAIN VIEW (Flexible)
        ========================================================================== */
     private void buildMainView() {
-        mainViewPane.getStyleClass().add("main-chat-pane");
-
-        // 1. Header cuộc trò chuyện
-        chatHeader.setAlignment(Pos.CENTER_LEFT);
-        chatHeader.setPadding(new Insets(12, 20, 12, 20));
-        chatHeader.getStyleClass().add("chat-header");
-
-        VBox titleBox = new VBox(2);
-        lblChatTitle.setStyle("-fx-font-size: 15.5px; -fx-font-weight: bold; -fx-text-fill: -text-normal;");
-        lblChatSubtitle.setStyle("-fx-font-size: 12px; -fx-text-fill: -text-muted;");
-        titleBox.getChildren().addAll(lblChatTitle, lblChatSubtitle);
-        HBox.setHgrow(titleBox, Priority.ALWAYS);
-
-        Button btnSearchMsg = new Button("🔍");
-        btnSearchMsg.getStyleClass().add("btn-icon-subtle");
-        Tooltip.install(btnSearchMsg, new Tooltip("Tìm kiếm trong cuộc trò chuyện (Mục 11)"));
-        btnSearchMsg.setOnAction(e -> {
-            TextInputDialog td = new TextInputDialog();
-            td.initOwner(primaryStage);
-            td.setTitle("Tìm kiếm tin nhắn");
-            td.setHeaderText("Tìm kiếm tin nhắn trong hội thoại này");
-            td.setContentText("Nhập từ khóa cần tìm:");
-            td.showAndWait().ifPresent(kw -> {
-                Alert a = new Alert(Alert.AlertType.INFORMATION);
-                a.initOwner(primaryStage);
-                a.setHeaderText("Kết quả tìm kiếm");
-                a.setContentText("Tính năng cuộn tự động và Highlight vàng 1.5s cho từ khóa '" + kw + "' sẽ kết nối Socket ở mốc 80%.");
-                a.showAndWait();
-            });
-        });
-
-        Button btnReportSpam = new Button("⚠️");
-        btnReportSpam.getStyleClass().add("btn-icon-subtle");
-        Tooltip.install(btnReportSpam, new Tooltip("Báo cáo vi phạm / Spam"));
-        btnReportSpam.setOnAction(e -> handleReportSpam());
-
-        Button btnToggleDrawer = new Button("ℹ️");
-        btnToggleDrawer.getStyleClass().add("btn-icon-subtle");
-        Tooltip.install(btnToggleDrawer, new Tooltip("Thông tin chi tiết (Cột 4)"));
-        btnToggleDrawer.setOnAction(e -> toggleRightDrawer());
-
-        chatHeader.getChildren().addAll(titleBox, btnSearchMsg, btnReportSpam, btnToggleDrawer);
-        mainViewPane.setTop(chatHeader);
-
-        // 2. Vùng hiển thị tin nhắn (ScrollPane)
-        messagesContainer.setPadding(new Insets(16, 24, 16, 24));
-        messagesScrollPane.setContent(messagesContainer);
-        messagesScrollPane.setFitToWidth(true);
-        messagesScrollPane.getStyleClass().add("transparent-scroll");
-        messagesScrollPane.vvalueProperty().bind(messagesContainer.heightProperty());
-        mainViewPane.setCenter(messagesScrollPane);
-
-        // 3. Thanh nhập tin nhắn ở dưới đáy
-        mainViewPane.setBottom(createChatInputBar());
-    }
-
-    private VBox createChatInputBar() {
-        VBox bottomContainer = new VBox(8);
-        bottomContainer.setPadding(new Insets(8, 20, 16, 20));
-        bottomContainer.getStyleClass().add("chat-bottom-bar");
-
-        // Gợi ý phản hồi nhanh (Smart Reply Chips)
-        smartRepliesBar.getChildren().clear();
-        smartRepliesBar.getChildren().addAll(
-            createSmartChip("💡 Tóm tắt cuộc họp"),
-            createSmartChip("📁 Gửi tài liệu tiến độ"),
-            createSmartChip("✓ Đã hiểu & Xác nhận")
-        );
-
-        HBox inputRow = new HBox(8);
-        inputRow.setAlignment(Pos.CENTER_LEFT);
-
-        Button btnAttach = new Button("📎");
-        btnAttach.getStyleClass().add("btn-icon-subtle");
-        Tooltip.install(btnAttach, new Tooltip("Đính kèm tệp tin"));
-
-        txtMessageInput.setPromptText("Nhập tin nhắn vào hội thoại... (Nhấn Enter để gửi)");
-        txtMessageInput.getStyleClass().add("chat-input-field");
-        HBox.setHgrow(txtMessageInput, Priority.ALWAYS);
-        txtMessageInput.setOnAction(e -> handleSendMessage());
-
-        Button btnAiSuggest = new Button("✨ Gợi ý AI");
-        btnAiSuggest.getStyleClass().add("btn-ai-suggest");
-        btnAiSuggest.setOnAction(e -> handleAiSuggestion());
-
-        Button btnSend = new Button("Gửi 🚀");
-        btnSend.getStyleClass().add("btn-primary");
-        btnSend.setOnAction(e -> handleSendMessage());
-
-        inputRow.getChildren().addAll(btnAttach, txtMessageInput, btnAiSuggest, btnSend);
-        bottomContainer.getChildren().addAll(smartRepliesBar, inputRow);
-        return bottomContainer;
-    }
-
-    private Button createSmartChip(String text) {
-        Button chip = new Button(text);
-        chip.getStyleClass().add("smart-reply-chip");
-        chip.setOnAction(e -> {
-            txtMessageInput.setText(text);
-            txtMessageInput.requestFocus();
-            txtMessageInput.positionCaret(text.length());
-        });
-        return chip;
-    }
-
-    private void handleSendMessage() {
-        String msg = txtMessageInput.getText().trim();
-        if (msg.isEmpty()) {
-            return;
-        }
-
-        String now = LocalTime.now().format(DateTimeFormatter.ofPattern("HH:mm"));
-        messagesContainer.getChildren().add(createMessageBubble("Trần Nguyễn Tuấn Minh", now, msg, true, false));
-        txtMessageInput.clear();
-    }
-
-    private void handleAiSuggestion() {
-        txtMessageInput.setText("Tôi đã xem qua tài liệu, tiến độ hiện tại rất khả quan và sẵn sàng cho buổi review mốc 20%.");
-        txtMessageInput.requestFocus();
+        chatConversationView = new ChatConversationView(primaryStage, this::handleReportSpam, this::toggleRightDrawer);
+        mainViewPane.setCenter(chatConversationView);
     }
 
     private void handleReportSpam() {
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
         alert.initOwner(primaryStage);
         alert.setTitle("Báo cáo vi phạm");
-        alert.setHeaderText("Gửi báo cáo vi phạm tới Ban quản trị (Mục 11.g)");
+        alert.setHeaderText("Gửi báo cáo vi phạm tới Ban quản trị (Mục 10)");
         alert.setContentText("Bạn có chắc chắn muốn gửi báo cáo spam đối với cuộc trò chuyện này không?");
         alert.showAndWait().ifPresent(res -> {
             if (res == ButtonType.OK) {
@@ -535,79 +412,11 @@ public class UserMainWorkspace extends BorderPane {
     }
 
     private void loadConversation(String chatId) {
-        messagesContainer.getChildren().clear();
-
-        if ("group_project".equals(chatId)) {
-            lblChatTitle.setText("🔒 Nhóm Đồ Án Java 2026");
-            lblChatSubtitle.setText("3 thành viên • Mã hóa đầu cuối AES-GCM 256-bit");
-
-            // Banner E2EE kiểu Messenger
-            HBox e2eeBanner = new HBox(10);
-            e2eeBanner.setAlignment(Pos.CENTER);
-            e2eeBanner.setPadding(new Insets(10, 16, 10, 16));
-            e2eeBanner.getStyleClass().add("e2ee-banner");
-
-            Label lblBanner = new Label("🔒 Tin nhắn trong nhóm này được bảo vệ bằng mã hóa đối xứng AES-GCM. Chỉ các thành viên trong nhóm mới có khóa giải mã.");
-            lblBanner.setWrapText(true);
-            lblBanner.setStyle("-fx-font-size: 12px; -fx-text-fill: #A0C0FF;");
-            e2eeBanner.getChildren().add(lblBanner);
-            messagesContainer.getChildren().add(e2eeBanner);
-
-            // Kịch bản chat mẫu từ dummy-data-matrix.md
-            messagesContainer.getChildren().addAll(
-                createMessageBubble("Lưu Chí Hải", "10:15", "Script database.sql đã chạy hoàn tất 13 bảng trên PostgreSQL rồi nhé!", false, false),
-                createMessageBubble("Nguyễn Lan Anh", "10:16", "Tuyệt vời, mình đã test thử các ràng buộc khóa ngoại và index idx_login_time chạy rất nhanh.", false, false),
-                createMessageBubble("Trần Nguyễn Tuấn Minh", "10:18", "Giao diện User JavaFX 21 + theme.css đã hoàn thành toàn bộ form Đăng nhập, Đăng ký 7 trường và khung chat rồi.", true, false),
-                createMessageBubble("Trợ lý AI [BOT]", "10:19", "💡 Các bạn nhớ chụp ảnh minh chứng TableView và các trường nhập liệu trước ngày 22/11/2026 để tổng hợp vào Báo cáo PDF mốc 20% nhé!", false, true)
-            );
-        } else if ("user_chihai".equals(chatId)) {
-            lblChatTitle.setText("💬 Lưu Chí Hải");
-            lblChatSubtitle.setText("Đang trực tuyến • @chihai_2026");
-
-            messagesContainer.getChildren().addAll(
-                createMessageBubble("Trần Nguyễn Tuấn Minh", "14:00", "Hải ơi, cậu kiểm tra giúp mình nhánh feat/user-ui xem các icon vector trắng đã tương phản rõ chưa nhé.", true, false),
-                createMessageBubble("Lưu Chí Hải", "14:02", "Mình xem rồi, icon trắng Lucide trên nền badge 38x38px nhìn rất sắc nét và chuyên nghiệp!", false, false)
-            );
-        } else {
-            lblChatTitle.setText("💬 Cuộc trò chuyện");
-            lblChatSubtitle.setText("Đang hoạt động");
-            messagesContainer.getChildren().add(createMessageBubble("Hệ thống", "12:00", "Bắt đầu cuộc trò chuyện mới...", false, false));
+        this.currentChatId = chatId;
+        if (chatConversationView != null) {
+            chatConversationView.loadConversation(chatId);
         }
-
         updateRightDrawerContent();
-    }
-
-    private Node createMessageBubble(String sender, String time, String text, boolean isOutgoing, boolean isAi) {
-        VBox bubbleBox = new VBox(4);
-        bubbleBox.setMaxWidth(520);
-
-        HBox metaRow = new HBox(6);
-        metaRow.setAlignment(isOutgoing ? Pos.CENTER_RIGHT : Pos.CENTER_LEFT);
-
-        Label lblSender = new Label(sender);
-        lblSender.setStyle("-fx-font-size: 12px; -fx-font-weight: bold; -fx-text-fill: -text-muted;");
-        if (isAi) {
-            lblSender.setStyle("-fx-font-size: 12px; -fx-font-weight: bold; -fx-text-fill: #9D7BFF;");
-        }
-
-        Label lblTime = new Label(time);
-        lblTime.setStyle("-fx-font-size: 11px; -fx-text-fill: -text-muted;");
-
-        metaRow.getChildren().addAll(lblSender, lblTime);
-
-        Label lblContent = new Label(text);
-        lblContent.setWrapText(true);
-        lblContent.getStyleClass().add(isOutgoing ? "chat-bubble-sent" : "chat-bubble-received");
-
-        if (isAi) {
-            lblContent.setStyle("-fx-background-color: #211A33; -fx-border-color: #5D4399; -fx-border-radius: 12px; -fx-background-radius: 12px; -fx-padding: 10px 14px; -fx-text-fill: #EDEDED;");
-        }
-
-        bubbleBox.getChildren().addAll(metaRow, lblContent);
-
-        HBox wrapper = new HBox(bubbleBox);
-        wrapper.setAlignment(isOutgoing ? Pos.CENTER_RIGHT : Pos.CENTER_LEFT);
-        return wrapper;
     }
 
     /* ==========================================================================
@@ -688,7 +497,9 @@ public class UserMainWorkspace extends BorderPane {
             c.setContentText("Bạn có chắc chắn muốn xóa lịch sử cuộc trò chuyện này ở phía bạn?");
             c.showAndWait().ifPresent(r -> {
                 if (r == ButtonType.OK) {
-                    messagesContainer.getChildren().clear();
+                    if (chatConversationView != null) {
+                        chatConversationView.clearHistory();
+                    }
                 }
             });
         });
