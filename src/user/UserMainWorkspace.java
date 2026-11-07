@@ -49,8 +49,8 @@ public class UserMainWorkspace extends BorderPane {
     private ChatConversationView chatConversationView;
 
     // Cột 4: Right Drawer
-    private final VBox rightDrawer = new VBox(14);
-    private final ScrollPane drawerScrollPane = new ScrollPane();
+    private final VBox rightDrawer = new VBox();
+    private GroupManagementDrawer groupManagementDrawer;
     private boolean isDrawerOpen = true;
 
     // View Quản lý Bạn bè chuyên dụng (Task U4, U5, U6, U7)
@@ -214,12 +214,14 @@ public class UserMainWorkspace extends BorderPane {
         btnNewGroup.getStyleClass().add("btn-icon-subtle");
         Tooltip.install(btnNewGroup, new Tooltip("Tạo nhóm trò chuyện mới"));
         btnNewGroup.setOnAction(e -> {
-            Alert alert = new Alert(Alert.AlertType.INFORMATION);
-            alert.initOwner(primaryStage);
-            alert.setTitle("Tạo nhóm mới");
-            alert.setHeaderText("Tạo nhóm chat kèm mã hóa E2EE");
-            alert.setContentText("Hộp thoại tạo nhóm chat với công tắc mã hóa AES-GCM (Mục 12.a) sẽ kết nối Socket ở mốc 80%.");
-            alert.showAndWait();
+            new GroupCreateDialog(primaryStage, result -> {
+                conversationListBox.getChildren().add(0, createConversationItem(
+                    "group_" + System.currentTimeMillis(), result.getGroupName(),
+                    result.isEncrypted() ? "🔒 Nhóm mã hóa E2EE vừa tạo..." : "Nhóm mới tạo...",
+                    "Vừa xong", result.isEncrypted(), 0, true, "#3F51B5", "GP"
+                ));
+                loadConversation("group_project");
+            }).show();
         });
 
         topBox.getChildren().addAll(lblSidebarTitle, sp, btnNewGroup);
@@ -395,20 +397,15 @@ public class UserMainWorkspace extends BorderPane {
     }
 
     private void handleReportSpam() {
-        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-        alert.initOwner(primaryStage);
-        alert.setTitle("Báo cáo vi phạm");
-        alert.setHeaderText("Gửi báo cáo vi phạm tới Ban quản trị (Mục 10)");
-        alert.setContentText("Bạn có chắc chắn muốn gửi báo cáo spam đối với cuộc trò chuyện này không?");
-        alert.showAndWait().ifPresent(res -> {
-            if (res == ButtonType.OK) {
-                Alert ok = new Alert(Alert.AlertType.INFORMATION);
-                ok.initOwner(primaryStage);
-                ok.setHeaderText("Báo cáo đã được ghi nhận");
-                ok.setContentText("Báo cáo của bạn đã được lưu vào bảng spam_reports trong CSDL để Quản trị viên xử lý.");
-                ok.showAndWait();
-            }
-        });
+        String targetName = "Lưu Chí Hải";
+        String targetUsername = "@chihai_2026";
+        if ("group_project".equals(currentChatId)) {
+            targetName = "Nhóm Đồ Án Java 2026";
+            targetUsername = "@group_project";
+        }
+        new SpamReportDialog(primaryStage, targetName, targetUsername, reason -> {
+            // Callback đã hiển thị thông báo ghi nhận
+        }).show();
     }
 
     private void loadConversation(String chatId) {
@@ -426,120 +423,47 @@ public class UserMainWorkspace extends BorderPane {
         rightDrawer.setPrefWidth(280);
         rightDrawer.setMinWidth(280);
         rightDrawer.setMaxWidth(280);
-        rightDrawer.setPadding(new Insets(16));
         rightDrawer.getStyleClass().add("right-drawer");
-
-        drawerScrollPane.setFitToWidth(true);
-        drawerScrollPane.getStyleClass().add("transparent-scroll");
-        VBox.setVgrow(drawerScrollPane, Priority.ALWAYS);
 
         updateRightDrawerContent();
     }
 
     private void updateRightDrawerContent() {
-        VBox drawerBody = new VBox(14);
-
-        // Header Drawer
-        HBox topRow = new HBox();
-        topRow.setAlignment(Pos.CENTER_LEFT);
-        Label lblHeader = new Label("Chi tiết hội thoại");
-        lblHeader.setStyle("-fx-font-size: 15px; -fx-font-weight: bold; -fx-text-fill: -text-normal;");
-        Region sp = new Region();
-        HBox.setHgrow(sp, Priority.ALWAYS);
-        Button btnClose = new Button("✕");
-        btnClose.getStyleClass().add("dialog-close-btn");
-        btnClose.setOnAction(e -> toggleRightDrawer());
-        topRow.getChildren().addAll(lblHeader, sp, btnClose);
-
-        // Avatar lớn & Tên
-        VBox profileCard = new VBox(6);
-        profileCard.setAlignment(Pos.CENTER);
-        Circle bigAvt = new Circle(32, Color.web("#4E6BF2"));
-        Label lblBigName = new Label("Nhóm Đồ Án Java 2026");
-        lblBigName.setStyle("-fx-font-size: 14.5px; -fx-font-weight: bold; -fx-text-fill: -text-normal;");
-        Label lblBigSub = new Label("Khởi tạo ngày 23/10/2026");
-        lblBigSub.setStyle("-fx-font-size: 11.5px; -fx-text-fill: -text-muted;");
-        profileCard.getChildren().addAll(bigAvt, lblBigName, lblBigSub);
-
-        // Phân đoạn: Quản lý Thành viên
-        VBox membersSection = new VBox(8);
-        Label lblSecMembers = new Label("THÀNH VIÊN NHÓM (3)");
-        lblSecMembers.setStyle("-fx-font-size: 11px; -fx-font-weight: bold; -fx-text-fill: -text-muted;");
-
-        membersSection.getChildren().addAll(
-            lblSecMembers,
-            createMemberRow("Trần Nguyễn Tuấn Minh", "Admin (Bạn)", true),
-            createMemberRow("Lưu Chí Hải", "Admin", false),
-            createMemberRow("Nguyễn Lan Anh", "Thành viên", false)
-        );
-
-        // Phân đoạn: Bảo mật E2EE
-        VBox secSection = new VBox(6);
-        Label lblSecSec = new Label("MÃ HÓA & BẢO MẬT");
-        lblSecSec.setStyle("-fx-font-size: 11px; -fx-font-weight: bold; -fx-text-fill: -text-muted;");
-
-        Label lblKeyInfo = new Label("Khóa DEK: AES-GCM 256-bit");
-        lblKeyInfo.setStyle("-fx-font-size: 12px; -fx-text-fill: -status-online;");
-
-        Label lblFingerprint = new Label("Mã định danh: 7f3b...e92a");
-        lblFingerprint.setStyle("-fx-font-size: 11px; -fx-text-fill: -text-muted;");
-        secSection.getChildren().addAll(lblSecSec, lblKeyInfo, lblFingerprint);
-
-        // Phân đoạn: Thao tác nguy hiểm
-        VBox dangerSection = new VBox(8);
-        Button btnClearHistory = new Button("🗑 Xóa lịch sử trò chuyện");
-        btnClearHistory.getStyleClass().add("btn-danger-outline");
-        btnClearHistory.setMaxWidth(Double.MAX_VALUE);
-        btnClearHistory.setOnAction(e -> {
-            Alert c = new Alert(Alert.AlertType.CONFIRMATION);
-            c.initOwner(primaryStage);
-            c.setHeaderText("Xác nhận xóa lịch sử");
-            c.setContentText("Bạn có chắc chắn muốn xóa lịch sử cuộc trò chuyện này ở phía bạn?");
-            c.showAndWait().ifPresent(r -> {
-                if (r == ButtonType.OK) {
+        if (groupManagementDrawer == null) {
+            groupManagementDrawer = new GroupManagementDrawer(
+                primaryStage,
+                this::toggleRightDrawer,
+                newName -> {
+                    if (chatConversationView != null) {
+                        chatConversationView.loadConversation(currentChatId);
+                    }
+                },
+                () -> {
+                    TextInputDialog td = new TextInputDialog();
+                    td.initOwner(primaryStage);
+                    td.setTitle("Thêm thành viên mới");
+                    td.setHeaderText("Thêm bạn bè vào nhóm (Mục 12.c)");
+                    td.setContentText("Nhập username hoặc họ tên bạn bè:");
+                    td.showAndWait().ifPresent(u -> {
+                        String trimmed = u.trim();
+                        if (!trimmed.isEmpty()) {
+                            groupManagementDrawer.addMember("u_" + System.currentTimeMillis(), trimmed, "@" + trimmed.toLowerCase().replace(" ", "_"));
+                        }
+                    });
+                },
+                () -> {
                     if (chatConversationView != null) {
                         chatConversationView.clearHistory();
                     }
                 }
-            });
-        });
-        dangerSection.getChildren().add(btnClearHistory);
-
-        drawerBody.getChildren().addAll(topRow, new Separator(), profileCard, new Separator(), membersSection, new Separator(), secSection, new Separator(), dangerSection);
-        drawerScrollPane.setContent(drawerBody);
-        rightDrawer.getChildren().setAll(drawerScrollPane);
-    }
-
-    private HBox createMemberRow(String name, String role, boolean isSelf) {
-        HBox row = new HBox(8);
-        row.setAlignment(Pos.CENTER_LEFT);
-
-        Circle dot = new Circle(3, Color.web("#4E6BF2"));
-        VBox meta = new VBox(1);
-        Label lblN = new Label(name);
-        lblN.setStyle("-fx-font-size: 12.5px; -fx-font-weight: bold; -fx-text-fill: -text-normal;");
-        Label lblR = new Label(role);
-        lblR.setStyle("-fx-font-size: 11px; -fx-text-fill: -text-muted;");
-        meta.getChildren().addAll(lblN, lblR);
-        HBox.setHgrow(meta, Priority.ALWAYS);
-
-        row.getChildren().addAll(dot, meta);
-
-        if (!isSelf) {
-            Button btnMore = new Button("•••");
-            btnMore.getStyleClass().add("btn-icon-subtle");
-            Tooltip.install(btnMore, new Tooltip("Phân quyền hoặc xóa thành viên"));
-            btnMore.setOnAction(e -> {
-                ContextMenu cm = new ContextMenu();
-                MenuItem miAdmin = new MenuItem("Gán quyền Admin nhóm");
-                MenuItem miKick = new MenuItem("Xóa khỏi nhóm (Kick)");
-                cm.getItems().addAll(miAdmin, miKick);
-                cm.show(btnMore, javafx.geometry.Side.BOTTOM, 0, 0);
-            });
-            row.getChildren().add(btnMore);
+            );
         }
 
-        return row;
+        if (currentChatId != null && currentChatId.startsWith("group")) {
+            groupManagementDrawer.setGroupName("group_project".equals(currentChatId) ? "Nhóm Đồ Án Java 2026" : "Nhóm Thể Thao Cuối Tuần");
+        }
+
+        rightDrawer.getChildren().setAll(groupManagementDrawer);
     }
 
     private void toggleRightDrawer() {

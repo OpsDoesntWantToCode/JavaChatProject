@@ -1,0 +1,353 @@
+package user;
+
+import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.SimpleBooleanProperty;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
+import javafx.scene.control.*;
+import javafx.scene.layout.*;
+import javafx.scene.paint.Color;
+import javafx.scene.shape.Circle;
+import javafx.stage.Stage;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.function.Consumer;
+
+/**
+ * Ngăn kéo Cột 4 Quản trị Nhóm Chat & Mã hóa E2EE (Task U12 — GroupManagementDrawer)
+ * Triển khai theo chuẩn docs/ui-spec/group-chat-encryption.md & base-ui-spec.md:
+ * - Chiều rộng cố định 280px, chỉ có viền trái (Single Border Source: 1px solid #2A2D35)
+ * - Đổi tên nhóm trực tiếp bằng icon bút ✏️ (Mục 12.b)
+ * - Thêm thành viên mới từ danh bạ (Mục 12.c)
+ * - Phân quyền Quản trị viên nhóm: Huy hiệu [Admin] màu vàng (Mục 12.d)
+ * - Xóa thành viên khỏi nhóm: Ràng buộc bảo mật btnRemoveMember.visibleProperty().bind(isCurrentUserAdmin) (Mục 12.e)
+ * - Trải nghiệm mã hóa nhóm E2EE phong cách Messenger: Icon 🔒, khóa DEK AES-GCM 256-bit, fingerprint (Mục 12.g)
+ */
+public class GroupManagementDrawer extends VBox {
+
+    public static class MemberItem {
+        private final String id;
+        private final String name;
+        private final String username;
+        private final boolean isSelf;
+        private final BooleanProperty isAdmin;
+
+        public MemberItem(String id, String name, String username, boolean isSelf, boolean isAdmin) {
+            this.id = id;
+            this.name = name;
+            this.username = username;
+            this.isSelf = isSelf;
+            this.isAdmin = new SimpleBooleanProperty(isAdmin);
+        }
+
+        public String getId() { return id; }
+        public String getName() { return name; }
+        public String getUsername() { return username; }
+        public boolean isSelf() { return isSelf; }
+        public boolean isAdmin() { return isAdmin.get(); }
+        public void setAdmin(boolean value) { isAdmin.set(value); }
+        public BooleanProperty adminProperty() { return isAdmin; }
+    }
+
+    private final Stage primaryStage;
+    private final Runnable onClose;
+    private final Consumer<String> onRename;
+    private final Runnable onAddMember;
+    private final Runnable onClearHistory;
+
+    // Ràng buộc bảo mật giao diện: Chỉ Admin mới có quyền thao tác quản trị
+    private final BooleanProperty isCurrentUserAdmin = new SimpleBooleanProperty(true);
+
+    private String groupName = "Nhóm Đồ Án Java 2026";
+    private final Label lblGroupName = new Label(groupName);
+    private final VBox membersListBox = new VBox(8);
+    private final List<MemberItem> members = new ArrayList<>();
+
+    public GroupManagementDrawer(Stage primaryStage, Runnable onClose, Consumer<String> onRename, Runnable onAddMember, Runnable onClearHistory) {
+        this.primaryStage = primaryStage;
+        this.onClose = onClose;
+        this.onRename = onRename;
+        this.onAddMember = onAddMember;
+        this.onClearHistory = onClearHistory;
+
+        setPrefWidth(280);
+        setMinWidth(280);
+        setMaxWidth(280);
+        getStyleClass().add("right-drawer");
+        // Tuân thủ quy tắc Single Border Source: Chỉ vẽ viền trái
+        setStyle("-fx-background-color: -bg-card; -fx-border-color: transparent transparent transparent -border-subtle; -fx-border-width: 0 0 0 1px;");
+
+        initDummyMembers();
+        buildUI();
+    }
+
+    private void initDummyMembers() {
+        members.clear();
+        members.add(new MemberItem("user_minh", "Trần Nguyễn Tuấn Minh", "@tuanminh_2026", true, true));
+        members.add(new MemberItem("user_hai", "Lưu Chí Hải", "@chihai_2026", false, true));
+        members.add(new MemberItem("user_lananh", "Nguyễn Lan Anh", "@lananh_it", false, false));
+    }
+
+    private void buildUI() {
+        ScrollPane scrollPane = new ScrollPane();
+        scrollPane.setFitToWidth(true);
+        scrollPane.getStyleClass().add("transparent-scroll");
+
+        VBox content = new VBox(14);
+        content.setPadding(new Insets(16));
+
+        // 1. Header ngăn kéo
+        HBox topRow = new HBox(8);
+        topRow.setAlignment(Pos.CENTER_LEFT);
+
+        Label lblTitle = new Label("Thông tin nhóm");
+        lblTitle.setStyle("-fx-font-size: 14.5px; -fx-font-weight: bold; -fx-text-fill: -text-normal;");
+
+        Region spacer = new Region();
+        HBox.setHgrow(spacer, Priority.ALWAYS);
+
+        Button btnClose = new Button("✕");
+        btnClose.getStyleClass().add("dialog-close-btn");
+        btnClose.setOnAction(e -> {
+            if (onClose != null) onClose.run();
+        });
+
+        topRow.getChildren().addAll(lblTitle, spacer, btnClose);
+
+        // 2. Avatar nhóm & Tên có nút sửa ✏️ (Mục 12.b)
+        VBox profileCard = new VBox(8);
+        profileCard.setAlignment(Pos.CENTER);
+        profileCard.setPadding(new Insets(8, 0, 8, 0));
+
+        Circle groupAvatar = new Circle(32, Color.web("#4E6BF2"));
+        Label lblAvtText = new Label("👥");
+        lblAvtText.setStyle("-fx-font-size: 24px;");
+        StackPane avtBox = new StackPane(groupAvatar, lblAvtText);
+
+        HBox nameRow = new HBox(6);
+        nameRow.setAlignment(Pos.CENTER);
+        lblGroupName.setStyle("-fx-font-size: 14.5px; -fx-font-weight: bold; -fx-text-fill: -text-normal;");
+
+        Button btnEditName = new Button("✏️");
+        btnEditName.getStyleClass().add("btn-icon-subtle");
+        btnEditName.setTooltip(new Tooltip("Đổi tên nhóm (Mục 12.b)"));
+        btnEditName.setOnAction(e -> handleRenameGroup());
+
+        nameRow.getChildren().addAll(lblGroupName, btnEditName);
+
+        Label lblCreatedDate = new Label("Khởi tạo ngày 23/10/2026 • 3 thành viên");
+        lblCreatedDate.setStyle("-fx-font-size: 11.5px; -fx-text-fill: -text-muted;");
+
+        profileCard.getChildren().addAll(avtBox, nameRow, lblCreatedDate);
+
+        // 3. Phân đoạn Thành viên & Nút Thêm Thành viên (Mục 12.c, 12.d, 12.e)
+        VBox membersSection = new VBox(8);
+        HBox membersHeaderRow = new HBox(8);
+        membersHeaderRow.setAlignment(Pos.CENTER_LEFT);
+
+        Label lblSecMembers = new Label("THÀNH VIÊN NHÓM (" + members.size() + ")");
+        lblSecMembers.setStyle("-fx-font-size: 11px; -fx-font-weight: bold; -fx-text-fill: -text-muted;");
+
+        Region sp2 = new Region();
+        HBox.setHgrow(sp2, Priority.ALWAYS);
+
+        Button btnAddMember = new Button("+ Thêm");
+        btnAddMember.getStyleClass().add("btn-secondary");
+        btnAddMember.setStyle("-fx-font-size: 11px; -fx-padding: 3px 8px;");
+        btnAddMember.setOnAction(e -> {
+            if (onAddMember != null) onAddMember.run();
+        });
+
+        membersHeaderRow.getChildren().addAll(lblSecMembers, sp2, btnAddMember);
+        renderMembersList();
+
+        membersSection.getChildren().addAll(membersHeaderRow, membersListBox);
+
+        // 4. Phân đoạn Mã hóa nhóm E2EE kiểu Messenger (Mục 12.g)
+        VBox e2eeSection = new VBox(6);
+        e2eeSection.setStyle("-fx-background-color: #141824; -fx-border-color: #263354; -fx-border-radius: 8px; -fx-background-radius: 8px; -fx-padding: 10px 12px;");
+
+        HBox e2eeHeader = new HBox(6);
+        e2eeHeader.setAlignment(Pos.CENTER_LEFT);
+        Label lblLockIcon = new Label("🔒");
+        Label lblE2eeTitle = new Label("BẢO VỆ MÃ HÓA NHÓM");
+        lblE2eeTitle.setStyle("-fx-font-size: 11px; -fx-font-weight: bold; -fx-text-fill: #A0C0FF;");
+        e2eeHeader.getChildren().addAll(lblLockIcon, lblE2eeTitle);
+
+        Label lblKey = new Label("Khóa đối xứng: AES-GCM 256-bit");
+        lblKey.setStyle("-fx-font-size: 11.5px; -fx-text-fill: -status-online;");
+
+        Label lblFingerprint = new Label("Mã định danh: 7f3b-e92a-44c1-88f0");
+        lblFingerprint.setStyle("-fx-font-size: 10.5px; -fx-text-fill: -text-muted;");
+
+        e2eeSection.getChildren().addAll(e2eeHeader, lblKey, lblFingerprint);
+
+        // 5. Thao tác hội thoại & Thao tác nguy hiểm
+        VBox dangerSection = new VBox(8);
+
+        Button btnClearHistory = new Button("🗑 Xóa lịch sử trò chuyện");
+        btnClearHistory.getStyleClass().add("btn-danger-outline");
+        btnClearHistory.setMaxWidth(Double.MAX_VALUE);
+        btnClearHistory.setOnAction(e -> {
+            Alert confirm = new Alert(Alert.AlertType.CONFIRMATION);
+            confirm.initOwner(primaryStage);
+            confirm.setTitle("Xác nhận xóa lịch sử");
+            confirm.setHeaderText("Xóa lịch sử tin nhắn phía bạn");
+            confirm.setContentText("Tin nhắn sẽ được ẩn ở phía bạn bằng cơ chế Watermark theo CSDL. Bạn có chắc chắn?");
+            confirm.showAndWait().ifPresent(btn -> {
+                if (btn == ButtonType.OK && onClearHistory != null) {
+                    onClearHistory.run();
+                }
+            });
+        });
+
+        Button btnLeaveGroup = new Button("🚪 Rời khỏi nhóm");
+        btnLeaveGroup.getStyleClass().add("btn-danger-subtle");
+        btnLeaveGroup.setMaxWidth(Double.MAX_VALUE);
+        btnLeaveGroup.setOnAction(e -> handleLeaveGroup());
+
+        dangerSection.getChildren().addAll(btnClearHistory, btnLeaveGroup);
+
+        content.getChildren().addAll(
+            topRow,
+            new Separator(),
+            profileCard,
+            new Separator(),
+            membersSection,
+            new Separator(),
+            e2eeSection,
+            new Separator(),
+            dangerSection
+        );
+
+        scrollPane.setContent(content);
+        getChildren().setAll(scrollPane);
+    }
+
+    private void renderMembersList() {
+        membersListBox.getChildren().clear();
+
+        for (MemberItem m : members) {
+            HBox row = new HBox(8);
+            row.setAlignment(Pos.CENTER_LEFT);
+            row.setPadding(new Insets(4, 0, 4, 0));
+
+            Circle dot = new Circle(3.5, m.isAdmin() ? Color.web("#F0B232") : Color.web("#4E6BF2"));
+
+            VBox meta = new VBox(2);
+            HBox nameBadgeRow = new HBox(6);
+            nameBadgeRow.setAlignment(Pos.CENTER_LEFT);
+
+            Label lblName = new Label(m.getName() + (m.isSelf() ? " (Bạn)" : ""));
+            lblName.setStyle("-fx-font-size: 12.5px; -fx-font-weight: bold; -fx-text-fill: -text-normal;");
+            nameBadgeRow.getChildren().add(lblName);
+
+            if (m.isAdmin()) {
+                Label badge = new Label("[Admin]");
+                badge.setStyle("-fx-font-size: 10px; -fx-font-weight: bold; -fx-text-fill: #F0B232; -fx-background-color: rgba(240, 178, 50, 0.15); -fx-padding: 1px 4px; -fx-background-radius: 4px;");
+                nameBadgeRow.getChildren().add(badge);
+            }
+
+            Label lblUser = new Label(m.getUsername());
+            lblUser.setStyle("-fx-font-size: 11px; -fx-text-fill: -text-muted;");
+
+            meta.getChildren().addAll(nameBadgeRow, lblUser);
+            HBox.setHgrow(meta, Priority.ALWAYS);
+
+            row.getChildren().addAll(dot, meta);
+
+            // Nút thao tác Quản trị viên (Chỉ hiển thị cho người khác, không áp dụng cho chính mình)
+            if (!m.isSelf()) {
+                Button btnMore = new Button("•••");
+                btnMore.getStyleClass().add("btn-icon-subtle");
+                btnMore.setTooltip(new Tooltip("Thao tác quản trị viên"));
+
+                // Ràng buộc bảo mật: Nút hành động chỉ hiển thị khi người dùng hiện tại có quyền Admin
+                btnMore.visibleProperty().bind(isCurrentUserAdmin);
+                btnMore.managedProperty().bind(isCurrentUserAdmin);
+
+                btnMore.setOnAction(e -> {
+                    ContextMenu menu = new ContextMenu();
+
+                    MenuItem miToggleAdmin = new MenuItem(m.isAdmin() ? "Thu hồi quyền Admin" : "Gán quyền Admin nhóm (Mục 12.d)");
+                    miToggleAdmin.setOnAction(ev -> {
+                        m.setAdmin(!m.isAdmin());
+                        renderMembersList();
+                    });
+
+                    MenuItem miRemove = new MenuItem("Xóa khỏi nhóm (Kick - Mục 12.e)");
+                    miRemove.setStyle("-fx-text-fill: -status-danger;");
+                    miRemove.setOnAction(ev -> {
+                        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+                        alert.initOwner(primaryStage);
+                        alert.setTitle("Xác nhận loại bỏ thành viên");
+                        alert.setHeaderText("Xóa @" + m.getUsername() + " khỏi nhóm");
+                        alert.setContentText("Bạn có chắc chắn muốn xóa thành viên " + m.getName() + " ra khỏi nhóm không?");
+                        alert.showAndWait().ifPresent(res -> {
+                            if (res == ButtonType.OK) {
+                                members.remove(m);
+                                renderMembersList();
+                            }
+                        });
+                    });
+
+                    menu.getItems().addAll(miToggleAdmin, new SeparatorMenuItem(), miRemove);
+                    menu.show(btnMore, javafx.geometry.Side.BOTTOM, 0, 0);
+                });
+
+                row.getChildren().add(btnMore);
+            }
+
+            membersListBox.getChildren().add(row);
+        }
+    }
+
+    private void handleRenameGroup() {
+        TextInputDialog dialog = new TextInputDialog(groupName);
+        dialog.initOwner(primaryStage);
+        dialog.setTitle("Đổi tên nhóm");
+        dialog.setHeaderText("Thay đổi tên nhóm chat (Mục 12.b)");
+        dialog.setContentText("Nhập tên nhóm mới:");
+
+        dialog.showAndWait().ifPresent(newName -> {
+            String trimmed = newName.trim();
+            if (!trimmed.isEmpty()) {
+                this.groupName = trimmed;
+                lblGroupName.setText(trimmed);
+                if (onRename != null) onRename.accept(trimmed);
+            }
+        });
+    }
+
+    private void handleLeaveGroup() {
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+        alert.initOwner(primaryStage);
+        alert.setTitle("Rời khỏi nhóm");
+        alert.setHeaderText("Xác nhận rời khỏi nhóm chat");
+        alert.setContentText("Bạn sẽ không thể xem hoặc nhận tin nhắn mới trong nhóm này cho đến khi được thêm lại.");
+        alert.showAndWait().ifPresent(res -> {
+            if (res == ButtonType.OK) {
+                Alert info = new Alert(Alert.AlertType.INFORMATION);
+                info.initOwner(primaryStage);
+                info.setHeaderText("Đã rời nhóm");
+                info.setContentText("Bạn đã rời khỏi nhóm chat thành công.");
+                info.showAndWait();
+            }
+        });
+    }
+
+    public void addMember(String id, String name, String username) {
+        members.add(new MemberItem(id, name, username, false, false));
+        renderMembersList();
+    }
+
+    public void setGroupName(String name) {
+        this.groupName = name;
+        this.lblGroupName.setText(name);
+    }
+
+    public BooleanProperty currentUserAdminProperty() {
+        return isCurrentUserAdmin;
+    }
+}

@@ -102,9 +102,9 @@
   - *Mô tả:* Cho phép click chuột phải lên từng tin nhắn hoặc chọn nhiều tin để thực hiện: "Xóa tin nhắn phía tôi" (xóa lẻ 1 hoặc vài dòng lịch sử).
 - [x] **Task U11 — Trợ lý gợi ý tin nhắn LLM (`ChatConversationView` / Smart Reply)** *(Hoàn thành: 02/11/2026)*:
   - *Mô tả:* Nút icon AI cạnh ô gõ tin nhắn. Khi bấm sẽ hiện popup/dialog gợi ý: chọn phong cách (Chỉnh sửa lịch sự hơn, Rút gọn, Mở rộng câu văn), hiển thị kết quả gợi ý từ AI kèm nút "Áp dụng vào ô chat".
-- [ ] **Task U12 — Tạo nhóm & Quản lý nhóm chat (`GroupManagementDrawer`, `GroupCreateDialog`)** *(Hạn chót: 02/11/2026)*:
+- [x] **Task U12 — Tạo nhóm & Quản lý nhóm chat (`GroupManagementDrawer`, `GroupCreateDialog`)** *(Hoàn thành: 02/11/2026)*:
   - *Mô tả:* Dialog tạo nhóm: nhập tên nhóm, chọn/nhập tối thiểu 1 username thành viên, checkbox "Bật mã hóa nhóm". Khung chat nhóm: Vùng hội thoại nhóm; Sidebar bên phải hiển thị tên nhóm (cho phép đổi tên), nút "Thêm thành viên", danh sách thành viên có huy hiệu "Admin nhóm". Nút "Gán Admin" cho thành viên và nút "Xóa khỏi nhóm" (chỉ hiển thị quyền xóa cho Admin nhóm).
-- [ ] **Task U13 — Hộp thoại Báo cáo Spam (`SpamReportDialog`)** *(Hạn chót: 02/11/2026)*:
+- [x] **Task U13 — Hộp thoại Báo cáo Spam (`SpamReportDialog`)** *(Hoàn thành: 02/11/2026)*:
   - *Mô tả:* Dialog bật lên từ thanh chat: hiển thị tên người bị báo cáo, ô nhập lý do spam/quấy rối, nút "Gửi báo cáo".
 
 ---
