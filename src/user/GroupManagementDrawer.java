@@ -144,6 +144,27 @@ public class GroupManagementDrawer extends VBox {
 
         profileCard.getChildren().addAll(avtBox, nameRow, lblCreatedDate);
 
+        // Hàng nút tác vụ nhanh (Quick Actions Row) kiểu Zalo / Telegram
+        HBox quickActionsRow = new HBox(8);
+        quickActionsRow.setAlignment(Pos.CENTER);
+        quickActionsRow.setPadding(new Insets(6, 0, 4, 0));
+
+        quickActionsRow.getChildren().addAll(
+            createQuickActionItem("🔔", "Tắt thông báo", () -> {
+                JavaFXTheme.showInfoAlert(primaryStage, "Thông báo", "Tắt thông báo", "Đã bật chế độ im lặng cho nhóm này.");
+            }),
+            createQuickActionItem("📌", "Ghim chat", () -> {
+                JavaFXTheme.showInfoAlert(primaryStage, "Ghim", "Ghim hội thoại", "Đã ghim cuộc trò chuyện này lên đầu.");
+            }),
+            createQuickActionItem("➕", "Thêm bạn", () -> {
+                if (onAddMember != null) onAddMember.run();
+            }),
+            createQuickActionItem("🔍", "Tìm tin", () -> {
+                // Tác vụ tìm kiếm
+            })
+        );
+        profileCard.getChildren().add(quickActionsRow);
+
         // 3. Phân đoạn Thành viên & Nút Thêm Thành viên (Mục 12.c, 12.d, 12.e)
         VBox membersSection = new VBox(8);
         HBox membersHeaderRow = new HBox(8);
@@ -168,52 +189,27 @@ public class GroupManagementDrawer extends VBox {
 
         membersSection.getChildren().addAll(membersHeaderRow, membersListBox);
 
-        // 4. Phân đoạn Mã hóa nhóm E2EE kiểu Messenger (Mục 12.g)
-        VBox e2eeSection = new VBox(6);
-        e2eeSection.setStyle("-fx-background-color: #141824; -fx-border-color: #263354; -fx-border-radius: 8px; -fx-background-radius: 8px; -fx-padding: 10px 12px;");
+        // 4. Thao tác hội thoại & Thao tác nguy hiểm (Dạng danh sách phẳng, không viền đỏ thô kệch)
+        VBox dangerSection = new VBox(2);
+        dangerSection.setPadding(new Insets(4, 0, 0, 0));
 
-        HBox e2eeHeader = new HBox(6);
-        e2eeHeader.setAlignment(Pos.CENTER_LEFT);
-        Label lblLockIcon = new Label("🔒");
-        Label lblE2eeTitle = new Label("BẢO VỆ MÃ HÓA NHÓM");
-        lblE2eeTitle.setStyle("-fx-font-size: 11px; -fx-font-weight: bold; -fx-text-fill: #A0C0FF;");
-        e2eeHeader.getChildren().addAll(lblLockIcon, lblE2eeTitle);
-
-        Label lblKey = new Label("Khóa đối xứng: AES-GCM 256-bit");
-        lblKey.setStyle("-fx-font-size: 11.5px; -fx-text-fill: -status-online;");
-
-        Label lblFingerprint = new Label("Mã định danh: 7f3b-e92a-44c1-88f0");
-        lblFingerprint.setStyle("-fx-font-size: 10.5px; -fx-text-fill: -text-muted;");
-
-        e2eeSection.getChildren().addAll(e2eeHeader, lblKey, lblFingerprint);
-
-        // 5. Thao tác hội thoại & Thao tác nguy hiểm
-        VBox dangerSection = new VBox(8);
-
-        Button btnClearHistory = new Button("🗑 Xóa lịch sử trò chuyện");
-        btnClearHistory.getStyleClass().add("btn-danger-outline");
-        btnClearHistory.setMaxWidth(Double.MAX_VALUE);
-        btnClearHistory.setOnAction(e -> {
-            Alert confirm = new Alert(Alert.AlertType.CONFIRMATION);
-            confirm.initOwner(primaryStage);
-            confirm.setTitle("Xác nhận xóa lịch sử");
-            confirm.setHeaderText("Xóa lịch sử tin nhắn phía bạn");
-            confirm.setContentText("Tin nhắn sẽ được ẩn ở phía bạn bằng cơ chế Watermark theo CSDL. Bạn có chắc chắn?");
-            confirm.showAndWait().ifPresent(btn -> {
-                if (btn == ButtonType.OK && onClearHistory != null) {
-                    onClearHistory.run();
-                }
-            });
+        HBox rowClear = createDangerListRow("🗑", "Xóa lịch sử trò chuyện", () -> {
+            boolean ok = JavaFXTheme.showConfirmDialog(
+                primaryStage,
+                "Xác nhận xóa lịch sử",
+                "Xóa lịch sử tin nhắn phía bạn (Mục 11.d)",
+                "Tin nhắn sẽ được ẩn ở phía bạn bằng cơ chế Watermark theo CSDL. Bạn có chắc chắn?"
+            );
+            if (ok && onClearHistory != null) {
+                onClearHistory.run();
+            }
         });
-        JavaFXTheme.applyTactileButton(btnClearHistory);
 
-        Button btnLeaveGroup = new Button("🚪 Rời khỏi nhóm");
-        btnLeaveGroup.getStyleClass().add("btn-danger-subtle");
-        btnLeaveGroup.setMaxWidth(Double.MAX_VALUE);
-        btnLeaveGroup.setOnAction(e -> handleLeaveGroup());
-        JavaFXTheme.applyTactileButton(btnLeaveGroup);
+        HBox rowLeave = createDangerListRow("🚪", "Rời khỏi nhóm trò chuyện", this::handleLeaveGroup);
 
-        dangerSection.getChildren().addAll(btnClearHistory, btnLeaveGroup);
+        dangerSection.getChildren().addAll(rowClear, rowLeave);
+
+        VBox mediaSection = createMediaSection();
 
         content.getChildren().addAll(
             topRow,
@@ -222,7 +218,7 @@ public class GroupManagementDrawer extends VBox {
             new Separator(),
             membersSection,
             new Separator(),
-            e2eeSection,
+            mediaSection,
             new Separator(),
             dangerSection
         );
@@ -231,22 +227,182 @@ public class GroupManagementDrawer extends VBox {
         getChildren().setAll(scrollPane);
     }
 
+    private VBox createQuickActionItem(String iconText, String labelText, Runnable onClick) {
+        VBox box = new VBox(4);
+        box.setAlignment(Pos.CENTER);
+        box.setPrefWidth(58);
+
+        Button btn = new Button(iconText);
+        btn.setStyle(
+            "-fx-background-color: #22252E; " +
+            "-fx-border-color: #2F333E; " +
+            "-fx-border-radius: 18px; " +
+            "-fx-background-radius: 18px; " +
+            "-fx-text-fill: -text-normal; " +
+            "-fx-font-size: 13px; " +
+            "-fx-pref-width: 36px; -fx-pref-height: 36px; " +
+            "-fx-min-width: 36px; -fx-min-height: 36px; " +
+            "-fx-padding: 0; -fx-cursor: hand;"
+        );
+        btn.setOnAction(e -> {
+            if (onClick != null) onClick.run();
+        });
+        btn.setOnMouseEntered(e -> btn.setStyle(
+            "-fx-background-color: #2E3342; " +
+            "-fx-border-color: #4E6BF2; " +
+            "-fx-border-radius: 18px; " +
+            "-fx-background-radius: 18px; " +
+            "-fx-text-fill: #FFFFFF; " +
+            "-fx-font-size: 13px; " +
+            "-fx-pref-width: 36px; -fx-pref-height: 36px; " +
+            "-fx-min-width: 36px; -fx-min-height: 36px; " +
+            "-fx-padding: 0; -fx-cursor: hand;"
+        ));
+        btn.setOnMouseExited(e -> btn.setStyle(
+            "-fx-background-color: #22252E; " +
+            "-fx-border-color: #2F333E; " +
+            "-fx-border-radius: 18px; " +
+            "-fx-background-radius: 18px; " +
+            "-fx-text-fill: -text-normal; " +
+            "-fx-font-size: 13px; " +
+            "-fx-pref-width: 36px; -fx-pref-height: 36px; " +
+            "-fx-min-width: 36px; -fx-min-height: 36px; " +
+            "-fx-padding: 0; -fx-cursor: hand;"
+        ));
+        JavaFXTheme.applyIconButton(btn);
+
+        Label lbl = new Label(labelText);
+        lbl.setStyle("-fx-font-size: 10px; -fx-text-fill: -text-muted;");
+        box.getChildren().addAll(btn, lbl);
+        return box;
+    }
+
+    private VBox createMediaSection() {
+        VBox sec = new VBox(8);
+        Label lblHeader = new Label("MEDIA & TÀI LIỆU CHIA SẺ");
+        lblHeader.setStyle("-fx-font-size: 11px; -fx-font-weight: bold; -fx-text-fill: -text-muted;");
+
+        VBox filesBox = createMediaCategoryRow("📁", "Tài liệu & Tệp tin", "0 tệp tin", () -> {
+            JavaFXTheme.showInfoAlert(primaryStage, "Tài liệu", "Quản lý tệp tin", "Chưa có tài liệu nào được chia sẻ trong hội thoại này.");
+        });
+
+        VBox imagesBox = createMediaCategoryRow("🖼", "Ảnh & Video", "0 hình ảnh", () -> {
+            JavaFXTheme.showInfoAlert(primaryStage, "Hình ảnh", "Kho ảnh & Video", "Chưa có hình ảnh nào được chia sẻ trong hội thoại này.");
+        });
+
+        VBox linksBox = createMediaCategoryRow("🔗", "Liên kết chia sẻ", "0 liên kết", () -> {
+            JavaFXTheme.showInfoAlert(primaryStage, "Liên kết", "Liên kết chia sẻ", "Chưa có liên kết web nào trong hội thoại này.");
+        });
+
+        sec.getChildren().addAll(lblHeader, filesBox, imagesBox, linksBox);
+        return sec;
+    }
+
+    private VBox createMediaCategoryRow(String icon, String title, String countText, Runnable onClick) {
+        VBox container = new VBox(2);
+        HBox row = new HBox(8);
+        row.setAlignment(Pos.CENTER_LEFT);
+        row.setPadding(new Insets(7, 10, 7, 10));
+        row.setStyle("-fx-background-color: #1A1C23; -fx-border-color: #262932; -fx-border-radius: 8px; -fx-background-radius: 8px; -fx-cursor: hand;");
+
+        Label lblIcon = new Label(icon);
+        lblIcon.setStyle("-fx-font-size: 14px;");
+
+        VBox textBox = new VBox(1);
+        Label lblTitle = new Label(title);
+        lblTitle.setStyle("-fx-font-size: 12.5px; -fx-font-weight: bold; -fx-text-fill: -text-normal;");
+        Label lblCount = new Label(countText);
+        lblCount.setStyle("-fx-font-size: 11px; -fx-text-fill: -text-muted;");
+        textBox.getChildren().addAll(lblTitle, lblCount);
+        HBox.setHgrow(textBox, Priority.ALWAYS);
+
+        Label lblArrow = new Label("›");
+        lblArrow.setStyle("-fx-font-size: 14px; -fx-text-fill: -text-muted;");
+
+        row.getChildren().addAll(lblIcon, textBox, lblArrow);
+        row.setOnMouseClicked(e -> {
+            if (onClick != null) onClick.run();
+        });
+        row.setOnMouseEntered(e -> row.setStyle("-fx-background-color: #22252E; -fx-border-color: #363A45; -fx-border-radius: 8px; -fx-background-radius: 8px; -fx-cursor: hand;"));
+        row.setOnMouseExited(e -> row.setStyle("-fx-background-color: #1A1C23; -fx-border-color: #262932; -fx-border-radius: 8px; -fx-background-radius: 8px; -fx-cursor: hand;"));
+
+        container.getChildren().add(row);
+        return container;
+    }
+
+    private HBox createDangerListRow(String icon, String title, Runnable action) {
+        HBox row = new HBox(10);
+        row.setAlignment(Pos.CENTER_LEFT);
+        row.setPadding(new Insets(8, 10, 8, 10));
+        row.setStyle("-fx-background-color: transparent; -fx-background-radius: 8px; -fx-cursor: hand;");
+
+        Label lblIcon = new Label(icon);
+        lblIcon.setStyle("-fx-font-size: 13px; -fx-text-fill: #FA777C;");
+
+        Label lblText = new Label(title);
+        lblText.setStyle("-fx-font-size: 12.5px; -fx-font-weight: 500; -fx-text-fill: #FA777C;");
+        HBox.setHgrow(lblText, Priority.ALWAYS);
+
+        row.getChildren().addAll(lblIcon, lblText);
+
+        row.setOnMouseEntered(e -> row.setStyle("-fx-background-color: rgba(250, 119, 124, 0.08); -fx-background-radius: 8px; -fx-cursor: hand;"));
+        row.setOnMouseExited(e -> row.setStyle("-fx-background-color: transparent; -fx-background-radius: 8px; -fx-cursor: hand;"));
+        row.setOnMouseClicked(e -> {
+            if (action != null) action.run();
+        });
+        return row;
+    }
+
     private void renderMembersList() {
         membersListBox.getChildren().clear();
 
         for (MemberItem m : members) {
-            HBox row = new HBox(8);
+            HBox row = new HBox(10);
             row.setAlignment(Pos.CENTER_LEFT);
-            row.setPadding(new Insets(4, 0, 4, 0));
+            row.setPadding(new Insets(5, 0, 5, 0));
 
-            Circle dot = new Circle(3.5, m.isAdmin() ? Color.web("#F0B232") : Color.web("#4E6BF2"));
+            // Avatar tròn 32px kèm chấm xanh Online ở góc dưới
+            StackPane avtPane = new StackPane();
+            Circle avtCircle = new Circle(16, Color.web(getMemberColor(m.getName())));
+            Label lblInitials = new Label(getMemberInitials(m.getName()));
+            lblInitials.setStyle("-fx-font-size: 11px; -fx-font-weight: bold; -fx-text-fill: #FFFFFF;");
+            avtPane.getChildren().addAll(avtCircle, lblInitials);
+
+            Circle onlineDot = new Circle(3.5, Color.web("#23A55A"));
+            onlineDot.setStroke(Color.web("#1B1D22"));
+            onlineDot.setStrokeWidth(1.5);
+            StackPane.setAlignment(onlineDot, Pos.BOTTOM_RIGHT);
+            avtPane.getChildren().add(onlineDot);
+
+            // Popover tương tác Avatar
+            avtPane.setStyle("-fx-cursor: hand;");
+            avtPane.setOnMouseClicked(e -> {
+                JavaFXTheme.showMiniProfilePopover(
+                    avtPane,
+                    m.getName(),
+                    m.getUsername(),
+                    true,
+                    getMemberColor(m.getName()),
+                    getMemberInitials(m.getName())
+                );
+            });
 
             VBox meta = new VBox(2);
             HBox nameBadgeRow = new HBox(6);
             nameBadgeRow.setAlignment(Pos.CENTER_LEFT);
 
             Label lblName = new Label(m.getName() + (m.isSelf() ? " (Bạn)" : ""));
-            lblName.setStyle("-fx-font-size: 12.5px; -fx-font-weight: bold; -fx-text-fill: -text-normal;");
+            lblName.setStyle("-fx-font-size: 12.5px; -fx-font-weight: bold; -fx-text-fill: -text-normal; -fx-cursor: hand;");
+            lblName.setOnMouseClicked(e -> {
+                JavaFXTheme.showMiniProfilePopover(
+                    lblName,
+                    m.getName(),
+                    m.getUsername(),
+                    true,
+                    getMemberColor(m.getName()),
+                    getMemberInitials(m.getName())
+                );
+            });
             nameBadgeRow.getChildren().add(lblName);
 
             if (m.isAdmin()) {
@@ -261,7 +417,7 @@ public class GroupManagementDrawer extends VBox {
             meta.getChildren().addAll(nameBadgeRow, lblUser);
             HBox.setHgrow(meta, Priority.ALWAYS);
 
-            row.getChildren().addAll(dot, meta);
+            row.getChildren().addAll(avtPane, meta);
 
             // Nút thao tác Quản trị viên (Chỉ hiển thị cho người khác, không áp dụng cho chính mình)
             if (!m.isSelf()) {
@@ -356,5 +512,22 @@ public class GroupManagementDrawer extends VBox {
 
     public BooleanProperty currentUserAdminProperty() {
         return isCurrentUserAdmin;
+    }
+
+    private String getMemberColor(String name) {
+        if (name == null || name.isEmpty()) return "#4E6BF2";
+        if (name.contains("Minh")) return "#3B82F6";
+        if (name.contains("Hải")) return "#10B981";
+        if (name.contains("Lan Anh")) return "#EC4899";
+        if (name.contains("Nam")) return "#8B5CF6";
+        if (name.contains("Huy")) return "#F59E0B";
+        return "#3B82F6";
+    }
+
+    private String getMemberInitials(String name) {
+        if (name == null || name.isEmpty()) return "?";
+        String[] parts = name.trim().split("\\s+");
+        if (parts.length == 1) return parts[0].substring(0, Math.min(2, parts[0].length())).toUpperCase();
+        return (parts[parts.length - 2].substring(0, 1) + parts[parts.length - 1].substring(0, 1)).toUpperCase();
     }
 }

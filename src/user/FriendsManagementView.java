@@ -216,7 +216,8 @@ public class FriendsManagementView extends BorderPane {
         // Avatar + Status Dot
         StackPane avtBox = new StackPane();
         Circle bg = new Circle(20, friend.isOnline ? Color.web("#23A55A") : Color.web("#4E6BF2"));
-        Label lblI = new Label(friend.name.substring(0, Math.min(2, friend.name.length())).toUpperCase());
+        String initText = friend.name.substring(0, Math.min(2, friend.name.length())).toUpperCase();
+        Label lblI = new Label(initText);
         lblI.setStyle("-fx-font-size: 13px; -fx-font-weight: bold; -fx-text-fill: #FFFFFF;");
         avtBox.getChildren().addAll(bg, lblI);
 
@@ -226,13 +227,36 @@ public class FriendsManagementView extends BorderPane {
         StackPane.setAlignment(dot, Pos.BOTTOM_RIGHT);
         avtBox.getChildren().add(dot);
 
+        String avtColor = friend.isOnline ? "#10B981" : "#4E6BF2";
+        avtBox.setStyle("-fx-cursor: hand;");
+        avtBox.setOnMouseClicked(e -> {
+            JavaFXTheme.showMiniProfilePopover(
+                avtBox,
+                friend.name,
+                friend.tag,
+                friend.isOnline,
+                avtColor,
+                initText
+            );
+        });
+
         // Name & Tag & Subtitle
         VBox meta = new VBox(2);
         HBox nameRow = new HBox(8);
         nameRow.setAlignment(Pos.CENTER_LEFT);
 
         Label lblName = new Label(friend.name);
-        lblName.setStyle("-fx-font-size: 14.5px; -fx-font-weight: bold; -fx-text-fill: -text-normal;");
+        lblName.setStyle("-fx-font-size: 14.5px; -fx-font-weight: bold; -fx-text-fill: -text-normal; -fx-cursor: hand;");
+        lblName.setOnMouseClicked(e -> {
+            JavaFXTheme.showMiniProfilePopover(
+                lblName,
+                friend.name,
+                friend.tag,
+                friend.isOnline,
+                avtColor,
+                initText
+            );
+        });
 
         Label lblTag = new Label(friend.tag);
         lblTag.setStyle("-fx-font-size: 12.5px; -fx-text-fill: -text-muted;");

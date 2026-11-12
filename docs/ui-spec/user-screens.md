@@ -81,17 +81,22 @@
 
 ## 4. Cụm 4: Khung Chat & Lịch sử Tin nhắn (Chat Engine)
 
-* **Tệp mã nguồn:** `ChatConversationView.java`, `SpamReportDialog.java`.
-* **Kiến trúc Ảo hóa Danh sách:** BẮT BUỘC dùng `ListView<Message>` (VirtualFlow) thay cho ScrollPane để tối ưu bộ nhớ và duy trì 60fps khi lịch sử chat dài. Hỗ trợ cuộn lên đỉnh để tải trang cũ (Lazy Pagination).
+* **Tệp mã nguồn:** `ChatConversationView.java`, `GlobalSearchDialog.java`, `ChatMockRepository.java`, `SpamReportDialog.java`.
+* **Kiến trúc Ảo hóa Danh sách:** BẮT BUỘC dùng `ListView<MessageItem>` (VirtualFlow) thay cho ScrollPane để tối ưu bộ nhớ và duy trì 60fps khi lịch sử chat dài. Hỗ trợ cuộn lên đỉnh để tải trang cũ (Lazy Pagination).
 * **Cấu trúc Khung Chat:**
-  * **Header (Top Bar):** Avatar `40px` kèm chấm online/offline, Họ tên / Tên nhóm, icon ổ khóa 🔒 xanh lá nếu nhóm bật AES-GCM. Cụm nút công cụ tích hợp `JavaFXTheme.applyIconButton`: 🔍 Tìm kiếm tin nhắn, ⚠️ Báo cáo Spam (mở `SpamReportDialog`), ☑️ Chọn nhiều xóa tin, ℹ️ Đóng/mở Right Drawer.
+  * **Header (Top Bar):** Avatar `40px` kèm chấm online/offline, Họ tên / Tên nhóm, icon ổ khóa 🔒 xanh lá nếu nhóm bật AES-GCM. Cụm nút công cụ tích hợp `JavaFXTheme.applyIconButton`: 🔍 Tìm kiếm tin nhắn (Mục 11.f), ⚠️ Báo cáo Spam (mở `SpamReportDialog`), ☑️ Chọn nhiều xóa tin (Mục 11.e), ℹ️ Đóng/mở Right Drawer.
   * **Luồng Bong bóng Tin nhắn:**
     * *Tin gửi đi (Sent):* Căn phải, nền `-bubble-sent: #4E6BF2`, chữ trắng, bo góc `12px` (góc dưới phải `3px`).
     * *Tin nhận được (Received):* Căn trái, nền `-bubble-received: #1E2128`, chữ `-text-normal: #EDEDED`, bo góc `12px` (góc dưới trái `3px`).
     * *Tin Trợ lý AI (Bot):* Căn trái, nền `-bg-ai-bubble: #2B2738`, viền trái tím `3px solid #8B5CF6`, huy hiệu `[AI BOT]`.
   * **Thanh Soạn thảo Tin nhắn (Bottom Bar):** Ô nhập liệu, nút đính kèm 📎 (`applyIconButton`), nút `✨ Gợi ý AI` và nút `Gửi 🚀` (`applyTactileButton`).
-  * **Tìm kiếm trong Hội thoại:** Thanh tìm kiếm nội bộ có nút Lên/Xuống để duyệt tin nhắn; tự động cuộn và highlight nền vàng nhạt `1.5s` vào bong bóng tìm thấy.
-  * **Xóa Tin nhắn Linh hoạt:** Menu chuột phải hoặc thanh Multi-Select cho phép chọn một hoặc nhiều tin nhắn để *"Xóa tin nhắn phía tôi"*.
+  * **Tìm kiếm trong Hội thoại (Mục 11.f):** Thanh tìm kiếm nội bộ có nút Lên/Xuống để duyệt tin nhắn; tự động cuộn và highlight nền vàng nhạt `1.5s` vào bong bóng tìm thấy. Nút `🌐 Tìm tất cả (11.g)` cho phép mở rộng nhanh sang phạm vi toàn cục.
+  * **Tìm kiếm Chuỗi trong Lịch sử Chat với Tất cả Mọi người (Mục 11.g - Toàn cục):**
+    * *Tích hợp Sub-Sidebar:* Khi gõ từ khóa vào `txtSearch`, danh sách chuyển đổi thời gian thực thành 2 phân mục: `CUỘC TRÒ CHUYỆN (k)` và `TIN NHẮN TOÀN CỤC — MỤC 11.G (m)`. Trích đoạn tin nhắn hiển thị tên hội thoại, người gửi, thời gian và từ khóa bôi vàng hổ phách `#F0B232`.
+    * *Hộp thoại Chuyên dụng (`GlobalSearchDialog.java`):* Hỗ trợ bộ lọc nhanh (Tất cả / Tin nhắn / Hội thoại), phím tắt `Ctrl+Shift+F` hoặc `Ctrl+K`.
+    * *Điều hướng Tức thời & Chớp sáng Vàng:* Nhấp chuột vào bất kỳ kết quả tìm kiếm nào sẽ tự động nạp hội thoại đích (`loadConversation`), cuộn mượt VirtualFlow đến đúng vị trí tin nhắn (`messageListView.scrollTo`) và kích hoạt hiệu ứng chớp sáng nền vàng hổ phách `1500ms` (`highlightAndScrollToMessage`), giúp người dùng định vị ngay lập tức ngữ cảnh tin nhắn cần tìm.
+  * **Xóa Tin nhắn Linh hoạt (Mục 11.e):** Menu chuột phải hoặc thanh Multi-Select cho phép chọn một hoặc nhiều tin nhắn để *"Xóa tin nhắn phía tôi"*.
+  * **Xóa Lịch sử Trò chuyện (Mục 11.d):** Nút xóa lịch sử trong Right Drawer xóa toàn bộ tin nhắn trong hội thoại hiện tại.
 
 ---
 

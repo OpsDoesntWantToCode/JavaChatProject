@@ -710,39 +710,35 @@ Text, .text {
 }
 
 .e2ee-banner {
-    -fx-background-color: #121E36;
-    -fx-border-color: #1E3A6E;
-    -fx-border-radius: 8px;
-    -fx-background-radius: 8px;
-    -fx-border-width: 1px;
+    -fx-background-color: transparent;
 }
 
 .chat-bubble-received {
     -fx-background-color: #1E2128;
     -fx-border-color: -border-subtle;
-    -fx-border-radius: 12px;
-    -fx-background-radius: 12px;
-    -fx-padding: 10px 14px;
+    -fx-border-radius: 14px;
+    -fx-background-radius: 14px 14px 14px 3px;
+    -fx-padding: 7px 12px 6px 12px;
     -fx-text-fill: -text-normal;
     -fx-font-size: 13.5px;
 }
 
 .chat-bubble-sent {
     -fx-background-color: -accent-primary;
-    -fx-border-radius: 12px;
-    -fx-background-radius: 12px;
-    -fx-padding: 10px 14px;
+    -fx-border-radius: 14px;
+    -fx-background-radius: 14px 14px 3px 14px;
+    -fx-padding: 7px 12px 6px 12px;
     -fx-text-fill: #FFFFFF;
     -fx-font-size: 13.5px;
 }
 
 .chat-bubble-ai {
-    -fx-background-color: #2B2738;
+    -fx-background-color: #231F32;
     -fx-border-color: transparent transparent transparent #8B5CF6;
     -fx-border-width: 0 0 0 3px;
     -fx-border-radius: 12px;
-    -fx-background-radius: 12px;
-    -fx-padding: 10px 14px;
+    -fx-background-radius: 12px 12px 12px 3px;
+    -fx-padding: 8px 14px 6px 14px;
     -fx-text-fill: -text-normal;
     -fx-font-size: 13.5px;
 }

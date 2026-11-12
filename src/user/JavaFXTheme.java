@@ -5,6 +5,7 @@ import javafx.animation.Interpolator;
 import javafx.animation.ParallelTransition;
 import javafx.animation.ScaleTransition;
 import javafx.animation.TranslateTransition;
+import javafx.geometry.Bounds;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
@@ -15,8 +16,11 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.StackPane;
+import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
+import javafx.scene.shape.Circle;
 import javafx.scene.shape.SVGPath;
+import javafx.stage.Popup;
 import javafx.stage.Stage;
 import javafx.stage.Window;
 import javafx.util.Duration;
@@ -488,6 +492,18 @@ public final class JavaFXTheme {
         dialog.setHeaderText(header);
         dialog.setContentText(prompt);
         applyDialogTheme(dialog);
+        TextField editor = dialog.getEditor();
+        if (editor != null) {
+            editor.setStyle(
+                "-fx-background-color: #0F1013; " +
+                "-fx-border-color: #2A2D35; " +
+                "-fx-border-radius: 8px; " +
+                "-fx-background-radius: 8px; " +
+                "-fx-text-fill: -text-normal; " +
+                "-fx-font-size: 13.5px; " +
+                "-fx-padding: 8px 12px;"
+            );
+        }
         return dialog.showAndWait();
     }
 
@@ -516,5 +532,133 @@ public final class JavaFXTheme {
         alert.setContentText(content);
         applyDialogTheme(alert);
         alert.showAndWait();
+    }
+
+    /**
+     * Mini-Profile Popover hiển thị thẻ định danh người dùng (260x280px)
+     * Kích hoạt khi click vào Avatar hoặc Tên người dùng trong cuộc hội thoại hoặc danh sách thành viên.
+     * Hiển thị Avatar, Tên, Username, Trạng thái online, Huy hiệu thành viên, cùng 2 nút hành động nhanh:
+     * - "💬 Nhắn tin trực tiếp" (Mục 11.a)
+     * - "🚫 Chặn người dùng" (Mục 6.d)
+     */
+    public static void showMiniProfilePopover(Node anchor, String fullName, String username, boolean online, String avatarColor, String initials) {
+        if (anchor == null || anchor.getScene() == null) return;
+
+        Popup popup = new Popup();
+        popup.setAutoHide(true);
+
+        VBox card = new VBox(12);
+        card.setPrefWidth(260);
+        card.setPadding(new Insets(16));
+        card.setStyle(
+            "-fx-background-color: #18191E; " +
+            "-fx-border-color: #2A2D35; " +
+            "-fx-border-radius: 12px; " +
+            "-fx-background-radius: 12px; " +
+            "-fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.55), 18, 0, 0, 8);"
+        );
+
+        // Header: Avatar lớn 48px + chấm online
+        HBox topRow = new HBox(12);
+        topRow.setAlignment(Pos.CENTER_LEFT);
+
+        StackPane avtStack = new StackPane();
+        Circle circle = new Circle(24, Color.web(avatarColor != null ? avatarColor : "#4E6BF2"));
+        Label lblInit = new Label(initials != null ? initials : "?");
+        lblInit.setStyle("-fx-font-size: 14px; -fx-font-weight: bold; -fx-text-fill: #FFFFFF;");
+        avtStack.getChildren().addAll(circle, lblInit);
+
+        Circle statusDot = new Circle(5, Color.web(online ? "#23A55A" : "#8E929B"));
+        statusDot.setStroke(Color.web("#18191E"));
+        statusDot.setStrokeWidth(2);
+        StackPane.setAlignment(statusDot, Pos.BOTTOM_RIGHT);
+        avtStack.getChildren().add(statusDot);
+
+        VBox nameBox = new VBox(2);
+        Label lblName = new Label(fullName != null ? fullName : "Người dùng");
+        lblName.setStyle("-fx-font-size: 14px; -fx-font-weight: bold; -fx-text-fill: #EDEDED;");
+        Label lblUser = new Label(username != null && !username.isEmpty() ? username : "@user");
+        lblUser.setStyle("-fx-font-size: 12px; -fx-text-fill: -text-muted;");
+        Label lblStatus = new Label(online ? "🟢 Đang trực tuyến" : "⚪ Ngoại tuyến");
+        lblStatus.setStyle("-fx-font-size: 11px; -fx-text-fill: " + (online ? "#23A55A;" : "#8E929B;"));
+        nameBox.getChildren().addAll(lblName, lblUser, lblStatus);
+
+        topRow.getChildren().addAll(avtStack, nameBox);
+
+        // Huy hiệu bảo mật / thành viên
+        HBox badgeRow = new HBox(6);
+        badgeRow.setAlignment(Pos.CENTER_LEFT);
+        Label badgeE2EE = new Label("🔒 Mã hóa E2EE");
+        badgeE2EE.setStyle("-fx-font-size: 10.5px; -fx-text-fill: #8E929B; -fx-background-color: #22252C; -fx-padding: 2px 7px; -fx-background-radius: 4px;");
+        Label badgeRole = new Label(username != null && username.contains("minh") ? "👑 Chủ nhóm" : "🛡️ Thành viên");
+        badgeRole.setStyle("-fx-font-size: 10.5px; -fx-text-fill: #A78BFA; -fx-background-color: rgba(139, 92, 246, 0.15); -fx-padding: 2px 7px; -fx-background-radius: 4px;");
+        badgeRow.getChildren().addAll(badgeE2EE, badgeRole);
+
+        Separator sep = new Separator();
+        sep.setStyle("-fx-background-color: #2A2D35; -fx-pref-height: 1px;");
+
+        // Action Buttons
+        VBox actions = new VBox(6);
+
+        Button btnDm = new Button("💬 Nhắn tin trực tiếp");
+        btnDm.setMaxWidth(Double.MAX_VALUE);
+        btnDm.setStyle(
+            "-fx-background-color: #242A3E; " +
+            "-fx-border-color: #3B4B75; " +
+            "-fx-border-radius: 7px; " +
+            "-fx-background-radius: 7px; " +
+            "-fx-text-fill: #739AFE; " +
+            "-fx-font-size: 12px; " +
+            "-fx-font-weight: bold; " +
+            "-fx-padding: 6 10; " +
+            "-fx-cursor: hand;"
+        );
+        btnDm.setOnAction(e -> {
+            popup.hide();
+            showInfoAlert(anchor.getScene().getWindow(), "Cuộc trò chuyện trực tiếp", "Chuyển tới tin nhắn riêng", "Đã mở cuộc trò chuyện trực tiếp với " + fullName);
+        });
+        applyTactileButton(btnDm);
+
+        Button btnBlock = new Button("🚫 Chặn người dùng này (Mục 6.d)");
+        btnBlock.setMaxWidth(Double.MAX_VALUE);
+        btnBlock.setStyle(
+            "-fx-background-color: rgba(250, 119, 124, 0.08); " +
+            "-fx-border-color: rgba(250, 119, 124, 0.3); " +
+            "-fx-border-radius: 7px; " +
+            "-fx-background-radius: 7px; " +
+            "-fx-text-fill: #FA777C; " +
+            "-fx-font-size: 12px; " +
+            "-fx-padding: 6 10; " +
+            "-fx-cursor: hand;"
+        );
+        btnBlock.setOnAction(e -> {
+            popup.hide();
+            boolean ok = showConfirmDialog(anchor.getScene().getWindow(), "Xác nhận chặn", "Chặn người dùng (Mục 6.d)", "Bạn có chắc chắn muốn chặn " + fullName + " (" + username + ") không? Người này sẽ không thể gửi tin nhắn cho bạn.");
+            if (ok) {
+                showInfoAlert(anchor.getScene().getWindow(), "Đã chặn", "Thao tác thành công", "Đã thêm " + fullName + " vào danh sách chặn.");
+            }
+        });
+        applyTactileButton(btnBlock);
+
+        actions.getChildren().addAll(btnDm, btnBlock);
+
+        card.getChildren().addAll(topRow, badgeRow, sep, actions);
+
+        // Đăng ký CSS
+        java.net.URL cssUrl = JavaFXTheme.class.getResource("theme.css");
+        if (cssUrl != null) {
+            card.getStylesheets().add(cssUrl.toExternalForm());
+        }
+
+        popup.getContent().add(card);
+
+        // Vị trí hiển thị bên dưới hoặc cạnh anchor
+        Bounds bounds = anchor.localToScreen(anchor.getBoundsInLocal());
+        if (bounds != null) {
+            double posX = Math.max(10, bounds.getMinX() - 10);
+            double posY = bounds.getMaxY() + 6;
+            popup.show(anchor.getScene().getWindow(), posX, posY);
+            applyModalEntrance(card);
+        }
     }
 }
