@@ -35,138 +35,43 @@ Hệ thống giao diện tuân thủ nghiêm ngặt mô hình phân tầng chu�
 └────────────────────────────────────────────────────────────────────────┘
 ```
 
-Mọi tài liệu đặc tả chức năng con (`docs/ui-spec/*.md`) đều kế thừa trực tiếp từ hệ thống Token này; không tự ý tạo ra các thông số biến thể nằm ngoài danh mục.
+Mọi tài liệu đặc tả màn hình (như [user-screens.md](user-screens.md)) đều kế thừa trực tiếp từ hệ thống Token này; không tự ý tạo ra các thông số biến thể nằm ngoài danh mục.
 
 ---
 
-## 2. Tầng 1: Primitive Tokens (Giá trị Nền tảng)
+## 2. Hệ Thống Token Hợp Nhất (Design Tokens Map)
 
-### 2.1 Thang Màu Thô (Primitive Palette)
-Bảng màu xây dựng trên nền tảng **Modern Obsidian Surface** kết hợp sắc thái **Tech Sapphire**:
+Bảng ánh xạ trực tiếp từ Primitive Token (Giá trị thô) sang Semantic Token (CSS trong `theme.css`):
 
-| Nhóm màu | Tên Token | Giá trị Hex | Ứng dụng gốc |
-| :--- | :--- | :---: | :--- |
-| **Dark Slates** | `color.slate.950` | `#0F1013` | Sắc đen obsidian sâu nhất |
-| | `color.slate.900` | `#141619` | Sắc canvas nền cửa sổ |
-| | `color.slate.850` | `#1B1D22` | Sắc bề mặt thẻ card và modal |
-| | `color.slate.800` | `#1E2026` | Sắc bề mặt khối công cụ / chip |
-| | `color.slate.750` | `#22252C` | Trạng thái hover bậc nhẹ |
-| | `color.slate.700` | `#262932` | Trạng thái hover danh sách / cell |
-| | `color.slate.600` | `#2A2D35` | Đường viền mỏng tiêu chuẩn |
-| | `color.slate.500` | `#383D48` | Đường viền tương tác / hover |
-| **Tech Sapphires** | `color.sapphire.500` | `#4E6BF2` | Sắc xanh chủ đạo nhận diện |
-| | `color.sapphire.600` | `#3D5AE0` | Sắc xanh tương tác hover |
-| | `color.sapphire.700` | `#2E48C7` | Sắc xanh trạng thái nhấn giữ (active) |
-| **Semantic Hues** | `color.emerald.500` | `#23A55A` | Trạng thái trực tuyến / thành công |
-| | `color.ruby.500` | `#FA777C` | Trạng thái lỗi / nguy hiểm / cảnh báo đỏ |
-| | `color.amber.500` | `#F0B232` | Trạng thái cảnh báo vàng / chờ duyệt |
-| | `color.neutral.500`| `#80848E` | Trạng thái ngoại tuyến / slate trung tính |
-| **Neutrals** | `color.neutral.000`| `#FFFFFF` | Trắng tinh khiết (Icon vector, CTA text) |
-| | `color.neutral.100`| `#EDEDED` | Trắng độ tương phản cao (WCAG AAA) |
-| | `color.neutral.400`| `#8E929B` | Xám nhạt phụ trợ (Placeholder, subtitle) |
-
-### 2.2 Thang Đo Khoảng Cách (8-Point Spatial System)
-Hệ thống khoảng cách tuân thủ nguyên tắc bội số của 4 và 8:
-
-| Token Khoảng cách | Giá trị | Mục đích áp dụng |
-| :--- | :---: | :--- |
-| `space.1` | **`4px`** | Khoảng cách vi mô (nhãn sao đỏ, phân đoạn thanh đo) |
-| `space.2` | **`8px`** | Khoảng cách nội bộ nhỏ, padding dọc cell, gap giữa icon và nhãn |
-| `space.3` | **`12px`** | Khoảng cách giữa các phần tử nội bộ, padding ngang trường nhập |
-| `space.4` | **`16px`** | Khoảng cách dọc tiêu chuẩn giữa các nhóm trường form |
-| `space.5` | **`20px`** | Khoảng cách giữa các cột trong lưới đối xứng (GridPane hgap) |
-| `space.6` | **`24px`** | Padding lề ngoài, padding khối Hero Section |
-| `space.9` | **`36px`** | Padding dọc nội bộ của thẻ xác thực |
-| `space.10` | **`40px`** | Padding ngang nội bộ của thẻ xác thực |
-
-### 2.3 Thang Đo Typography (Type Scale)
-*   **Họ Font chuẩn:** `Segoe UI` (hỗ trợ hiển thị mượt mà trên Windows Desktop).
-*   **Đặc tính hiển thị:** Kích hoạt DirectWrite Subpixel LCD ClearType (`-fx-font-smoothing-type: lcd;`).
-*   **Thang kích thước & Trọng số:**
-
-| Cấp bậc | Token Kích thước | Trọng số (Weight) | Màu mặc định | Mục đích sử dụng |
-| :--- | :---: | :---: | :--- | :--- |
-| **Caption / Badge** | `11px` | Regular / Bold | `color.neutral.400` | Nhãn credit, timestamp tin nhắn, badge nhỏ |
-| **Field Label** | `12.5px` | Bold (`700`) | `color.neutral.400` | Nhãn trường form, nhãn độ mạnh mật khẩu |
-| **Body Secondary** | `13.5px` | Regular (`400`) | `color.neutral.400` | Mô tả tính năng, liên kết phụ trợ, text footer |
-| **Body Primary** | `14px` | Regular (`400`) | `color.neutral.400` | Phụ đề form, nội dung tin nhắn chat đối phương |
-| **Body Medium** | `14.5px` | Semi-Bold (`600`) | `color.neutral.100` | Tiêu đề tính năng thẻ công cụ, text nút bấm |
-| **Input / Content** | `15px` | Regular / Bold | `color.neutral.100` | Nội dung trường nhập liệu, nút CTA chính |
-| **Header Section** | `16px` | Bold (`700`) | `color.neutral.100` | Tiêu đề thanh tiêu đề chat (Header Title) |
-| **Display Title** | `26px` | Bold (`700`) | `color.neutral.100` | Tiêu đề thẻ xác thực chính, tiêu đề thương hiệu |
-
-### 2.4 Thang Bo Góc Chọn Lọc (Corner Radius Matrix)
-Quy chuẩn bo góc có chọn lọc (Selective Radius) phản ánh phong cách giao diện công cụ chuyên nghiệp:
-
-| Token Bo góc | Bán kính | Áp dụng cho thành phần |
-| :--- | :---: | :--- |
-| `radius.xs` | **`2.5px`** | Phân đoạn thanh đo mật khẩu |
-| `radius.sm` | **`6px`** | Vùng highlight lựa chọn trong menu (ListCell) |
-| `radius.md` | **`8px`** | Nút bấm hành động (`.btn-primary`), hộp icon badge (`38x38px`), popup menu |
-| `radius.lg` | **`9px`** | Trường nhập liệu (`.text-field`, `.password-field`, `.combo-box`, `.date-picker`) |
-| `radius.xl` | **`10px`** | Thẻ tính năng công cụ (`.feature-chip`), thẻ kết quả danh bạ |
-| `radius.2xl` | **`14px`** | Thẻ xác thực chính (`.auth-card`), hộp thoại Modal |
-
-### 2.5 Thang Thời Lượng Chuyển Động (Motion & Timing)
-
-| Token Thời lượng | Giá trị | Ứng dụng tương tác |
-| :--- | :---: | :--- |
-| `motion.instant` | **`80ms`** | Phản hồi nhấn giữ chuột (:pressed state) |
-| `motion.fast` | **`120ms`** | Phản hồi di chuột (:hover), nút toggle con mắt |
-| `motion.normal` | **`150ms`** | Hoạt ảnh mở menu thả xuống (Fade + SlideY) |
-| `motion.smooth` | **`200ms`** | Chuyển cảnh View (Fade out 90ms + Fade in 110ms), Drawer trượt |
-| `motion.alert` | **`320ms`** | Hiệu ứng rung lắc báo lỗi (Shake on Error) |
-| `motion.highlight`| **`1500ms`** | Hiệu ứng chớp highlight khi tìm kiếm tin nhắn |
+| Nhóm | Biến CSS (`theme.css`) | Primitive Token | Giá trị Hex | Ứng dụng công thái học |
+| :--- | :--- | :--- | :---: | :--- |
+| **Bề mặt** | `-bg-canvas` | `color.slate.900` | `#141619` | Nền tĩnh ngoài cùng của cửa sổ |
+| | `-bg-card` | `color.slate.850` | `#1B1D22` | Bề mặt thẻ Card, Modal, Sidebar, Drawer |
+| | `-bg-input` / `-bg-nav-rail` | `color.slate.950` | `#0F1013` | Nền chìm cho ô nhập liệu và Nav Rail 60px |
+| | `-bg-chip` | `color.slate.800` | `#1E2026` | Bề mặt nút Smart Chip, thẻ tính năng Hero |
+| | `-bg-item-hover` | `color.slate.700` | `#262932` | Trạng thái hover cell danh sách |
+| **Hành động** | `-accent-primary` / `-text-link` | `color.sapphire.500`| `#4E6BF2` | Sắc xanh chủ đạo, nút CTA, link điều hướng |
+| | `-accent-hover` | `color.sapphire.600`| `#3D5AE0` | Trạng thái hover nút CTA |
+| | `-accent-active` | `color.sapphire.700`| `#2E48C7` | Trạng thái nhấn giữ nút CTA |
+| | `-accent-ai` | `color.violet.500` | `#8B5CF6` | Điểm nhấn Trợ lý AI và huy hiệu [AI BOT] |
+| **Trạng thái** | `-status-online` | `color.emerald.500` | `#23A55A` | Trực tuyến, thành công, an toàn E2EE |
+| | `-status-danger` | `color.ruby.500` | `#FA777C` | Báo lỗi, nút xóa/rời nhóm, sao đỏ bắt buộc |
+| | `-status-warning`| `color.amber.500` | `#F0B232` | Cảnh báo, huy hiệu [Admin] nhóm |
+| | `-status-offline`| `color.neutral.500`| `#80848E` | Ngoại tuyến, trạng thái trung tính |
+| **Typography** | `-text-normal` | `color.neutral.100`| `#EDEDED` | Chữ chính đạt tương phản cao WCAG AAA |
+| | `-text-muted` | `color.neutral.400`| `#8E929B` | Chữ phụ trợ, subtitle, placeholder |
+| | `-text-white` | `color.neutral.000`| `#FFFFFF` | Trắng tinh khiết (Icon Lucide, text CTA) |
+| **Đường viền** | `-border-subtle` | `color.slate.600` | `#2A2D35` | Đường viền hairline tiêu chuẩn 1px |
+| | `-border-hover` | `color.slate.500` | `#383D48` | Đường viền tương tác hover/focus |
+| **Chat Bubbles**| `-bubble-sent` | `color.sapphire.500`| `#4E6BF2` | Bong bóng tin gửi đi (căn phải) |
+| | `-bubble-received` | `color.slate.750` | `#1E2128` | Bong bóng tin nhận được (căn trái) |
+| | `-bg-ai-bubble` | `color.slate.820` | `#2B2738` | Bong bóng tin Trợ lý AI (viền trái tím) |
 
 ---
 
-## 3. Tầng 2: Semantic Tokens (Token Ngữ Nghĩa & Vai Trò)
+## 3. Tầng 3: Component-Level Tokens & Tiêu chuẩn Thành phần
 
-Các token ngữ nghĩa ánh xạ trực tiếp từ Primitive Tokens, đóng vai trò làm giao diện lập trình logic cho CSS stylesheet (`src/user/theme.css`):
-
-```css
-/* Tầng 2: Semantic Mapping trong theme.css */
-.root {
-    /* Backgrounds */
-    -bg-canvas:        #141619; /* color.slate.900 */
-    -bg-card:          #1B1D22; /* color.slate.850 */
-    -bg-input:         #0F1013; /* color.slate.950 */
-    -bg-chip:          #1E2026; /* color.slate.800 */
-    -bg-nav-rail:      #0F1013; /* color.slate.950 */
-    -bg-item-hover:    #262932; /* color.slate.700 */
-
-    /* Actions */
-    -accent-primary:   #4E6BF2; /* color.sapphire.500 */
-    -accent-hover:     #3D5AE0; /* color.sapphire.600 */
-    -accent-active:    #2E48C7; /* color.sapphire.700 */
-
-    /* Statuses */
-    -status-online:    #23A55A; /* color.emerald.500 */
-    -status-danger:    #FA777C; /* color.ruby.500 */
-    -status-warning:   #F0B232; /* color.amber.500 */
-    -status-offline:   #80848E; /* color.neutral.500 */
-
-    /* Typography */
-    -text-normal:      #EDEDED; /* color.neutral.100 */
-    -text-muted:       #8E929B; /* color.neutral.400 */
-    -text-white:       #FFFFFF; /* color.neutral.000 */
-    -text-link:        #4E6BF2; /* color.sapphire.500 */
-
-    /* Borders */
-    -border-subtle:    #2A2D35; /* color.slate.600 */
-    -border-hover:     #383D48; /* color.slate.500 */
-
-    /* Chat Bubbles */
-    -bubble-sent:      #4E6BF2; /* color.sapphire.500 */
-    -bubble-received:  #252830; /* Tối ưu độ sâu chat */
-}
-```
-
----
-
-## 4. Tầng 3: Component-Level Tokens & Tiêu chuẩn Thành phần
-
-### 4.1 Thẻ Card Chính (`.auth-card`) & Phân tầng Bề mặt (Layered Surface Elevation)
+### 3.1 Thẻ Card Chính (`.auth-card`) & Phân tầng Bề mặt (Layered Surface Elevation)
 *   **Tokens:** `background: -bg-card`, `border: 1px solid -border-subtle`, `radius: radius.2xl (14px)`, `padding: space.9 space.10 (36px 40px)`.
 *   **Nguyên tắc Phân tầng Độ sâu Bề mặt (Layered Surface Elevation):**
     *   Thay thế hoàn toàn các vầng sáng mờ ảo hoặc viền neon trang trí (vốn là biểu hiện của AI slop không có giá trị công năng) bằng **hệ thống phân tầng bề mặt tinh tế** thông qua các bước sáng tự nhiên kết hợp đường viền hairline:
@@ -176,16 +81,16 @@ Các token ngữ nghĩa ánh xạ trực tiếp từ Primitive Tokens, đóng va
         *   **Tầng 3 (Floating Popups / Menus):** `background: #22252C`, bo góc `8px`, bóng đổ độ sâu nhẹ nhàng `dropshadow(three-pass-box, rgba(0, 0, 0, 0.45), 14, 0, 0, 6)`.
     *   **Bảo vệ độ sắc nét font chữ (Zero Rasterization):** Tuyệt đối không gắn `-fx-effect` trực tiếp lên thẻ card hoặc bất kỳ container chứa chữ. Giữ nguyên công nghệ DirectWrite Subpixel LCD ClearType nguyên bản.
 
-### 4.2 Trường Nhập Liệu (`.text-field`, `.password-field`, `.combo-box`, `.date-picker`)
+### 3.2 Trường Nhập Liệu (`.text-field`, `.password-field`, `.combo-box`, `.date-picker`)
 *   **Tokens:** `height: 44px`, `background: -bg-input`, `border: 1px solid -border-subtle`, `radius: radius.lg (9px)`, `padding: space.2 space.3 (8px 14px)`, `font-size: 15px`.
 *   **Trạng thái Focus:** `border: 1px solid -accent-primary`, `effect: dropshadow(three-pass-box, rgba(78, 107, 242, 0.35), 8, 0, 0, 0)`.
 *   **Trạng thái Lỗi (`.input-error`):** `border: 1px solid -status-danger`, `effect: dropshadow(three-pass-box, rgba(250, 119, 124, 0.35), 8, 0, 0, 0)`.
 
-### 4.4 Nút Bấm Chính (`.btn-primary`)
+### 3.3 Nút Bấm Chính (`.btn-primary`)
 *   **Tokens:** `height: 44px`, `background: -accent-primary`, `radius: radius.md (8px)`, `font-size: 15px`, `font-weight: bold`, `text-fill: -text-white`.
 *   **Tương tác:** Hover sang `-accent-hover` (`120ms`), Pressed sang `-accent-active` (`80ms`).
 
-### 4.5 Icon Vector Chuẩn Hóa
+### 3.4 Icon Vector Chuẩn Hóa
 *   **Hình thức:** Vector `SVGPath` lấy từ hệ thống thư viện **Lucide / Feather**.
 *   **Màu sắc:** Cố định màu trắng thuần túy (`#FFFFFF`), áp dụng quy tắc cưỡng bức CSS:
     ```css
@@ -197,7 +102,7 @@ Các token ngữ nghĩa ánh xạ trực tiếp từ Primitive Tokens, đóng va
 
 ---
 
-## 5. Quy Chuẩn Không Gian & Khung Màn Hình (Layout & Responsive Standards)
+## 4. Quy Chuẩn Không Gian & Khung Màn Hình (Layout & Responsive Standards)
 
 Ứng dụng desktop hỗ trợ 2 chế độ hiển thị thích ứng mượt mà:
 
@@ -217,7 +122,7 @@ Các token ngữ nghĩa ánh xạ trực tiếp từ Primitive Tokens, đóng va
 
 ---
 
-## 6. Sáu Nguyên Tắc Kỹ Thuật Thực Tiễn Chống AI Slop (Anti-Slop Engineering Principles)
+## 5. Sáu Nguyên Tắc Kỹ Thuật Thực Tiễn Chống AI Slop (Anti-Slop Engineering Principles)
 
 Nhằm đảm bảo sản phẩm mang bản sắc công cụ máy tính để bàn chuyên nghiệp, đáng tin cậy và không mang dáng dấp "ý tưởng đồ họa AI hời hợt":
 
@@ -242,18 +147,17 @@ Nhằm đảm bảo sản phẩm mang bản sắc công cụ máy tính để b�
 
 ---
 
-## 7. Quy Chuẩn Vòng Lặp Phát Triển Nguyên Tử (Spec-First ➔ Anti-Slop Code ➔ Atomic Commit)
+## 6. Quy Chuẩn Vòng Lặp Phát Triển Nguyên Tử (Spec-First ➔ Anti-Slop Code ➔ Atomic Commit)
 
 Mọi hoạt động bổ sung hoặc sửa đổi giao diện phân hệ User BẮT BUỘC tuân thủ chu trình 3 bước khép kín:
 
 1. **Bước 1 — Spec-First & Spec Synchronization (Đặc tả đi trước mã nguồn):**
-   - BẮT BUỘC rà soát và chỉnh sửa tệp đặc tả chi tiết tương ứng trong `docs/ui-spec/*.md` TRƯỚC KHI viết code.
-   - Đảm bảo tên lớp (`Class`), phương thức (`Method`), cấu trúc phân cấp Node, class CSS và dữ liệu mẫu khớp 100% với hiện thực mã nguồn.
-   - Cập nhật đồng bộ danh mục tệp và trách nhiệm tại `components-and-files.md`.
+   - BẮT BUỘC rà soát và chỉnh sửa tệp đặc tả chi tiết trong `docs/ui-spec/user-screens.md` TRƯỚC KHI viết code.
+   - Đảm bảo tên lớp (`Class`), phương thức (`Method`), cấu trúc phân cấp Node, class CSS và hành vi UI khớp 100% với hiện thực mã nguồn.
 
 2. **Bước 2 — Anti-AI-Slop Code Implementation (Triển khai mã chuẩn mực):**
-   - Triển khai mã JavaFX 21 + CSS tuân thủ nghiêm ngặt 6 nguyên tắc Anti-Slop tại Mục 6 và Quy tắc Single Border Source tại Mục 5.3.
-   - Sử dụng 100% token từ `src/user/theme.css` và dữ liệu mẫu kịch bản từ `dummy-data-matrix.md`.
+   - Triển khai mã JavaFX 21 + CSS tuân thủ nghiêm ngặt 6 nguyên tắc Anti-Slop tại Mục 5 và Quy tắc Single Border Source tại Mục 4.3.
+   - Sử dụng 100% token từ `src/user/theme.css`.
 
 3. **Bước 3 — Atomic Verification & Conventional Commit (Kiểm thử & Lưu vết Git):**
    - Kiểm tra `git diff` sạch sẽ, chạy thử giao diện qua `UserLauncher`.

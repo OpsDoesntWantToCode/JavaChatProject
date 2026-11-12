@@ -53,6 +53,12 @@
 
 ### 3.2 Phân hệ Quản trị (Admin UI) — Thành viên A: Hải (`src/admin/`)
 
+> **Quyết định phân công & Kế hoạch triển khai (Cập nhật 12/11/2026):**
+> 1. Phân hệ Admin UI hoàn toàn do **Thành viên A (Lưu Chí Hải)** phụ trách độc lập trên nhánh `feat/admin-db`, không thuộc phạm vi phần việc của Thành viên B (Trần Nguyễn Tuấn Minh).
+> 2. Toàn bộ giao diện Admin sẽ sử dụng công nghệ của **JavaFX 21 + CSS** (chuyển đổi từ các mô tả Swing cũ sang `TableView`, `BorderPane`, `javafx.scene.chart.*`).
+> 3. Đặc tả giao diện chi tiết của Admin (`admin-screens.md`) **sẽ được mô tả sau** bởi Hải.
+> 4. Toàn bộ mã nguồn Admin UI (`src/admin/`) **sẽ được thực hiện sau** bởi Hải trên nhánh `feat/admin-db`.
+
 - [ ] **Task A1 — Khung giao diện chính Admin (`AdminMainFrame`)** *(Hạn chót: 26/10/2026)*:
   - *Mô tả:* Cửa sổ chính kích thước 1000x700. Cột trái là Sidebar điều hướng chứa menu 9 chức năng (dùng `CardLayout` hoặc `JTabbedPane` ẩn tab header). Header hiển thị thông tin Admin đang đăng nhập và nút Đăng xuất.
 - [ ] **Task A2 — Quản lý danh sách người dùng (`UserManagementPanel`)** *(Hạn chót: 27/10/2026)*:
