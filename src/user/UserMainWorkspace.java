@@ -33,7 +33,7 @@ public class UserMainWorkspace extends BorderPane {
     private final VBox navRail = new VBox(16);
     private final Button btnNavChat = new Button("💬");
     private final Button btnNavFriends = new Button("👥");
-    private final Button btnNavSettings = new Button("⚙️");
+    private final Button btnNavSettings = new Button("⚙");
     private final Button btnNavLogout = new Button("🚪");
     private boolean isChatMode = true;
 
@@ -122,6 +122,11 @@ public class UserMainWorkspace extends BorderPane {
         btnNavSettings.getStyleClass().add("nav-item-btn");
         btnNavLogout.getStyleClass().add("nav-item-btn");
 
+        JavaFXTheme.applyIconButton(btnNavChat);
+        JavaFXTheme.applyIconButton(btnNavFriends);
+        JavaFXTheme.applyIconButton(btnNavSettings);
+        JavaFXTheme.applyIconButton(btnNavLogout);
+
         Tooltip.install(btnNavChat, new Tooltip("Đoạn chat & Nhóm"));
         Tooltip.install(btnNavFriends, new Tooltip("Danh bạ & Bạn bè"));
         Tooltip.install(btnNavSettings, new Tooltip("Cài đặt hệ thống"));
@@ -164,6 +169,7 @@ public class UserMainWorkspace extends BorderPane {
             rightDrawer.setVisible(isDrawerOpen);
             rightDrawer.setManaged(isDrawerOpen);
             loadConversation(currentChatId);
+            JavaFXTheme.applyTabContentTransition(chatConversationView, false);
         } else {
             btnNavFriends.getStyleClass().add("nav-item-btn-active");
             btnNavChat.getStyleClass().remove("nav-item-btn-active");
@@ -175,17 +181,19 @@ public class UserMainWorkspace extends BorderPane {
                     switchMode(true);
                     loadConversation(userId);
                 }, userId -> {
-                    Alert a = new Alert(Alert.AlertType.INFORMATION);
-                    a.initOwner(primaryStage);
-                    a.setHeaderText("Tạo nhóm mới");
-                    a.setContentText("Tính năng tạo nhóm chat với thành viên này sẽ kết nối Socket ở mốc 80%.");
-                    a.showAndWait();
+                    JavaFXTheme.showInfoAlert(
+                        primaryStage,
+                        "Tạo nhóm mới",
+                        "Tạo nhóm trò chuyện",
+                        "Tính năng tạo nhóm chat với thành viên này sẽ kết nối Socket ở mốc 80%."
+                    );
                 });
             }
             mainViewPane.setCenter(friendsManagementView);
             mainViewPane.setBottom(null);
             rightDrawer.setVisible(false);
             rightDrawer.setManaged(false);
+            JavaFXTheme.applyTabContentTransition(friendsManagementView, true);
         }
     }
 
@@ -213,6 +221,7 @@ public class UserMainWorkspace extends BorderPane {
         Button btnNewGroup = new Button("➕");
         btnNewGroup.getStyleClass().add("btn-icon-subtle");
         Tooltip.install(btnNewGroup, new Tooltip("Tạo nhóm trò chuyện mới"));
+        JavaFXTheme.applyIconButton(btnNewGroup);
         btnNewGroup.setOnAction(e -> {
             new GroupCreateDialog(primaryStage, result -> {
                 conversationListBox.getChildren().add(0, createConversationItem(
@@ -439,12 +448,13 @@ public class UserMainWorkspace extends BorderPane {
                     }
                 },
                 () -> {
-                    TextInputDialog td = new TextInputDialog();
-                    td.initOwner(primaryStage);
-                    td.setTitle("Thêm thành viên mới");
-                    td.setHeaderText("Thêm bạn bè vào nhóm (Mục 12.c)");
-                    td.setContentText("Nhập username hoặc họ tên bạn bè:");
-                    td.showAndWait().ifPresent(u -> {
+                    JavaFXTheme.showInputDialog(
+                        primaryStage,
+                        "Thêm thành viên mới",
+                        "Thêm bạn bè vào nhóm (Mục 12.c)",
+                        "Nhập username hoặc họ tên bạn bè:",
+                        ""
+                    ).ifPresent(u -> {
                         String trimmed = u.trim();
                         if (!trimmed.isEmpty()) {
                             groupManagementDrawer.addMember("u_" + System.currentTimeMillis(), trimmed, "@" + trimmed.toLowerCase().replace(" ", "_"));
@@ -468,7 +478,10 @@ public class UserMainWorkspace extends BorderPane {
 
     private void toggleRightDrawer() {
         isDrawerOpen = !isDrawerOpen;
-        rightDrawer.setVisible(isDrawerOpen);
-        rightDrawer.setManaged(isDrawerOpen);
+        if (isDrawerOpen) {
+            JavaFXTheme.animateDrawerOpen(rightDrawer, 280);
+        } else {
+            JavaFXTheme.animateDrawerClose(rightDrawer, 280, null);
+        }
     }
 }

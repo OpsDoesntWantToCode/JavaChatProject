@@ -186,32 +186,55 @@ public class ChatConversationView extends BorderPane {
         titleBox.getChildren().addAll(lblChatTitle, lblChatSubtitle);
         HBox.setHgrow(titleBox, Priority.ALWAYS);
 
-        // Các nút hành động trên Header
-        Button btnToggleMulti = new Button("☑️");
+        // Các nút hành động trên Header (sử dụng SVG Vector chống lỗi font/tofu)
+        Button btnToggleMulti = new Button();
+        btnToggleMulti.setGraphic(JavaFXTheme.createSvgIcon(JavaFXTheme.SVG_CHECKLIST, 0.75));
         btnToggleMulti.getStyleClass().add("btn-icon-subtle");
+        btnToggleMulti.setPrefSize(34, 34);
+        btnToggleMulti.setMinSize(34, 34);
+        btnToggleMulti.setMaxSize(34, 34);
         Tooltip.install(btnToggleMulti, new Tooltip("Chọn nhiều tin nhắn để xóa (Mục 11.e)"));
         btnToggleMulti.setOnAction(e -> setMultiSelectMode(!isMultiSelectMode()));
+        JavaFXTheme.applyIconButton(btnToggleMulti);
 
-        Button btnSearch = new Button("🔍");
+        Button btnSearch = new Button();
+        btnSearch.setGraphic(JavaFXTheme.createSvgIcon(JavaFXTheme.SVG_SEARCH, 0.75));
         btnSearch.getStyleClass().add("btn-icon-subtle");
+        btnSearch.setPrefSize(34, 34);
+        btnSearch.setMinSize(34, 34);
+        btnSearch.setMaxSize(34, 34);
         Tooltip.install(btnSearch, new Tooltip("Tìm kiếm trong cuộc trò chuyện (Mục 11.f)"));
         btnSearch.setOnAction(e -> toggleSearchBar());
+        JavaFXTheme.applyIconButton(btnSearch);
 
-        Button btnReportSpam = new Button("⚠️");
+        Button btnReportSpam = new Button();
+        btnReportSpam.setGraphic(JavaFXTheme.createSvgIcon(JavaFXTheme.SVG_REPORT, 0.75));
         btnReportSpam.getStyleClass().add("btn-icon-subtle");
+        btnReportSpam.setPrefSize(34, 34);
+        btnReportSpam.setMinSize(34, 34);
+        btnReportSpam.setMaxSize(34, 34);
         Tooltip.install(btnReportSpam, new Tooltip("Báo cáo vi phạm / Spam (Mục 10)"));
         btnReportSpam.setOnAction(e -> handleReportSpam());
+        JavaFXTheme.applyIconButton(btnReportSpam);
 
-        Button btnToggleDrawer = new Button("ℹ️");
+        Button btnToggleDrawer = new Button();
+        btnToggleDrawer.setGraphic(JavaFXTheme.createSvgIcon(JavaFXTheme.SVG_INFO, 0.75));
         btnToggleDrawer.getStyleClass().add("btn-icon-subtle");
+        btnToggleDrawer.setPrefSize(34, 34);
+        btnToggleDrawer.setMinSize(34, 34);
+        btnToggleDrawer.setMaxSize(34, 34);
         Tooltip.install(btnToggleDrawer, new Tooltip("Thông tin chi tiết hội thoại (Cột 4)"));
         btnToggleDrawer.setOnAction(e -> {
             if (onToggleDrawer != null) {
                 onToggleDrawer.run();
             }
         });
+        JavaFXTheme.applyIconButton(btnToggleDrawer);
 
-        chatHeader.getChildren().addAll(headerAvatarStack, titleBox, btnToggleMulti, btnSearch, btnReportSpam, btnToggleDrawer);
+        HBox headerActions = new HBox(6, btnToggleMulti, btnSearch, btnReportSpam, btnToggleDrawer);
+        headerActions.setAlignment(Pos.CENTER_RIGHT);
+
+        chatHeader.getChildren().addAll(headerAvatarStack, titleBox, headerActions);
     }
 
     // =========================================================================
@@ -465,17 +488,16 @@ public class ChatConversationView extends BorderPane {
         long count = messagesList.stream().filter(MessageItem::isSelected).count();
         if (count == 0) return;
 
-        Alert confirm = new Alert(Alert.AlertType.CONFIRMATION);
-        if (ownerStage != null) confirm.initOwner(ownerStage);
-        confirm.setTitle("Xác nhận xóa tin nhắn");
-        confirm.setHeaderText("Xóa " + count + " tin nhắn đã chọn (Mục 11.e)");
-        confirm.setContentText("Bạn có chắc chắn muốn xóa vĩnh viễn các dòng tin nhắn đã chọn khỏi lịch sử trò chuyện không?");
-        confirm.showAndWait().ifPresent(res -> {
-            if (res == ButtonType.OK) {
-                messagesList.removeIf(MessageItem::isSelected);
-                setMultiSelectMode(false);
-            }
-        });
+        boolean ok = JavaFXTheme.showConfirmDialog(
+            ownerStage,
+            "Xác nhận xóa tin nhắn",
+            "Xóa " + count + " tin nhắn đã chọn (Mục 11.e)",
+            "Bạn có chắc chắn muốn xóa vĩnh viễn các dòng tin nhắn đã chọn khỏi lịch sử trò chuyện không?"
+        );
+        if (ok) {
+            messagesList.removeIf(MessageItem::isSelected);
+            setMultiSelectMode(false);
+        }
     }
 
     // =========================================================================
@@ -499,6 +521,7 @@ public class ChatConversationView extends BorderPane {
         Button btnAttach = new Button("📎");
         btnAttach.getStyleClass().add("btn-icon-subtle");
         Tooltip.install(btnAttach, new Tooltip("Đính kèm tệp tin tài liệu"));
+        JavaFXTheme.applyIconButton(btnAttach);
 
         txtMessageInput.setPromptText("Nhập tin nhắn vào hội thoại... (Gõ /ai để kích hoạt Trợ lý AI)");
         txtMessageInput.getStyleClass().add("chat-input-field");
@@ -519,9 +542,11 @@ public class ChatConversationView extends BorderPane {
         btnAiSuggest.getStyleClass().add("btn-ai-suggest");
         Tooltip.install(btnAiSuggest, new Tooltip("Nhờ Trợ lý AI phân tích và đưa ra phản hồi thông minh (Mục 11.h)"));
         btnAiSuggest.setOnAction(e -> handleAiSuggestion());
+        JavaFXTheme.applyTactileButton(btnAiSuggest);
 
         btnSend.getStyleClass().add("btn-primary");
         btnSend.setOnAction(e -> handleSendMessage());
+        JavaFXTheme.applyTactileButton(btnSend);
 
         inputRow.getChildren().addAll(btnAttach, txtMessageInput, btnAiSuggest, btnSend);
         bottomBar.getChildren().addAll(smartRepliesBar, inputRow);
@@ -535,6 +560,7 @@ public class ChatConversationView extends BorderPane {
             txtMessageInput.requestFocus();
             txtMessageInput.positionCaret(text.length());
         });
+        JavaFXTheme.applyTactileButton(chip);
         return chip;
     }
 
@@ -599,20 +625,20 @@ public class ChatConversationView extends BorderPane {
             return;
         }
 
-        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-        if (ownerStage != null) alert.initOwner(ownerStage);
-        alert.setTitle("Báo cáo vi phạm");
-        alert.setHeaderText("Gửi báo cáo vi phạm tới Ban quản trị (Mục 10)");
-        alert.setContentText("Bạn có chắc chắn muốn gửi báo cáo vi phạm đối với cuộc trò chuyện này không?");
-        alert.showAndWait().ifPresent(res -> {
-            if (res == ButtonType.OK) {
-                Alert ok = new Alert(Alert.AlertType.INFORMATION);
-                if (ownerStage != null) ok.initOwner(ownerStage);
-                ok.setHeaderText("Báo cáo đã được ghi nhận");
-                ok.setContentText("Báo cáo của bạn đã được chuyển tới bảng spam_reports trong CSDL để Quản trị viên xử lý.");
-                ok.showAndWait();
-            }
-        });
+        boolean confirmed = JavaFXTheme.showConfirmDialog(
+            ownerStage,
+            "Báo cáo vi phạm",
+            "Gửi báo cáo vi phạm tới Ban quản trị (Mục 10)",
+            "Bạn có chắc chắn muốn gửi báo cáo vi phạm đối với cuộc trò chuyện này không?"
+        );
+        if (confirmed) {
+            JavaFXTheme.showInfoAlert(
+                ownerStage,
+                "Báo cáo đã gửi",
+                "Báo cáo đã được ghi nhận",
+                "Báo cáo của bạn đã được chuyển tới bảng spam_reports trong CSDL để Quản trị viên xử lý."
+            );
+        }
     }
 
     // =========================================================================
@@ -756,7 +782,11 @@ public class ChatConversationView extends BorderPane {
 
         public MessageListCell() {
             // Không áp dụng nền mặc định màu xanh của ListView khi select
+            setContentDisplay(ContentDisplay.GRAPHIC_ONLY);
             setStyle("-fx-background-color: transparent; -fx-padding: 4px 12px;");
+
+            // Ngăn chặn VBox tự động kéo dãn bong bóng theo độ dài hàng meta (thời gian / tên người gửi)
+            bubbleContainer.setFillWidth(false);
 
             chkSelect.visibleProperty().bind(multiSelectMode);
             chkSelect.managedProperty().bind(multiSelectMode);
@@ -780,6 +810,7 @@ public class ChatConversationView extends BorderPane {
 
             // Context Menu thao tác nhanh trên tin nhắn
             ContextMenu contextMenu = new ContextMenu();
+            JavaFXTheme.applyContextMenuTheme(contextMenu);
             MenuItem mCopy = new MenuItem("📋 Sao chép nội dung");
             mCopy.setOnAction(e -> {
                 if (getItem() != null) {
@@ -799,7 +830,7 @@ public class ChatConversationView extends BorderPane {
                 }
             });
 
-            MenuItem mSelectMode = new MenuItem("☑️ Chọn nhiều tin nhắn...");
+            MenuItem mSelectMode = new MenuItem("☑ Chọn nhiều tin nhắn...");
             mSelectMode.setOnAction(e -> {
                 if (getItem() != null) {
                     setMultiSelectMode(true);
@@ -862,9 +893,8 @@ public class ChatConversationView extends BorderPane {
                 bubbleContainer.setAlignment(Pos.TOP_RIGHT);
                 metaRow.setAlignment(Pos.CENTER_RIGHT);
 
-                lblSender.setStyle("-fx-font-size: 11.5px; -fx-text-fill: -text-muted;");
                 lblTime.setStyle("-fx-font-size: 11px; -fx-text-fill: -text-muted;");
-                metaRow.getChildren().addAll(lblTime, lblSender);
+                metaRow.getChildren().setAll(lblTime);
 
                 lblContent.getStyleClass().setAll("chat-bubble-sent");
                 // Bo góc 12px, góc dưới phải 3px

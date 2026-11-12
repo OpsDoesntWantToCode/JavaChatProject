@@ -22,6 +22,7 @@ import java.time.format.DateTimeFormatter;
  */
 public class UserSettingsDialog extends Stage {
 
+    private final VBox rootNode = new VBox(16);
     private final VBox tabProfileContent = new VBox(14);
     private final VBox tabSecurityContent = new VBox(14);
     private final Button btnTabProfile = new Button("👤 Hồ sơ cá nhân");
@@ -53,10 +54,9 @@ public class UserSettingsDialog extends Stage {
         setTitle("Cài đặt tài khoản & Hồ sơ cá nhân");
         setResizable(false);
 
-        VBox root = new VBox(16);
-        root.getStyleClass().add("settings-dialog-card");
-        root.setPadding(new Insets(24));
-        root.setPrefWidth(540);
+        rootNode.getStyleClass().add("settings-dialog-card");
+        rootNode.setPadding(new Insets(24));
+        rootNode.setPrefWidth(540);
 
         // 1. Header hộp thoại
         HBox headerBox = createHeader();
@@ -74,9 +74,9 @@ public class UserSettingsDialog extends Stage {
         // Mặc định hiển thị Tab 1
         selectTab(true);
 
-        root.getChildren().addAll(headerBox, tabSelector, contentStack);
+        rootNode.getChildren().addAll(headerBox, tabSelector, contentStack);
 
-        Scene scene = new Scene(root);
+        Scene scene = new Scene(rootNode);
         java.net.URL cssUrl = getClass().getResource("theme.css");
         if (cssUrl != null) {
             scene.getStylesheets().add(cssUrl.toExternalForm());
@@ -84,6 +84,9 @@ public class UserSettingsDialog extends Stage {
 
         setScene(scene);
         centerOnScreen();
+
+        // Hiệu ứng phóng nhẹ 0.96x -> 1.0x + Fade-in theo chuẩn Microsoft Fluent 2
+        setOnShown(e -> JavaFXTheme.applyModalEntrance(rootNode));
     }
 
     private HBox createHeader() {
@@ -101,7 +104,8 @@ public class UserSettingsDialog extends Stage {
 
         Button btnClose = new Button("✕");
         btnClose.getStyleClass().add("dialog-close-btn");
-        btnClose.setOnAction(e -> close());
+        btnClose.setOnAction(e -> JavaFXTheme.closeModalWithAnimation(this, rootNode));
+        JavaFXTheme.applyIconButton(btnClose);
 
         header.getChildren().addAll(titleBox, btnClose);
         return header;
@@ -131,9 +135,11 @@ public class UserSettingsDialog extends Stage {
         if (isProfile) {
             btnTabProfile.getStyleClass().add("settings-tab-btn-active");
             btnTabSecurity.getStyleClass().remove("settings-tab-btn-active");
+            JavaFXTheme.applyTabContentTransition(tabProfileContent, false);
         } else {
             btnTabSecurity.getStyleClass().add("settings-tab-btn-active");
             btnTabProfile.getStyleClass().remove("settings-tab-btn-active");
+            JavaFXTheme.applyTabContentTransition(tabSecurityContent, true);
         }
     }
 
@@ -158,6 +164,7 @@ public class UserSettingsDialog extends Stage {
 
         Button btnChangeAvatar = new Button("Đổi ảnh đại diện");
         btnChangeAvatar.getStyleClass().add("btn-secondary");
+        JavaFXTheme.applyTactileButton(btnChangeAvatar);
         btnChangeAvatar.setOnAction(e -> {
             lblProfileStatus.setText("✓ Tính năng tải ảnh avatar sẽ kết nối Socket ở mốc 80%");
             lblProfileStatus.getStyleClass().setAll("status-message", "status-success");
@@ -214,11 +221,13 @@ public class UserSettingsDialog extends Stage {
 
         Button btnCancel = new Button("Đóng");
         btnCancel.getStyleClass().add("btn-secondary");
-        btnCancel.setOnAction(e -> close());
+        btnCancel.setOnAction(e -> JavaFXTheme.closeModalWithAnimation(this, rootNode));
+        JavaFXTheme.applyTactileButton(btnCancel);
 
         Button btnSave = new Button("Lưu thay đổi hồ sơ");
         btnSave.getStyleClass().add("btn-primary");
         btnSave.setOnAction(e -> handleSaveProfile());
+        JavaFXTheme.applyTactileButton(btnSave);
 
         actionRow.getChildren().addAll(lblProfileStatus, btnCancel, btnSave);
 
@@ -269,11 +278,13 @@ public class UserSettingsDialog extends Stage {
 
         Button btnCancel = new Button("Đóng");
         btnCancel.getStyleClass().add("btn-secondary");
-        btnCancel.setOnAction(e -> close());
+        btnCancel.setOnAction(e -> JavaFXTheme.closeModalWithAnimation(this, rootNode));
+        JavaFXTheme.applyTactileButton(btnCancel);
 
         Button btnChangePass = new Button("Cập nhật mật khẩu");
         btnChangePass.getStyleClass().add("btn-primary");
         btnChangePass.setOnAction(e -> handleChangePassword());
+        JavaFXTheme.applyTactileButton(btnChangePass);
 
         actionRow.getChildren().addAll(lblSecurityStatus, btnCancel, btnChangePass);
 

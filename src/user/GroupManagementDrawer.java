@@ -112,6 +112,7 @@ public class GroupManagementDrawer extends VBox {
         btnClose.setOnAction(e -> {
             if (onClose != null) onClose.run();
         });
+        JavaFXTheme.applyIconButton(btnClose);
 
         topRow.getChildren().addAll(lblTitle, spacer, btnClose);
 
@@ -129,10 +130,12 @@ public class GroupManagementDrawer extends VBox {
         nameRow.setAlignment(Pos.CENTER);
         lblGroupName.setStyle("-fx-font-size: 14.5px; -fx-font-weight: bold; -fx-text-fill: -text-normal;");
 
-        Button btnEditName = new Button("✏️");
+        Button btnEditName = new Button();
+        btnEditName.setGraphic(JavaFXTheme.createSvgIcon(JavaFXTheme.SVG_EDIT, 0.70));
         btnEditName.getStyleClass().add("btn-icon-subtle");
         btnEditName.setTooltip(new Tooltip("Đổi tên nhóm (Mục 12.b)"));
         btnEditName.setOnAction(e -> handleRenameGroup());
+        JavaFXTheme.applyIconButton(btnEditName);
 
         nameRow.getChildren().addAll(lblGroupName, btnEditName);
 
@@ -158,6 +161,7 @@ public class GroupManagementDrawer extends VBox {
         btnAddMember.setOnAction(e -> {
             if (onAddMember != null) onAddMember.run();
         });
+        JavaFXTheme.applyTactileButton(btnAddMember);
 
         membersHeaderRow.getChildren().addAll(lblSecMembers, sp2, btnAddMember);
         renderMembersList();
@@ -201,11 +205,13 @@ public class GroupManagementDrawer extends VBox {
                 }
             });
         });
+        JavaFXTheme.applyTactileButton(btnClearHistory);
 
         Button btnLeaveGroup = new Button("🚪 Rời khỏi nhóm");
         btnLeaveGroup.getStyleClass().add("btn-danger-subtle");
         btnLeaveGroup.setMaxWidth(Double.MAX_VALUE);
         btnLeaveGroup.setOnAction(e -> handleLeaveGroup());
+        JavaFXTheme.applyTactileButton(btnLeaveGroup);
 
         dangerSection.getChildren().addAll(btnClearHistory, btnLeaveGroup);
 
@@ -262,6 +268,7 @@ public class GroupManagementDrawer extends VBox {
                 Button btnMore = new Button("•••");
                 btnMore.getStyleClass().add("btn-icon-subtle");
                 btnMore.setTooltip(new Tooltip("Thao tác quản trị viên"));
+                JavaFXTheme.applyIconButton(btnMore);
 
                 // Ràng buộc bảo mật: Nút hành động chỉ hiển thị khi người dùng hiện tại có quyền Admin
                 btnMore.visibleProperty().bind(isCurrentUserAdmin);
@@ -269,6 +276,7 @@ public class GroupManagementDrawer extends VBox {
 
                 btnMore.setOnAction(e -> {
                     ContextMenu menu = new ContextMenu();
+                    JavaFXTheme.applyContextMenuTheme(menu);
 
                     MenuItem miToggleAdmin = new MenuItem(m.isAdmin() ? "Thu hồi quyền Admin" : "Gán quyền Admin nhóm (Mục 12.d)");
                     miToggleAdmin.setOnAction(ev -> {
@@ -279,17 +287,16 @@ public class GroupManagementDrawer extends VBox {
                     MenuItem miRemove = new MenuItem("Xóa khỏi nhóm (Kick - Mục 12.e)");
                     miRemove.setStyle("-fx-text-fill: -status-danger;");
                     miRemove.setOnAction(ev -> {
-                        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-                        alert.initOwner(primaryStage);
-                        alert.setTitle("Xác nhận loại bỏ thành viên");
-                        alert.setHeaderText("Xóa @" + m.getUsername() + " khỏi nhóm");
-                        alert.setContentText("Bạn có chắc chắn muốn xóa thành viên " + m.getName() + " ra khỏi nhóm không?");
-                        alert.showAndWait().ifPresent(res -> {
-                            if (res == ButtonType.OK) {
-                                members.remove(m);
-                                renderMembersList();
-                            }
-                        });
+                        boolean ok = JavaFXTheme.showConfirmDialog(
+                            primaryStage,
+                            "Xác nhận loại bỏ thành viên",
+                            "Xóa @" + m.getUsername() + " khỏi nhóm",
+                            "Bạn có chắc chắn muốn xóa thành viên " + m.getName() + " ra khỏi nhóm không?"
+                        );
+                        if (ok) {
+                            members.remove(m);
+                            renderMembersList();
+                        }
                     });
 
                     menu.getItems().addAll(miToggleAdmin, new SeparatorMenuItem(), miRemove);
@@ -304,13 +311,13 @@ public class GroupManagementDrawer extends VBox {
     }
 
     private void handleRenameGroup() {
-        TextInputDialog dialog = new TextInputDialog(groupName);
-        dialog.initOwner(primaryStage);
-        dialog.setTitle("Đổi tên nhóm");
-        dialog.setHeaderText("Thay đổi tên nhóm chat (Mục 12.b)");
-        dialog.setContentText("Nhập tên nhóm mới:");
-
-        dialog.showAndWait().ifPresent(newName -> {
+        JavaFXTheme.showInputDialog(
+            primaryStage,
+            "Đổi tên nhóm",
+            "Thay đổi tên nhóm chat (Mục 12.b)",
+            "Nhập tên nhóm mới:",
+            groupName
+        ).ifPresent(newName -> {
             String trimmed = newName.trim();
             if (!trimmed.isEmpty()) {
                 this.groupName = trimmed;
@@ -321,20 +328,20 @@ public class GroupManagementDrawer extends VBox {
     }
 
     private void handleLeaveGroup() {
-        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-        alert.initOwner(primaryStage);
-        alert.setTitle("Rời khỏi nhóm");
-        alert.setHeaderText("Xác nhận rời khỏi nhóm chat");
-        alert.setContentText("Bạn sẽ không thể xem hoặc nhận tin nhắn mới trong nhóm này cho đến khi được thêm lại.");
-        alert.showAndWait().ifPresent(res -> {
-            if (res == ButtonType.OK) {
-                Alert info = new Alert(Alert.AlertType.INFORMATION);
-                info.initOwner(primaryStage);
-                info.setHeaderText("Đã rời nhóm");
-                info.setContentText("Bạn đã rời khỏi nhóm chat thành công.");
-                info.showAndWait();
-            }
-        });
+        boolean confirmed = JavaFXTheme.showConfirmDialog(
+            primaryStage,
+            "Rời khỏi nhóm",
+            "Xác nhận rời khỏi nhóm chat",
+            "Bạn sẽ không thể xem hoặc nhận tin nhắn mới trong nhóm này cho đến khi được thêm lại."
+        );
+        if (confirmed) {
+            JavaFXTheme.showInfoAlert(
+                primaryStage,
+                "Rời nhóm thành công",
+                "Đã rời nhóm",
+                "Bạn đã rời khỏi nhóm chat thành công."
+            );
+        }
     }
 
     public void addMember(String id, String name, String username) {

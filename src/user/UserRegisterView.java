@@ -171,6 +171,7 @@ public class UserRegisterView {
         // CTA Button
         btnRegister.getStyleClass().add("btn-primary");
         btnRegister.setMaxWidth(Double.MAX_VALUE);
+        JavaFXTheme.applyTactileButton(btnRegister);
         btnRegister.setOnAction(e -> handleRegister());
 
         // Footer Login Link
@@ -381,11 +382,7 @@ public class UserRegisterView {
         if (!pass.equals(confirm)) {
             JavaFXTheme.shakeNode(confirmPassWrapper.getContainer());
             confirmPassWrapper.requestFocus();
-            Alert alert = new Alert(Alert.AlertType.WARNING);
-            alert.setTitle("Lỗi xác nhận");
-            alert.setHeaderText(null);
-            alert.setContentText("Mật khẩu xác nhận không khớp!");
-            alert.showAndWait();
+            JavaFXTheme.showInfoAlert(null, "Lỗi xác nhận", null, "Mật khẩu xác nhận không khớp!");
             return;
         }
 
@@ -397,11 +394,12 @@ public class UserRegisterView {
             btnRegister.setDisable(false);
             btnRegister.setText("Đăng ký tài khoản");
 
-            Alert alert = new Alert(Alert.AlertType.INFORMATION);
-            alert.setTitle("Thành công");
-            alert.setHeaderText(null);
-            alert.setContentText("✓ Tạo tài khoản thành công cho: " + name + " (" + user + ")\n(JavaFX 21 + CSS Obsidian Theme)");
-            alert.showAndWait();
+            JavaFXTheme.showInfoAlert(
+                null,
+                "Thành công",
+                null,
+                "✓ Tạo tài khoản thành công cho: " + name + " (" + user + ")\n(JavaFX 21 + CSS Obsidian Theme)"
+            );
 
             if (onNavigateToLogin != null) {
                 onNavigateToLogin.run();

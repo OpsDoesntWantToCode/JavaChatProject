@@ -82,6 +82,7 @@ public class UserForgotPasswordView {
         // CTA Button
         btnSend.getStyleClass().add("btn-primary");
         btnSend.setMaxWidth(Double.MAX_VALUE);
+        JavaFXTheme.applyTactileButton(btnSend);
         btnSend.setOnAction(e -> handleResetPassword());
 
         // Footer Back to Login Link
@@ -130,11 +131,12 @@ public class UserForgotPasswordView {
             lblStatus.setText("✓ Mật khẩu mới đã được gửi thành công đến: " + identity + "\nVui lòng kiểm tra hộp thư đến (Inbox / Spam).");
             lblStatus.getStyleClass().add("status-success");
 
-            Alert alert = new Alert(Alert.AlertType.INFORMATION);
-            alert.setTitle("Gửi Email Thành công");
-            alert.setHeaderText("Đã cấp lại mật khẩu qua Email");
-            alert.setContentText("Hệ thống đã gửi mật khẩu ngẫu nhiên đến " + identity + ".\nBạn có thể quay lại màn hình Đăng nhập để truy cập tài khoản.");
-            alert.showAndWait();
+            JavaFXTheme.showInfoAlert(
+                null,
+                "Gửi Email Thành công",
+                "Đã cấp lại mật khẩu qua Email",
+                "Hệ thống đã gửi mật khẩu ngẫu nhiên đến " + identity + ".\nBạn có thể quay lại màn hình Đăng nhập để truy cập tài khoản."
+            );
         });
         delay.play();
     }

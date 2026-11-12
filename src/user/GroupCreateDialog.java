@@ -82,7 +82,7 @@ public class GroupCreateDialog {
 
         VBox root = new VBox(16);
         root.setPadding(new Insets(24));
-        root.setStyle("-fx-background-color: -bg-card; -fx-border-color: -border-subtle; -fx-border-width: 1px;");
+        root.getStyleClass().add("settings-dialog-card");
 
         // 1. Tiêu đề hộp thoại
         HBox headerRow = new HBox(8);
@@ -96,7 +96,8 @@ public class GroupCreateDialog {
 
         Button btnClose = new Button("✕");
         btnClose.getStyleClass().add("dialog-close-btn");
-        btnClose.setOnAction(e -> dialog.close());
+        btnClose.setOnAction(e -> JavaFXTheme.closeModalWithAnimation(dialog, root));
+        JavaFXTheme.applyIconButton(btnClose);
 
         headerRow.getChildren().addAll(lblHeader, sp, btnClose);
 
@@ -147,7 +148,7 @@ public class GroupCreateDialog {
         ListView<FriendSelectable> listView = new ListView<>(friends);
         listView.setPrefHeight(160);
         listView.getStyleClass().add("transparent-scroll");
-        listView.setStyle("-fx-background-color: -bg-input; -fx-border-color: -border-subtle; -fx-border-radius: 8px; -fx-background-radius: 8px;");
+        listView.setStyle("-fx-background-color: -bg-input; -fx-control-inner-background: -bg-input; -fx-border-color: -border-subtle; -fx-border-radius: 8px; -fx-background-radius: 8px;");
 
         listView.setCellFactory(lv -> new ListCell<>() {
             @Override
@@ -161,6 +162,15 @@ public class GroupCreateDialog {
                     HBox row = new HBox(10);
                     row.setAlignment(Pos.CENTER_LEFT);
                     row.setPadding(new Insets(6, 10, 6, 10));
+                    row.setStyle("-fx-background-color: transparent; -fx-background-radius: 6px;");
+                    row.setCursor(javafx.scene.Cursor.HAND);
+                    row.setOnMouseEntered(e -> row.setStyle("-fx-background-color: #1E2129; -fx-background-radius: 6px;"));
+                    row.setOnMouseExited(e -> row.setStyle("-fx-background-color: transparent; -fx-background-radius: 6px;"));
+                    row.setOnMouseClicked(e -> {
+                        if (e.getTarget() != null && !e.getTarget().toString().contains("CheckBox") && !e.getTarget().toString().contains("box") && !e.getTarget().toString().contains("mark")) {
+                            item.setSelected(!item.isSelected());
+                        }
+                    });
 
                     CheckBox chk = new CheckBox();
                     chk.selectedProperty().bindBidirectional(item.selectedProperty());
@@ -194,11 +204,13 @@ public class GroupCreateDialog {
 
         Button btnCancel = new Button("Hủy");
         btnCancel.getStyleClass().add("btn-secondary");
-        btnCancel.setOnAction(e -> dialog.close());
+        btnCancel.setOnAction(e -> JavaFXTheme.closeModalWithAnimation(dialog, root));
+        JavaFXTheme.applyTactileButton(btnCancel);
 
         Button btnCreate = new Button("Tạo nhóm 🚀");
         btnCreate.getStyleClass().add("btn-primary");
         btnCreate.setStyle("-fx-pref-height: 40px; -fx-padding: 0 20px;");
+        JavaFXTheme.applyTactileButton(btnCreate);
 
         // Ràng buộc bảo đảm: Chỉ kích hoạt khi tên không rỗng và chọn >= 1 thành viên
         btnCreate.disableProperty().bind(
@@ -224,7 +236,7 @@ public class GroupCreateDialog {
             if (onCreated != null) {
                 onCreated.accept(new GroupResult(gName, isEncrypted, chosenMembers));
             }
-            dialog.close();
+            JavaFXTheme.closeModalWithAnimation(dialog, root);
         });
 
         buttonBar.getChildren().addAll(btnCancel, btnCreate);
@@ -239,6 +251,7 @@ public class GroupCreateDialog {
 
         dialog.setScene(scene);
         dialog.setResizable(false);
+        dialog.setOnShown(e -> JavaFXTheme.applyModalEntrance(root));
         dialog.showAndWait();
     }
 }

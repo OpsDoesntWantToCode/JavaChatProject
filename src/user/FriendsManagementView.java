@@ -148,6 +148,7 @@ public class FriendsManagementView extends BorderPane {
         }
 
         renderCurrentTab();
+        JavaFXTheme.applyTabContentTransition(contentList, true);
     }
 
     private void renderCurrentTab() {
@@ -254,6 +255,7 @@ public class FriendsManagementView extends BorderPane {
                 onOpenChatWithUser.accept(friend.id);
             }
         });
+        JavaFXTheme.applyTactileButton(btnChat);
 
         Button btnGroup = new Button("➕ Tạo nhóm");
         btnGroup.getStyleClass().add("btn-secondary");
@@ -262,11 +264,14 @@ public class FriendsManagementView extends BorderPane {
                 onCreateGroupWithUser.accept(friend.id);
             }
         });
+        JavaFXTheme.applyTactileButton(btnGroup);
 
         Button btnMore = new Button("•••");
         btnMore.getStyleClass().add("btn-icon-subtle");
+        JavaFXTheme.applyIconButton(btnMore);
         btnMore.setOnAction(e -> {
             ContextMenu cm = new ContextMenu();
+            JavaFXTheme.applyContextMenuTheme(cm);
 
             MenuItem miUnfriend = new MenuItem("❌ Hủy kết bạn (Mục 6.c)");
             miUnfriend.setOnAction(ev -> handleUnfriend(friend));
@@ -285,31 +290,29 @@ public class FriendsManagementView extends BorderPane {
     }
 
     private void handleUnfriend(FriendModel friend) {
-        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-        alert.initOwner(ownerStage);
-        alert.setTitle("Hủy kết bạn");
-        alert.setHeaderText("Hủy kết bạn với " + friend.name + " (" + friend.tag + ")?");
-        alert.setContentText("Hai bạn sẽ trở thành người lạ và không còn nằm trong danh sách bạn bè của nhau.");
-        alert.showAndWait().ifPresent(res -> {
-            if (res == ButtonType.OK) {
-                friendsList.remove(friend);
-                renderCurrentTab();
-            }
-        });
+        boolean ok = JavaFXTheme.showConfirmDialog(
+            ownerStage,
+            "Hủy kết bạn",
+            "Hủy kết bạn với " + friend.name + " (" + friend.tag + ")?",
+            "Hai bạn sẽ trở thành người lạ và không còn nằm trong danh sách bạn bè của nhau."
+        );
+        if (ok) {
+            friendsList.remove(friend);
+            renderCurrentTab();
+        }
     }
 
     private void handleBlock(FriendModel friend) {
-        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-        alert.initOwner(ownerStage);
-        alert.setTitle("Chặn người dùng");
-        alert.setHeaderText("Chặn " + friend.name + " (" + friend.tag + ")?");
-        alert.setContentText("Sau khi chặn:\n- Người này không thể tìm thấy hoặc xem thông tin của bạn.\n- Không thể gửi tin nhắn hoặc lời mời kết bạn.\n- Bạn có thể mở khóa chặn bất cứ lúc nào trong mục Đã chặn.");
-        alert.showAndWait().ifPresent(res -> {
-            if (res == ButtonType.OK) {
-                friendsList.remove(friend);
-                renderCurrentTab();
-            }
-        });
+        boolean ok = JavaFXTheme.showConfirmDialog(
+            ownerStage,
+            "Chặn người dùng",
+            "Chặn " + friend.name + " (" + friend.tag + ")?",
+            "Sau khi chặn:\n- Người này không thể tìm thấy hoặc xem thông tin của bạn.\n- Không thể gửi tin nhắn hoặc lời mời kết bạn.\n- Bạn có thể mở khóa chặn bất cứ lúc nào trong mục Đã chặn."
+        );
+        if (ok) {
+            friendsList.remove(friend);
+            renderCurrentTab();
+        }
     }
 
     /* --------------------------------------------------------------------------
@@ -363,12 +366,14 @@ public class FriendsManagementView extends BorderPane {
             pendingList.remove(req);
             friendsList.add(new FriendModel(req.id, req.name, req.tag, true, "Vừa trở thành bạn bè"));
             renderCurrentTab();
-            Alert a = new Alert(Alert.AlertType.INFORMATION);
-            a.initOwner(ownerStage);
-            a.setHeaderText(null);
-            a.setContentText("✓ Bạn và " + req.name + " đã trở thành bạn bè!");
-            a.showAndWait();
+            JavaFXTheme.showInfoAlert(
+                ownerStage,
+                "Kết bạn thành công",
+                null,
+                "✓ Bạn và " + req.name + " đã trở thành bạn bè!"
+            );
         });
+        JavaFXTheme.applyTactileButton(btnAccept);
 
         Button btnReject = new Button("Từ chối ✕");
         btnReject.getStyleClass().add("btn-secondary");
@@ -376,6 +381,7 @@ public class FriendsManagementView extends BorderPane {
             pendingList.remove(req);
             renderCurrentTab();
         });
+        JavaFXTheme.applyTactileButton(btnReject);
 
         actions.getChildren().addAll(btnAccept, btnReject);
         row.getChildren().addAll(avt, meta, actions);
@@ -441,6 +447,7 @@ public class FriendsManagementView extends BorderPane {
             btnAdd.setText("✓ Đã gửi lời mời");
             btnAdd.setDisable(true);
         });
+        JavaFXTheme.applyTactileButton(btnAdd);
 
         Button btnChatNow = new Button("💬 Nhắn tin ngay (Mục 9)");
         btnChatNow.getStyleClass().add("btn-secondary");
@@ -449,6 +456,7 @@ public class FriendsManagementView extends BorderPane {
                 onOpenChatWithUser.accept(stranger.id);
             }
         });
+        JavaFXTheme.applyTactileButton(btnChatNow);
 
         Button btnCreateGroup = new Button("👥 Tạo Group (Mục 9)");
         btnCreateGroup.getStyleClass().add("btn-secondary");
@@ -457,6 +465,7 @@ public class FriendsManagementView extends BorderPane {
                 onCreateGroupWithUser.accept(stranger.id);
             }
         });
+        JavaFXTheme.applyTactileButton(btnCreateGroup);
 
         actionRow.getChildren().addAll(btnAdd, btnChatNow, btnCreateGroup);
         card.getChildren().addAll(avt, info, actionRow);

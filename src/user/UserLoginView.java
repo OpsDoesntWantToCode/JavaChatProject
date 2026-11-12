@@ -94,6 +94,7 @@ public class UserLoginView {
         // CTA Button
         btnLogin.getStyleClass().add("btn-primary");
         btnLogin.setMaxWidth(Double.MAX_VALUE);
+        JavaFXTheme.applyTactileButton(btnLogin);
         btnLogin.setOnAction(e -> handleLogin());
 
         // Footer Register Link
@@ -146,11 +147,7 @@ public class UserLoginView {
             if (onLoginSuccess != null) {
                 onLoginSuccess.run();
             } else {
-                Alert alert = new Alert(Alert.AlertType.INFORMATION);
-                alert.setTitle("Thành công");
-                alert.setHeaderText(null);
-                alert.setContentText("✓ Đăng nhập thành công với tài khoản: " + user);
-                alert.showAndWait();
+                JavaFXTheme.showInfoAlert(null, "Thành công", null, "✓ Đăng nhập thành công với tài khoản: " + user);
             }
         });
         delay.play();

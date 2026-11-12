@@ -41,15 +41,15 @@ public class SpamReportDialog {
         dialog.initOwner(parentStage);
         dialog.setTitle("Báo cáo vi phạm / Spam");
 
-        VBox root = new VBox(14);
+        VBox root = new VBox(16);
         root.setPadding(new Insets(24));
-        root.setStyle("-fx-background-color: -bg-card; -fx-border-color: -border-subtle; -fx-border-width: 1px;");
+        root.getStyleClass().add("settings-dialog-card");
 
         // 1. Tiêu đề
         HBox headerRow = new HBox(8);
         headerRow.setAlignment(Pos.CENTER_LEFT);
 
-        Label lblHeader = new Label("⚠️ Báo cáo vi phạm người dùng");
+        Label lblHeader = new Label("⚠ Báo cáo vi phạm người dùng");
         lblHeader.setStyle("-fx-font-size: 15.5px; -fx-font-weight: bold; -fx-text-fill: -text-normal;");
 
         Region sp = new Region();
@@ -57,17 +57,19 @@ public class SpamReportDialog {
 
         Button btnClose = new Button("✕");
         btnClose.getStyleClass().add("dialog-close-btn");
-        btnClose.setOnAction(e -> dialog.close());
+        btnClose.setOnAction(e -> JavaFXTheme.closeModalWithAnimation(dialog, root));
+        JavaFXTheme.applyIconButton(btnClose);
 
         headerRow.getChildren().addAll(lblHeader, sp, btnClose);
 
         // 2. Thẻ hiển thị đối tượng bị báo cáo
-        HBox targetBox = new HBox(10);
+        HBox targetBox = new HBox(12);
         targetBox.setAlignment(Pos.CENTER_LEFT);
         targetBox.setStyle("-fx-background-color: -bg-input; -fx-border-color: -border-subtle; -fx-border-radius: 8px; -fx-background-radius: 8px; -fx-padding: 10px 14px;");
 
         Circle avt = new Circle(16, Color.web("#FA777C"));
         Label lblAvtIcon = new Label("👤");
+        lblAvtIcon.setStyle("-fx-font-size: 14px; -fx-text-fill: #FFFFFF;");
         StackPane avtBox = new StackPane(avt, lblAvtIcon);
 
         VBox targetMeta = new VBox(2);
@@ -80,7 +82,7 @@ public class SpamReportDialog {
         targetBox.getChildren().addAll(avtBox, targetMeta);
 
         // 3. Phân loại lý do vi phạm
-        VBox reasonsBox = new VBox(8);
+        VBox reasonsBox = new VBox(10);
         Label lblReasonTitle = new Label("LÝ DO BÁO CÁO VI PHẠM *");
         lblReasonTitle.setStyle("-fx-font-size: 11.5px; -fx-font-weight: bold; -fx-text-fill: -text-muted;");
 
@@ -96,11 +98,6 @@ public class SpamReportDialog {
         rb4.setToggleGroup(reasonGroup);
         rb1.setSelected(true);
 
-        rb1.setStyle("-fx-text-fill: -text-normal; -fx-font-size: 12.5px;");
-        rb2.setStyle("-fx-text-fill: -text-normal; -fx-font-size: 12.5px;");
-        rb3.setStyle("-fx-text-fill: -text-normal; -fx-font-size: 12.5px;");
-        rb4.setStyle("-fx-text-fill: -text-normal; -fx-font-size: 12.5px;");
-
         reasonsBox.getChildren().addAll(lblReasonTitle, rb1, rb2, rb3, rb4);
 
         // 4. Vùng nhập chi tiết
@@ -112,7 +109,7 @@ public class SpamReportDialog {
         txtDetail.setPromptText("Cung cấp thêm thông tin hoặc bối cảnh cuộc trò chuyện để Ban quản trị đối soát lịch sử...");
         txtDetail.setPrefRowCount(3);
         txtDetail.setWrapText(true);
-        txtDetail.setStyle("-fx-background-color: -bg-input; -fx-border-color: -border-subtle; -fx-border-radius: 8px; -fx-background-radius: 8px;");
+        txtDetail.getStyleClass().add("text-area");
 
         detailBox.getChildren().addAll(lblDetail, txtDetail);
 
@@ -123,25 +120,27 @@ public class SpamReportDialog {
 
         Button btnCancel = new Button("Hủy bỏ");
         btnCancel.getStyleClass().add("btn-secondary");
-        btnCancel.setOnAction(e -> dialog.close());
+        btnCancel.setOnAction(e -> JavaFXTheme.closeModalWithAnimation(dialog, root));
+        JavaFXTheme.applyTactileButton(btnCancel);
 
-        Button btnSubmit = new Button("Gửi báo cáo vi phạm ⚠️");
-        btnSubmit.setStyle("-fx-background-color: #FA777C; -fx-text-fill: #FFFFFF; -fx-font-weight: bold; -fx-background-radius: 8px; -fx-padding: 8px 16px; -fx-cursor: hand;");
+        Button btnSubmit = new Button("Gửi báo cáo vi phạm ⚠");
+        btnSubmit.getStyleClass().add("btn-danger-solid");
+        JavaFXTheme.applyTactileButton(btnSubmit);
         btnSubmit.setOnAction(e -> {
             RadioButton selected = (RadioButton) reasonGroup.getSelectedToggle();
             String reason = selected != null ? selected.getText() : "Spam";
 
-            Alert alert = new Alert(Alert.AlertType.INFORMATION);
-            alert.initOwner(parentStage);
-            alert.setTitle("Báo cáo đã gửi");
-            alert.setHeaderText("Báo cáo vi phạm đã được ghi nhận");
-            alert.setContentText("Thông tin vi phạm đối với " + targetName + " đã được chuyển đến Ban quản trị (ghi nhận vào bảng spam_reports). Cảm ơn sự đóng góp của bạn!");
-            alert.showAndWait();
+            JavaFXTheme.showInfoAlert(
+                parentStage,
+                "Báo cáo đã gửi",
+                "Báo cáo vi phạm đã được ghi nhận",
+                "Thông tin vi phạm đối với " + targetName + " đã được chuyển đến Ban quản trị (ghi nhận vào bảng spam_reports). Cảm ơn sự đóng góp của bạn!"
+            );
 
             if (onSubmitted != null) {
                 onSubmitted.accept(reason);
             }
-            dialog.close();
+            JavaFXTheme.closeModalWithAnimation(dialog, root);
         });
 
         buttonBar.getChildren().addAll(btnCancel, btnSubmit);
@@ -156,6 +155,7 @@ public class SpamReportDialog {
 
         dialog.setScene(scene);
         dialog.setResizable(false);
+        dialog.setOnShown(e -> JavaFXTheme.applyModalEntrance(root));
         dialog.showAndWait();
     }
 }

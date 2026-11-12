@@ -194,6 +194,52 @@ Text, .text {
 }
 
 /* --------------------------------------------------------------------------
+   TEXT AREA (MATTE DARK OBSIDIAN, BO GÓC 9PX & KHỬ NỀN TRẮNG MODENA)
+   -------------------------------------------------------------------------- */
+.text-area {
+    -fx-background-color: -bg-input;
+    -fx-control-inner-background: -bg-input;
+    -fx-background-radius: 9px;
+    -fx-border-color: -border-subtle;
+    -fx-border-radius: 9px;
+    -fx-border-width: 1px;
+    -fx-text-fill: -text-normal;
+    -fx-prompt-text-fill: #686C75;
+    -fx-font-family: "Segoe UI";
+    -fx-font-size: 13.5px;
+    -fx-padding: 2px;
+}
+
+.text-area:focused {
+    -fx-border-color: -accent-primary;
+    -fx-effect: dropshadow(three-pass-box, rgba(78, 107, 242, 0.35), 8, 0, 0, 0);
+}
+
+.text-area .scroll-pane {
+    -fx-background-color: transparent;
+    -fx-background: transparent;
+    -fx-padding: 0;
+}
+
+.text-area .scroll-pane .viewport {
+    -fx-background-color: transparent;
+}
+
+.text-area .content {
+    -fx-background-color: -bg-input;
+    -fx-background-radius: 8px;
+    -fx-text-fill: -text-normal;
+    -fx-prompt-text-fill: #686C75;
+    -fx-highlight-fill: -accent-primary;
+    -fx-highlight-text-fill: #FFFFFF;
+    -fx-padding: 8px 12px;
+}
+
+.text-area:focused .content {
+    -fx-background-color: -bg-input;
+}
+
+/* --------------------------------------------------------------------------
    COMBOBOX & POPUP (MATTE DARK OBSIDIAN, BO GÓC 9PX & 8PX)
    Tuyệt đối loại bỏ nền trắng chữ trắng của Modena
    -------------------------------------------------------------------------- */
@@ -371,6 +417,85 @@ Text, .text {
     -fx-background-color: -accent-active;
     -fx-opacity: 0.65;
     -fx-cursor: wait;
+}
+
+/* --------------------------------------------------------------------------
+   RADIO BUTTON (MATTE OBSIDIAN FLAT CIRCLE & SAPPHIRE DOT)
+   -------------------------------------------------------------------------- */
+.radio-button {
+    -fx-text-fill: -text-normal;
+    -fx-font-family: "Segoe UI";
+    -fx-font-size: 13px;
+    -fx-cursor: hand;
+    -fx-label-padding: 0 0 0 8px;
+}
+.radio-button .radio {
+    -fx-background-color: -bg-input;
+    -fx-border-color: -border-subtle;
+    -fx-border-radius: 12px;
+    -fx-background-radius: 12px;
+    -fx-border-width: 1.5px;
+    -fx-padding: 3px;
+    -fx-alignment: center;
+}
+.radio-button:hover .radio {
+    -fx-border-color: -accent-hover;
+    -fx-background-color: #1A1C22;
+}
+.radio-button:focused .radio {
+    -fx-border-color: -accent-primary;
+}
+.radio-button:selected .radio {
+    -fx-border-color: -accent-primary;
+    -fx-background-color: -bg-input;
+}
+.radio-button .dot {
+    -fx-background-radius: 8px;
+    -fx-background-color: transparent;
+    -fx-padding: 4px;
+}
+.radio-button:selected .dot {
+    -fx-background-color: -accent-primary;
+}
+
+/* --------------------------------------------------------------------------
+   CHECK BOX (MATTE OBSIDIAN FLAT BOX & SAPPHIRE ACCENT CHECKMARK)
+   -------------------------------------------------------------------------- */
+.check-box {
+    -fx-text-fill: -text-normal;
+    -fx-font-family: "Segoe UI";
+    -fx-font-size: 13px;
+    -fx-cursor: hand;
+    -fx-label-padding: 0 0 0 8px;
+}
+.check-box .box {
+    -fx-background-color: -bg-input;
+    -fx-border-color: -border-subtle;
+    -fx-border-radius: 4px;
+    -fx-background-radius: 4px;
+    -fx-border-width: 1.5px;
+    -fx-padding: 3px;
+    -fx-alignment: center;
+}
+.check-box:hover .box {
+    -fx-border-color: -accent-hover;
+    -fx-background-color: #1A1C22;
+}
+.check-box:focused .box {
+    -fx-border-color: -accent-primary;
+}
+.check-box:selected .box {
+    -fx-background-color: -accent-primary;
+    -fx-border-color: -accent-primary;
+}
+.check-box .mark {
+    -fx-background-color: transparent;
+    -fx-shape: "M 1 4.5 L 3.5 7 L 8.5 1.5";
+    -fx-scale-shape: true;
+    -fx-padding: 4px;
+}
+.check-box:selected .mark {
+    -fx-background-color: #FFFFFF;
 }
 
 /* --------------------------------------------------------------------------
@@ -653,10 +778,22 @@ Text, .text {
     -fx-background-radius: 6px;
     -fx-cursor: hand;
     -fx-padding: 6px 8px;
+    -fx-alignment: center;
 }
 .btn-icon-subtle:hover {
     -fx-background-color: #242730;
     -fx-text-fill: -text-normal;
+}
+
+/* Icon SVG bên trong các nút công cụ Header & Sidebar */
+.header-svg-icon {
+    -fx-fill: -text-muted;
+}
+.btn-icon-subtle:hover .header-svg-icon {
+    -fx-fill: -text-normal;
+}
+.btn-icon-subtle:pressed .header-svg-icon {
+    -fx-fill: #FFFFFF;
 }
 
 .btn-danger-outline {
@@ -671,6 +808,23 @@ Text, .text {
 }
 .btn-danger-outline:hover {
     -fx-background-color: rgba(250, 119, 124, 0.12);
+}
+
+.btn-danger-solid {
+    -fx-background-color: #FA777C;
+    -fx-text-fill: #FFFFFF;
+    -fx-font-weight: bold;
+    -fx-font-size: 13.5px;
+    -fx-background-radius: 8px;
+    -fx-padding: 8px 18px;
+    -fx-cursor: hand;
+    -fx-border-width: 0;
+}
+.btn-danger-solid:hover {
+    -fx-background-color: #E85B60;
+}
+.btn-danger-solid:pressed {
+    -fx-background-color: #D6454A;
 }
 
 .btn-danger-subtle {
@@ -784,4 +938,223 @@ Text, .text {
 }
 .transparent-scroll .viewport {
     -fx-background-color: transparent;
+}
+
+/* --------------------------------------------------------------------------
+   SCROLL BAR (MINIMALIST OBSIDIAN DARK SCROLLBAR)
+   -------------------------------------------------------------------------- */
+.scroll-bar {
+    -fx-background-color: transparent;
+}
+
+.scroll-bar:vertical {
+    -fx-pref-width: 8px;
+    -fx-max-width: 8px;
+}
+
+.scroll-bar:horizontal {
+    -fx-pref-height: 8px;
+    -fx-max-height: 8px;
+}
+
+.scroll-bar .track {
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
+    -fx-background-radius: 4px;
+}
+
+.scroll-bar .thumb {
+    -fx-background-color: #2E323D;
+    -fx-background-radius: 4px;
+    -fx-border-color: transparent;
+}
+
+.scroll-bar .thumb:hover {
+    -fx-background-color: #424756;
+}
+
+.scroll-bar .thumb:pressed {
+    -fx-background-color: -accent-primary;
+}
+
+.scroll-bar .increment-button,
+.scroll-bar .decrement-button {
+    -fx-background-color: transparent;
+    -fx-background-radius: 0;
+    -fx-padding: 0;
+    -fx-pref-width: 0;
+    -fx-pref-height: 0;
+}
+
+.scroll-bar .increment-arrow,
+.scroll-bar .decrement-arrow {
+    -fx-background-color: transparent;
+    -fx-shape: " ";
+    -fx-padding: 0;
+}
+
+/* --------------------------------------------------------------------------
+   LIST VIEW & CELLS (OBSIDIAN DARK PALETTE)
+   -------------------------------------------------------------------------- */
+.list-view {
+    -fx-background-color: -bg-input;
+    -fx-control-inner-background: -bg-input;
+    -fx-background-insets: 0;
+    -fx-padding: 0;
+    -fx-border-color: -border-subtle;
+    -fx-border-radius: 8px;
+    -fx-background-radius: 8px;
+}
+
+.list-view:focused {
+    -fx-border-color: -border-subtle;
+}
+
+.list-view .virtual-flow {
+    -fx-background-color: transparent;
+}
+
+.list-view .virtual-flow .clipped-container {
+    -fx-background-color: transparent;
+}
+
+.list-view .list-cell {
+    -fx-background-color: transparent;
+    -fx-text-fill: -text-normal;
+    -fx-padding: 4px 8px;
+}
+
+.list-view .list-cell:empty {
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
+}
+
+/* --------------------------------------------------------------------------
+   CONTEXT MENU & POPUP MENUS (OBSIDIAN DARK FLOATING CARD)
+   -------------------------------------------------------------------------- */
+.context-menu {
+    -fx-background-color: -bg-card;
+    -fx-border-color: -border-subtle;
+    -fx-border-width: 1px;
+    -fx-border-radius: 8px;
+    -fx-background-radius: 8px;
+    -fx-padding: 6px;
+    -fx-effect: dropshadow(three-pass-box, rgba(0, 0, 0, 0.65), 18, 0, 0, 8);
+}
+
+.context-menu .menu-item {
+    -fx-background-color: transparent;
+    -fx-background-radius: 6px;
+    -fx-padding: 7px 12px;
+}
+
+.context-menu .menu-item:hover,
+.context-menu .menu-item:focused {
+    -fx-background-color: #262A34;
+}
+
+.context-menu .menu-item .label {
+    -fx-text-fill: -text-normal;
+    -fx-font-family: "Segoe UI";
+    -fx-font-size: 13px;
+}
+
+.context-menu .menu-item:hover .label,
+.context-menu .menu-item:focused .label {
+    -fx-text-fill: #FFFFFF;
+}
+
+.context-menu .separator-menu-item {
+    -fx-padding: 4px 0;
+}
+
+.context-menu .separator-menu-item .line {
+    -fx-border-color: -border-subtle transparent transparent transparent;
+    -fx-border-width: 1px 0 0 0;
+}
+
+/* --------------------------------------------------------------------------
+   TOOLTIP (OBSIDIAN DARK FLOATING PILL)
+   -------------------------------------------------------------------------- */
+.tooltip {
+    -fx-background-color: #242730;
+    -fx-border-color: -border-subtle;
+    -fx-border-radius: 6px;
+    -fx-background-radius: 6px;
+    -fx-border-width: 1px;
+    -fx-text-fill: -text-normal;
+    -fx-font-family: "Segoe UI";
+    -fx-font-size: 12px;
+    -fx-padding: 5px 9px;
+    -fx-effect: dropshadow(three-pass-box, rgba(0, 0, 0, 0.45), 8, 0, 0, 4);
+}
+
+/* --------------------------------------------------------------------------
+   DIALOG PANE, ALERTS & PROMPTS (OBSIDIAN DARK MODAL)
+   -------------------------------------------------------------------------- */
+.dialog-pane {
+    -fx-background-color: -bg-card;
+    -fx-border-color: -border-subtle;
+    -fx-border-width: 1px;
+    -fx-border-radius: 12px;
+    -fx-background-radius: 12px;
+    -fx-padding: 16px 20px;
+}
+
+.dialog-pane:header .header-panel {
+    -fx-background-color: -bg-input;
+    -fx-background-radius: 10px 10px 0 0;
+    -fx-padding: 14px 18px;
+    -fx-border-color: transparent transparent -border-subtle transparent;
+    -fx-border-width: 0 0 1px 0;
+}
+
+.dialog-pane:header .header-panel .label {
+    -fx-font-size: 15px;
+    -fx-font-weight: bold;
+    -fx-text-fill: -text-normal;
+}
+
+.dialog-pane .content {
+    -fx-padding: 16px 4px 12px 4px;
+    -fx-text-fill: -text-normal;
+}
+
+.dialog-pane .content.label,
+.dialog-pane .content .label,
+.dialog-pane .label {
+    -fx-text-fill: -text-normal;
+    -fx-font-size: 13.5px;
+}
+
+.dialog-pane > .button-bar > .container {
+    -fx-padding: 12px 0 0 0;
+}
+
+.dialog-pane > .button-bar > .container > .button {
+    -fx-background-color: #252832;
+    -fx-border-color: -border-subtle;
+    -fx-border-radius: 8px;
+    -fx-background-radius: 8px;
+    -fx-border-width: 1px;
+    -fx-text-fill: -text-normal;
+    -fx-font-size: 13px;
+    -fx-font-weight: bold;
+    -fx-padding: 8px 18px;
+    -fx-cursor: hand;
+}
+
+.dialog-pane > .button-bar > .container > .button:hover {
+    -fx-background-color: #303442;
+    -fx-border-color: #3E4354;
+}
+
+.dialog-pane > .button-bar > .container > .button:default {
+    -fx-background-color: -accent-primary;
+    -fx-border-color: transparent;
+    -fx-text-fill: #FFFFFF;
+}
+
+.dialog-pane > .button-bar > .container > .button:default:hover {
+    -fx-background-color: -accent-hover;
 }
