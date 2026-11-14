@@ -29,7 +29,7 @@
 - **Khi chọn thư viện, phiên bản JDK hoặc kiến trúc Client-Server:**
   -> BẮT BUỘC tuân thủ `docs/tech-stack.md`.
 - **Khi thiết kế, lập trình hoặc rà soát giao diện Admin:**
-  -> BẮT BUỘC đọc [chuẩn thiết kế Admin](docs/admin/admin-design-system.md), tái sử dụng `src/admin/admin.css` và giữ JavaFX 21; áp dụng kỹ năng `ui-ux-pro-max` khi có, PHẢI đối chiếu các gợi ý phiên bản mới với JavaFX 21.
+  -> BẮT BUỘC đọc [chuẩn thiết kế Admin](docs/admin-spec/admin-design-system.md), tái sử dụng `src/admin/admin.css` và giữ JavaFX 21; áp dụng kỹ năng `ui-ux-pro-max` khi có, PHẢI đối chiếu các gợi ý phiên bản mới với JavaFX 21.
 - **Khi thiết kế bảng, tra cứu CSDL, xem sơ đồ ERD hoặc viết truy vấn SQL/transaction:**
   -> BẮT BUỘC đọc `docs/database/schema.md` (Tài liệu CSDL duy nhất: chứa 13 bảng, 65 cột, sơ đồ Mermaid ERD và cẩm nang vận hành backend).
 
