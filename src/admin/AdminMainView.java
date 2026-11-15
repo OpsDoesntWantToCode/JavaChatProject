@@ -19,7 +19,7 @@ import javafx.scene.layout.Region;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 
-/** Khung Admin: quản lý user và lịch sử đăng nhập mẫu; các trang còn lại là bản xem trước. */
+/** Khung Admin: user, lịch sử, nhóm và spam mẫu; các trang còn lại là bản xem trước. */
 public final class AdminMainView extends BorderPane {
     private final Label pageTitle = new Label();
     private final Label pageDescription = new Label();
@@ -99,6 +99,8 @@ public final class AdminMainView extends BorderPane {
         {
             case USERS -> new UserManagementView(demoData);
             case LOGIN_HISTORY -> new GlobalLoginHistoryView(demoData);
+            case GROUPS -> new GroupManagementView(demoData);
+            case SPAM_REPORTS -> new SpamReportView(demoData);
             default -> createPreview(selected);
         }));
     }

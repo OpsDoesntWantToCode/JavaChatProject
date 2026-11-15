@@ -1,11 +1,7 @@
 package admin;
 
 import java.time.DateTimeException;
-import java.time.LocalDate;
 import java.time.OffsetDateTime;
-import java.time.ZoneId;
-import java.time.format.DateTimeFormatter;
-import java.time.format.ResolverStyle;
 import java.util.List;
 import java.util.Locale;
 import javafx.collections.FXCollections;
@@ -23,21 +19,17 @@ import javafx.scene.control.TextField;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
-import javafx.util.StringConverter;
 
 /** A4 và bảng lịch sử theo user ở A3; cùng nguồn sự kiện, chỉ khác phạm vi. */
 final class GlobalLoginHistoryView extends VBox implements AutoCloseable
 {
-    private static final ZoneId ZONE = ZoneId.of("Asia/Ho_Chi_Minh");
-    private static final DateTimeFormatter DATE = DateTimeFormatter.ofPattern("dd/MM/uuuu")
-            .withResolverStyle(ResolverStyle.STRICT);
     private final AdminDemoData data;
     private final Long userId;
     private final ObservableList<AdminDemoData.LoginEvent> rows = FXCollections.observableArrayList();
     private final FilteredList<AdminDemoData.LoginEvent> filtered = new FilteredList<>(rows);
     private final TextField username = new TextField();
-    private final DatePicker from = datePicker("login-from");
-    private final DatePicker to = datePicker("login-to");
+    private final DatePicker from = AdminDateRange.picker("login-from");
+    private final DatePicker to = AdminDateRange.picker("login-to");
     private final Label error = new Label();
     private final Label count = new Label();
     private final ListChangeListener<UserRow> userListener = change -> reload();
@@ -107,41 +99,6 @@ final class GlobalLoginHistoryView extends VBox implements AutoCloseable
         reload();
     }
 
-    private static DatePicker datePicker(String id)
-    {
-        DatePicker picker = new DatePicker();
-        picker.setId(id);
-        picker.setPromptText("dd/MM/yyyy");
-        picker.setConverter(new StringConverter<>()
-        {
-            @Override
-            public String toString(LocalDate value)
-            {
-                return value == null ? "" : DATE.format(value);
-            }
-
-            @Override
-            public LocalDate fromString(String value)
-            {
-                try
-                {
-                    return parseDate(value);
-                }
-                catch (DateTimeException exception)
-                {
-                    // Giữ nội dung sai để báo lỗi; không ném exception từ commit khi rời ô nhập.
-                    return picker.getValue();
-                }
-            }
-        });
-        return picker;
-    }
-
-    private static LocalDate parseDate(String value)
-    {
-        return value == null || value.isBlank() ? null : LocalDate.parse(value.strip(), DATE);
-    }
-
     private void reload()
     {
         rows.setAll(data.records().logins().stream()
@@ -153,17 +110,11 @@ final class GlobalLoginHistoryView extends VBox implements AutoCloseable
     {
         try
         {
-            LocalDate start = parseDate(from.getEditor().getText());
-            LocalDate end = parseDate(to.getEditor().getText());
-            if (start != null && end != null && start.isAfter(end))
-            {
-                throw new IllegalArgumentException("Từ ngày phải nhỏ hơn hoặc bằng Đến ngày.");
-            }
+            AdminDateRange range = AdminDateRange.read(from, to);
             String query = username.getText().strip().toLowerCase(Locale.ROOT);
             filtered.setPredicate(event ->
             {
-                LocalDate date = event.occurredAt().atZoneSameInstant(ZONE).toLocalDate();
-                return (start == null || !date.isBefore(start)) && (end == null || !date.isAfter(end))
+                return range.contains(event.occurredAt())
                         && data.user(event.userId()).username().toLowerCase(Locale.ROOT).contains(query);
             });
             error.setText("");

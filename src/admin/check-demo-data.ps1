@@ -1,4 +1,4 @@
-# Kiem tra T02/T03: du lieu mau va cac node JavaFX, khong ket noi DB/Server.
+# Kiem tra du lieu mau va UI Admin da trien khai; khong ket noi DB/Server.
 [CmdletBinding()]
 param([string]$MavenCommand = 'mvn.cmd')
 
@@ -38,6 +38,7 @@ import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.stage.Stage;
+import javafx.stage.Window;
 
 public final class AdminDemoDataCheck
 {
@@ -328,6 +329,306 @@ public final class AdminDemoDataCheck
         }
     }
 
+    @SuppressWarnings("unchecked")
+    private static void groupChecks(boolean dark)
+    {
+        AdminDemoData data = new AdminDemoData(store());
+        AdminMainView root = new AdminMainView(() ->
+        {
+        }, data);
+        Scene scene = new Scene(root, 1000, 700);
+        scene.getStylesheets().add(Objects.requireNonNull(AdminMainView.class.getResource("/admin/admin.css")).toExternalForm());
+        if (dark)
+        {
+            root.getStyleClass().add("theme-dark");
+        }
+        Stage stage = new Stage();
+        stage.setScene(scene);
+        stage.show();
+        root.applyCss();
+        root.layout();
+        try
+        {
+            ((ToggleButton) root.lookup("#nav-groups")).fire();
+            TableView<AdminDemoData.ChatGroup> table = (TableView<AdminDemoData.ChatGroup>) root.lookup("#groups-table");
+            TextField filter = (TextField) root.lookup("#group-name-filter");
+            Button detail = (Button) root.lookup("#group-detail");
+            Button clear = (Button) root.lookup("#group-clear");
+            Node cached = root.lookup("#group-management");
+            check(table.getItems().size() == 3 && table.getItems().getFirst().id() == 3, "groups default latest first");
+            check(detail.isDisabled(), "group detail requires selection");
+            table.getSelectionModel().selectFirst();
+            check(!detail.isDisabled(), "group detail available for selected row");
+            filter.setText("  NH\u00d3M H\u1eccC T\u1eacP  ");
+            check(table.getItems().size() == 1 && table.getItems().getFirst().id() == 2, "group filter case and whitespace");
+            check(detail.isDisabled(), "changing filter clears stale selected group");
+            check(table.getColumns().get(3).getCellObservableValue(0).getValue().equals(Boolean.TRUE), "encrypted flag is data only");
+            ((ToggleButton) root.lookup("#nav-users")).fire();
+            data.userStore().update(2, draft("minh.group", "Minh for groups", "minh.group@example.test"));
+            ((ToggleButton) root.lookup("#nav-groups")).fire();
+            check(root.lookup("#group-management") == cached && table.getItems().getFirst().id() == 2,
+                    "group page and filter survive navigation");
+            filter.setText("no.group.matches");
+            check(table.getItems().isEmpty() && detail.isDisabled(), "group empty result disables details");
+            clear.fire();
+            check(table.getItems().size() == 3 && filter.getText().isEmpty(), "clear restores group list");
+            TableColumn<AdminDemoData.ChatGroup, String> name = (TableColumn<AdminDemoData.ChatGroup, String>) table.getColumns().get(0);
+            table.getSortOrder().setAll(List.of(name));
+            name.setSortType(TableColumn.SortType.ASCENDING);
+            table.sort();
+            check(table.getItems().getFirst().id() == 1 && table.getItems().getLast().id() == 3, "group name ascending Vietnamese order");
+            name.setSortType(TableColumn.SortType.DESCENDING);
+            table.sort();
+            check(table.getItems().getFirst().id() == 3, "group name descending");
+            TableColumn<AdminDemoData.ChatGroup, OffsetDateTime> date = (TableColumn<AdminDemoData.ChatGroup, OffsetDateTime>) table.getColumns().get(2);
+            date.setSortType(TableColumn.SortType.ASCENDING);
+            table.getSortOrder().setAll(List.of(date));
+            table.sort();
+            check(table.getItems().getFirst().id() == 1, "group creation date ascending by value");
+            date.setSortType(TableColumn.SortType.DESCENDING);
+            table.sort();
+            check(table.getItems().getFirst().id() == 3
+                    && table.getColumns().get(1).getCellObservableValue(0).getValue().equals("minh.group"),
+                    "group creator resolves latest profile");
+            rejected(() -> new GroupDetailDialog(root, data, 999), "unknown group rejected");
+
+            for (long groupId : new long[] {1, 2, 3})
+            {
+                GroupDetailDialog dialog = new GroupDetailDialog(root, data, groupId);
+                dialog.show();
+                TableView<UserRow> members = (TableView<UserRow>) dialog.getDialogPane().lookup("#group-members-table");
+                TableView<UserRow> admins = (TableView<UserRow>) dialog.getDialogPane().lookup("#group-admins-table");
+                Set<Long> expectedMembers = groupId == 1 ? Set.of(1L, 2L, 3L, 7L)
+                        : groupId == 2 ? Set.of(3L, 5L, 8L, 9L) : Set.of(2L, 4L, 6L);
+                Set<Long> expectedAdmins = groupId == 1 ? Set.of(1L, 2L) : groupId == 2 ? Set.of(3L, 9L) : Set.of(2L);
+                Set<Long> actualMembers = new HashSet<>();
+                members.getItems().forEach(row -> actualMembers.add(row.id()));
+                Set<Long> actualAdmins = new HashSet<>();
+                admins.getItems().forEach(row -> actualAdmins.add(row.id()));
+                check(actualMembers.equals(expectedMembers), "members scoped to group " + groupId);
+                check(actualAdmins.equals(expectedAdmins), "admins scoped to group " + groupId);
+                check(dialog.getOwner() == stage && dialog.getDialogPane().getStyleClass().contains("theme-dark") == dark,
+                        "group dialog owner and theme");
+                if (groupId == 1)
+                {
+                    check(admins.getItems().stream().anyMatch(row -> row.id() == 2 && row.role() == UserRow.Role.USER),
+                            "group admin differs from system admin");
+                    data.userStore().update(3, draft("lan.group", "Lan in group", "lan.group@example.test"));
+                    check(members.getItems().stream().anyMatch(row -> row.id() == 3 && row.fullName().equals("Lan in group")),
+                            "open members table follows profile edits");
+                }
+                if (groupId == 2)
+                {
+                    check(members.getItems().stream().anyMatch(row -> row.id() == 8 && row.status() == UserRow.Status.DELETED),
+                            "membership fixture retains deleted profile with explicit status");
+                    data.userStore().changeStatus(3, UserRow.Status.LOCKED);
+                    check(admins.getItems().stream().anyMatch(row -> row.id() == 3 && row.status() == UserRow.Status.LOCKED),
+                            "open admins table follows account status");
+                }
+                dialog.close();
+                check(dialog.getResult() == null, "read-only group dialog closes without result conversion error");
+            }
+            AdminDemoData.Records r = data.records();
+            check(r.groups().size() == 3 && r.memberships().size() == 11, "group inspection does not mutate memberships");
+            AdminDemoData emptyData = new AdminDemoData(store(), new AdminDemoData.Records(
+                    r.logins(), r.friendships(), List.of(), List.of(), r.reports(),
+                    r.activities().stream().filter(event -> event.kind() != AdminDemoData.ActivityKind.GROUP_MESSAGE).toList(),
+                    r.onlineUserIds()));
+            GroupManagementView empty = new GroupManagementView(emptyData);
+            check(((TableView<?>) empty.lookup("#groups-table")).getItems().isEmpty()
+                    && ((Button) empty.lookup("#group-detail")).isDisabled(), "empty group dataset");
+            empty.close();
+            ((GroupManagementView) cached).close();
+        }
+        finally
+        {
+            stage.close();
+        }
+    }
+
+    private static void respondToLock(Button lock, Stage owner, boolean confirm, Runnable beforeAnswer)
+    {
+        check(!lock.isDisabled(), "confirmation test requires an eligible target");
+        AtomicReference<Throwable> failure = new AtomicReference<>();
+        boolean[] answered = {false};
+        Platform.runLater(() ->
+        {
+            DialogPane pane = null;
+            try
+            {
+                List<Window> dialogs = Window.getWindows().stream().filter(window -> window != owner && window.isShowing()
+                        && window instanceof Stage stage && stage.getOwner() == owner).toList();
+                check(dialogs.size() == 1, "exactly one confirmation owned by Admin");
+                pane = (DialogPane) dialogs.getFirst().getScene().lookup(".dialog-pane");
+                check(pane != null && pane.getContentText().contains("an.report"), "confirmation names reported user");
+                boolean dark = owner.getScene().getRoot().getStyleClass().contains("theme-dark");
+                check(pane.getStyleClass().contains("theme-dark") == dark, "confirmation theme");
+                ButtonType cancel = pane.getButtonTypes().stream()
+                        .filter(type -> type.getButtonData() == ButtonBar.ButtonData.CANCEL_CLOSE).findFirst().orElseThrow();
+                ButtonType apply = pane.getButtonTypes().stream()
+                        .filter(type -> type.getButtonData() == ButtonBar.ButtonData.OK_DONE).findFirst().orElseThrow();
+                check(((Button) pane.lookupButton(cancel)).isDefaultButton()
+                        && !((Button) pane.lookupButton(apply)).isDefaultButton(), "cancel is safe default");
+                beforeAnswer.run();
+                answered[0] = true;
+                ((Button) pane.lookupButton(confirm ? apply : cancel)).fire();
+            }
+            catch (Throwable error)
+            {
+                failure.set(error);
+                if (pane != null)
+                {
+                    pane.getScene().getWindow().hide();
+                }
+                else
+                {
+                    List.copyOf(Window.getWindows()).stream().filter(window -> window instanceof Stage stage
+                            && stage.getOwner() == owner).forEach(Window::hide);
+                }
+            }
+        });
+        lock.fire();
+        if (failure.get() != null)
+        {
+            throw new AssertionError("Confirmation response failed", failure.get());
+        }
+        check(answered[0], "confirmation was answered");
+    }
+
+    private static void selectReport(TableView<AdminDemoData.SpamReport> table, long id)
+    {
+        table.getSelectionModel().select(table.getItems().stream().filter(report -> report.id() == id)
+                .findFirst().orElseThrow());
+    }
+
+    @SuppressWarnings("unchecked")
+    private static void spamChecks(boolean dark)
+    {
+        AdminUserStore store = store();
+        AdminDemoData.Records r = new AdminDemoData(store).records();
+        List<AdminDemoData.SpamReport> reports = new ArrayList<>(r.reports());
+        reports.add(new AdminDemoData.SpamReport(99, 2, 1, "Protected account test",
+                OffsetDateTime.parse("2026-11-03T11:00:00+07:00")));
+        reports.add(new AdminDemoData.SpamReport(100, 3, 4, "Vietnam date boundary test",
+                OffsetDateTime.parse("2026-11-03T17:00:00Z")));
+        List<AdminDemoData.ActivityEvent> activities = new ArrayList<>(r.activities());
+        activities.add(new AdminDemoData.ActivityEvent(99, 1, AdminDemoData.ActivityKind.DIRECT_MESSAGE,
+                2L, OffsetDateTime.parse("2026-11-03T10:59:00+07:00")));
+        AdminDemoData data = new AdminDemoData(store, new AdminDemoData.Records(r.logins(), r.friendships(),
+                r.groups(), r.memberships(), reports, activities, r.onlineUserIds()));
+        AdminMainView root = new AdminMainView(() ->
+        {
+        }, data);
+        Scene scene = new Scene(root, 1000, 700);
+        scene.getStylesheets().add(Objects.requireNonNull(AdminMainView.class.getResource("/admin/admin.css")).toExternalForm());
+        if (dark)
+        {
+            root.getStyleClass().add("theme-dark");
+        }
+        Stage stage = new Stage();
+        stage.setScene(scene);
+        stage.show();
+        root.applyCss();
+        root.layout();
+        try
+        {
+            ((ToggleButton) root.lookup("#nav-spam_reports")).fire();
+            Node cached = root.lookup("#spam-reports");
+            TableView<AdminDemoData.SpamReport> table = (TableView<AdminDemoData.SpamReport>) root.lookup("#spam-reports-table");
+            TextField username = (TextField) root.lookup("#spam-username");
+            DatePicker from = (DatePicker) root.lookup("#spam-from");
+            DatePicker to = (DatePicker) root.lookup("#spam-to");
+            Button clear = (Button) root.lookup("#spam-clear");
+            Button lock = (Button) root.lookup("#spam-lock");
+            Label error = (Label) root.lookup("#spam-error");
+            Label hint = (Label) root.lookup("#spam-selection-hint");
+            check(table.getItems().size() == 5 && table.getItems().getFirst().id() == 100, "spam defaults latest first");
+            check(lock.isDisabled(), "spam lock requires selected report");
+            username.setText("  AN.TRAN  ");
+            check(table.getItems().size() == 2, "filter matches reported username, case insensitive");
+            from.getEditor().setText("03/11/2026");
+            to.getEditor().setText("03/11/2026");
+            check(table.getItems().size() == 1 && table.getItems().getFirst().id() == 1, "inclusive single-day reported filter");
+            from.getEditor().setText("04/11/2026");
+            check(error.isVisible() && table.getItems().isEmpty() && lock.isDisabled(), "reversed dates disable locking");
+            to.getEditor().setText("04/11/2026");
+            check(!error.isVisible() && table.getItems().size() == 1 && table.getItems().getFirst().id() == 100,
+                    "report in UTC is filtered by Vietnam local date");
+            from.getEditor().setText("31/02/2026");
+            from.commitValue();
+            check(error.isVisible() && table.getItems().isEmpty(), "invalid spam date remains an error after commit");
+            clear.fire();
+            check(!error.isVisible() && table.getItems().size() == 5, "clear removes invalid spam filter");
+            from.getEditor().setText("04/11/2026");
+            check(table.getItems().size() == 1, "spam unbounded end");
+            clear.fire();
+            to.getEditor().setText("03/11/2026");
+            check(table.getItems().size() == 4, "spam unbounded start");
+            clear.fire();
+            username.setText("lan.nguyen");
+            check(table.getItems().isEmpty(), "reporter username does not match reported filter");
+            clear.fire();
+            TableColumn<AdminDemoData.SpamReport, OffsetDateTime> time = (TableColumn<AdminDemoData.SpamReport, OffsetDateTime>) table.getColumns().getFirst();
+            time.setSortType(TableColumn.SortType.ASCENDING);
+            table.sort();
+            check(table.getItems().getFirst().id() == 1, "spam timestamp ascending");
+            TableColumn<AdminDemoData.SpamReport, String> target = (TableColumn<AdminDemoData.SpamReport, String>) table.getColumns().get(2);
+            target.setSortType(TableColumn.SortType.ASCENDING);
+            table.getSortOrder().setAll(List.of(target));
+            table.sort();
+            check(table.getItems().getFirst().reportedId() == 4, "reported username sort");
+            selectReport(table, 2);
+            check(lock.isDisabled() && hint.getText().contains(UserRow.Status.LOCKED.label()), "locked target explained");
+            selectReport(table, 3);
+            check(lock.isDisabled() && hint.getText().contains(UserRow.Status.DELETED.label()), "deleted target explained");
+            selectReport(table, 99);
+            check(lock.isDisabled() && hint.getText().contains("Admin"), "last active system admin protected");
+            lock.fire();
+            check(data.user(1).status() == UserRow.Status.ACTIVE, "disabled admin lock cannot mutate store");
+            username.setText("an.tran");
+            store.update(4, draft("an.report", "Reported An", "an.report@example.test"));
+            check(table.getItems().isEmpty(), "rename reapplies reported username filter");
+            username.setText("an.report");
+            check(table.getItems().size() == 2 && target.getCellObservableValue(0).getValue().equals("an.report"),
+                    "renamed target resolves by ID");
+            ((ToggleButton) root.lookup("#nav-users")).fire();
+            ((ToggleButton) root.lookup("#nav-spam_reports")).fire();
+            check(root.lookup("#spam-reports") == cached && username.getText().equals("an.report"), "spam page preserves filter");
+            selectReport(table, 1);
+            check(!lock.isDisabled() && hint.getText().contains("an.report"), "active reported user eligible");
+            root.applyCss();
+            root.layout();
+            check(hint.getHeight() + 0.1 >= hint.prefHeight(hint.getWidth()), "selected report explanation is not clipped");
+            int[] mutations = {0};
+            store.users().addListener((javafx.collections.ListChangeListener<UserRow>) change -> mutations[0]++);
+            respondToLock(lock, stage, false, () ->
+            {
+            });
+            check(mutations[0] == 0 && data.user(4).status() == UserRow.Status.ACTIVE, "cancel does not mutate target");
+            respondToLock(lock, stage, true, () -> store.changeStatus(4, UserRow.Status.LOCKED));
+            check(mutations[0] == 1 && lock.isDisabled(), "state rechecked after confirmation, no redundant update");
+            store.changeStatus(4, UserRow.Status.ACTIVE);
+            mutations[0] = 0;
+            respondToLock(lock, stage, true, () ->
+            {
+            });
+            check(mutations[0] == 1 && data.user(4).status() == UserRow.Status.LOCKED, "confirm locks reported user once");
+            check(data.user(3).status() == UserRow.Status.ACTIVE, "reporter is unchanged");
+            check(table.getItems().size() == 2 && data.records().reports().size() == 5, "locking preserves report evidence");
+            check(lock.isDisabled() && table.getSelectionModel().getSelectedItem().id() == 1, "selection follows report, repeat locking disabled");
+            ((ToggleButton) root.lookup("#nav-users")).fire();
+            ((TextField) root.lookup("#filter-username")).setText("an.report");
+            TableView<UserRow> users = (TableView<UserRow>) root.lookup("#users-table");
+            check(users.getItems().size() == 1 && users.getItems().getFirst().status() == UserRow.Status.LOCKED,
+                    "cached A2 shows lock from spam view");
+            ((SpamReportView) cached).close();
+        }
+        finally
+        {
+            stage.close();
+        }
+    }
+
     public static void main(String[] args) throws Exception
     {
         dataChecks();
@@ -346,6 +647,14 @@ public final class AdminDemoDataCheck
                 historyChecks(false);
                 historyChecks(true);
                 System.out.println("PASS: " + (passed - beforeHistory) + " A3/A4 JavaFX checks across light/dark.");
+                int beforeGroups = passed;
+                groupChecks(false);
+                groupChecks(true);
+                System.out.println("PASS: " + (passed - beforeGroups) + " A5 group JavaFX checks across light/dark.");
+                int beforeSpam = passed;
+                spamChecks(false);
+                spamChecks(true);
+                System.out.println("PASS: " + (passed - beforeSpam) + " A6 spam/confirmation JavaFX checks across light/dark.");
             }
             catch (Throwable error)
             {
@@ -356,7 +665,7 @@ public final class AdminDemoDataCheck
                 finished.countDown();
             }
         });
-        boolean done = finished.await(30, TimeUnit.SECONDS);
+        boolean done = finished.await(60, TimeUnit.SECONDS);
         Platform.exit();
         if (!done)
         {

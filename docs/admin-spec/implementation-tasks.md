@@ -52,9 +52,24 @@
 
 ## Đợt 2 — A5/A6
 
-- [ ] T07: Dựng bảng nhóm và dialog thành viên/Admin nhóm; lọc tên, sort tên/ngày.
-- [ ] T08: Dựng báo cáo spam; lọc/sort và xác nhận khóa đúng người bị báo cáo qua store chung.
-- [ ] T09: Kiểm tra Hủy không đổi dữ liệu, không khóa Admin cuối cùng/DELETED/LOCKED, A2 phản ánh trạng thái; kiểm tra hai theme.
+- [x] T07: Dựng bảng nhóm và dialog thành viên/Admin nhóm; lọc tên, sort tên/ngày.
+  - Ngày 15/11/2026: thêm `GroupManagementView`, `GroupDetailDialog`, nối mục Nhóm chat trong `AdminMainView`. Bảng gồm tên nhóm, người tạo, ngày tạo và cờ mã hóa mẫu; lọc tên bỏ khoảng trắng/không phân biệt hoa thường, sort tên theo tiếng Việt và thời gian theo giá trị thực.
+  - Có xóa bộ lọc, số kết quả, trạng thái rỗng và nút Chi tiết bị vô hiệu khi chưa chọn. Mở chi tiết bằng nút/Enter/nhấp đúp dòng có dữ liệu; thay bộ lọc bỏ chọn dòng cũ để tránh mở nhầm nhóm.
+  - Dialog tách bảng thành viên và bảng Admin nhóm, lấy vai trò từ membership thay vì quyền hệ thống. Hồ sơ và trạng thái cập nhật từ store chung; giữ dữ liệu membership mẫu, hiển thị rõ tài khoản LOCKED/DELETED. Gỡ listener khi đóng; chỉ xem, không sửa nhóm hoặc thực hiện mã hóa.
+  - Chạy `check-demo-data.ps1` theo lệnh T02: **BUILD SUCCESS, 64 PASS A5** (32 mỗi theme), cùng **28 PASS dữ liệu + 94 PASS JavaFX hồi quy T03/A3/A4**. Kiểm tra đủ 3 nhóm, nhóm nhiều Admin, lọc rỗng, sort tăng/giảm, giữ trang/bộ lọc, cập nhật hồ sơ/trạng thái, owner/theme và đóng dialog; dữ liệu nhóm không đổi.
+  - Kiểm tra trực quan qua Computer Use ở cửa sổ chuẩn: trang nhóm và dialog Nhóm học tập ở cả hai theme, đúng 4 thành viên/2 Admin; cờ mã hóa ghi rõ là mẫu. Tăng chiều cao bảng Admin từ 100 lên 124 để hai dòng hiển thị trọn vẹn, chạy lại suite và kiểm tra bố cục cuối ở sáng/tối. Phiên chạy đóng bình thường, không có exception trong output.
+  - Giới hạn: chưa kiểm thử mọi DPI/kích thước hoặc trình đọc màn hình. T08 và kiểm tra khóa từ spam T09 chưa làm; không kiểm thử DB/Server hoặc mã hóa thật.
+- [x] T08: Dựng báo cáo spam; lọc/sort và xác nhận khóa đúng người bị báo cáo qua store chung.
+  - Ngày 15/11/2026: thêm `SpamReportView`, nối mục Báo cáo spam trong khung. Bảng có thời gian, người báo cáo, người bị báo cáo, lý do và trạng thái tài khoản bị báo cáo; lọc username bị báo cáo/khoảng ngày, sort thời gian/username, có xóa bộ lọc và trạng thái rỗng/lỗi.
+  - Tách `AdminDateRange` dùng chung A4/A6, giữ parse nghiêm ngặt và quy tắc ngày theo giờ Việt Nam; các kiểm tra A4 cũ vẫn PASS. Chọn báo cáo hiển thị đầy đủ lý do; tài khoản LOCKED/DELETED hoặc Admin cuối cùng bị vô hiệu hóa nút khóa và có giải thích.
+  - Xác nhận nêu đúng username bị báo cáo, Hủy là mặc định an toàn. Sau xác nhận đọc lại cùng ID và kiểm tra lại trạng thái trước khi gọi store; không khóa nhầm người gửi báo cáo, không mở khóa hoặc ghi đè trạng thái vừa đổi ở nơi khác. Giữ nguyên bản ghi báo cáo.
+- [x] T09: Kiểm tra Hủy không đổi dữ liệu, không khóa Admin cuối cùng/DELETED/LOCKED, A2 phản ánh trạng thái; kiểm tra hai theme.
+  - Chạy `check-demo-data.ps1` theo lệnh T02: **BUILD SUCCESS, 94 PASS A6/xác nhận** (47 mỗi theme), cùng **28 PASS dữ liệu + 158 PASS JavaFX hồi quy T03/A3/A4/A5**. Tổng JavaFX cuối là 252 kiểm tra.
+  - Kiểm tra bộ lọc AND, ngày sai/khoảng đảo, một đầu trống, mốc UTC sang ngày Việt Nam, dữ liệu rỗng, sort và rename theo ID. Giữ trang/bộ lọc, giải thích đầy đủ, Hủy không mutation, xác nhận chỉ đổi đúng target một lần; báo cáo vẫn còn và A2 đã mở nhận trạng thái mới.
+  - Dùng fixture bổ sung chỉ trong test để kiểm tra báo cáo Admin cuối cùng. Hộp xác nhận thật được kiểm tra owner/theme, Hủy mặc định; mô phỏng target đã bị khóa trong lúc hộp mở và xác nhận không ghi thêm thay đổi. Đây không phải kiểm thử concurrency của Server/DB.
+  - Kiểm tra trực quan bảng và hộp xác nhận ở cả hai theme: Hủy giữ an.tran ACTIVE; xác nhận khóa ở theme tối làm A2 có 2 tài khoản đã khóa và an.tran hiển thị LOCKED. Báo cáo vẫn giữ 3/3, nút khóa tiếp bị vô hiệu.
+  - Phát hiện nhãn giải thích bị cắt dòng; đặt chiều cao tối thiểu theo nội dung cho nhãn lý do/feedback, thêm kiểm tra bố cục và chạy lại suite. Kiểm tra lại bằng mắt ở hai theme: lý do và giải thích tài khoản đã xóa hiển thị đầy đủ. Phiên UI đóng bình thường, không có exception trong output.
+  - Giới hạn: chưa kiểm tra mọi DPI/kích thước, trình đọc màn hình, DB/Server hoặc thu hồi phiên đăng nhập thật. Tất cả thao tác chỉ trên dữ liệu mẫu trong bộ nhớ.
 
 ## Đợt 3 — A7/A8/A9
 
@@ -84,5 +99,5 @@
 |---|---|
 | Specify | Đã ghi yêu cầu và quyết định chính; các đề xuất còn mở được ghi riêng. |
 | Plan | Đã có phương án kỹ thuật để review. |
-| Tasks | T00–T06 hoàn thành theo phạm vi ghi ở trên; T07–T22 chưa thực hiện. |
-| Implement | Đã có nguồn dữ liệu chung, A3 và A4; chưa triển khai A5–A11. |
+| Tasks | T00–T09 hoàn thành theo phạm vi ghi ở trên; T10–T22 chưa thực hiện. |
+| Implement | Đã có nguồn dữ liệu chung, A3–A6; chưa triển khai A7–A11. |
