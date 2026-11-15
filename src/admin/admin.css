@@ -128,7 +128,7 @@
 .admin-dialog .button:default { -fx-background-color: -admin-primary; -fx-text-fill: -admin-on-primary; }
 .admin-dialog .button:default:hover { -fx-background-color: -admin-primary-hover; }
 .admin-dialog .button:default:focused { -fx-border-color: -admin-text; }
-.user-management .table-view {
+.admin-data-view .table-view {
     -fx-background-color: -admin-surface;
     -fx-border-color: -admin-border;
     -fx-border-width: 2;
@@ -141,17 +141,17 @@
     -fx-selection-bar: -admin-selection;
     -fx-selection-bar-non-focused: -admin-selection;
 }
-.user-management .table-view:focused { -fx-border-color: -admin-accent; -fx-border-width: 2; }
-.user-management .column-header-background, .user-management .column-header,
-.user-management .filler { -fx-background-color: -admin-soft; }
-.user-management .column-header { -fx-size: 38; -fx-border-color: transparent transparent -admin-border transparent; }
-.user-management .table-row-cell { -fx-cell-size: 38; }
-.user-management .table-cell { -fx-text-fill: -admin-text; -fx-alignment: center-left; -fx-padding: 8; }
-.user-management .table-row-cell:selected { -fx-background-color: -admin-selection; }
-.user-management .table-row-cell:selected .table-cell { -fx-text-fill: -admin-on-selection; }
-.user-management .column-header .label { -fx-font-weight: bold; }
-.user-management .text-field, .admin-dialog .text-field, .admin-dialog .text-area,
-.user-management .combo-box, .admin-dialog .combo-box, .admin-dialog .date-picker {
+.admin-data-view .table-view:focused { -fx-border-color: -admin-accent; -fx-border-width: 2; }
+.admin-data-view .column-header-background, .admin-data-view .column-header,
+.admin-data-view .filler { -fx-background-color: -admin-soft; }
+.admin-data-view .column-header { -fx-size: 38; -fx-border-color: transparent transparent -admin-border transparent; }
+.admin-data-view .table-row-cell { -fx-cell-size: 38; }
+.admin-data-view .table-cell { -fx-text-fill: -admin-text; -fx-alignment: center-left; -fx-padding: 8; }
+.admin-data-view .table-row-cell:selected { -fx-background-color: -admin-selection; }
+.admin-data-view .table-row-cell:selected .table-cell { -fx-text-fill: -admin-on-selection; }
+.admin-data-view .column-header .label { -fx-font-weight: bold; }
+.admin-data-view .text-field, .admin-dialog .text-field, .admin-dialog .text-area,
+.admin-data-view .combo-box, .admin-dialog .combo-box, .date-picker {
     -fx-background-color: -admin-surface;
     -fx-text-fill: -admin-text;
     -fx-prompt-text-fill: -admin-muted;
@@ -164,26 +164,26 @@
     -fx-min-height: 32;
 }
 .admin-dialog .text-area .content { -fx-background-color: -admin-surface; }
-.user-management .text-field:focused, .admin-dialog .text-field:focused,
-.admin-dialog .text-area:focused, .user-management .combo-box:focused,
-.admin-dialog .combo-box:focused, .admin-dialog .date-picker:focused { -fx-border-color: -admin-accent; }
-.admin-dialog .date-picker > .text-field { -fx-border-width: 0; -fx-min-height: 28; }
-.admin-dialog .date-picker > .arrow-button { -fx-background-color: -admin-soft; }
-.admin-dialog .date-picker-popup { -fx-background-color: -admin-surface; }
-.admin-dialog .date-picker-popup > .month-year-pane { -fx-background-color: -admin-soft; }
-.admin-dialog .date-picker-popup .day-cell { -fx-background-color: -admin-surface; -fx-text-fill: -admin-text; }
-.admin-dialog .date-picker-popup .day-cell:hover { -fx-background-color: -admin-soft; }
-.admin-dialog .date-picker-popup .day-cell.selected { -fx-background-color: -admin-selection; -fx-text-fill: -admin-on-selection; }
-.admin-dialog .date-picker-popup .previous-month,
-.admin-dialog .date-picker-popup .next-month { -fx-text-fill: -admin-muted; }
-.admin-dialog .date-picker-popup .day-name-cell,
-.admin-dialog .date-picker-popup .week-number-cell { -fx-background-color: -admin-soft; -fx-text-fill: -admin-muted; }
-.admin-dialog .date-picker-popup .day-cell:focused { -fx-border-color: -admin-accent; }
-.admin-dialog .date-picker-popup .spinner .button .left-arrow,
-.admin-dialog .date-picker-popup .spinner .button .right-arrow { -fx-background-color: -admin-text; -fx-background-insets: 0; -fx-effect: null; }
-.user-management .combo-box .list-cell, .admin-dialog .combo-box .list-cell { -fx-text-fill: -admin-text; -fx-background-color: -admin-surface; }
-.user-management .combo-box-popup .list-cell:hover, .admin-dialog .combo-box-popup .list-cell:hover { -fx-background-color: -admin-soft; }
-.user-management .combo-box-popup .list-cell:filled:selected,
+.admin-data-view .text-field:focused, .admin-dialog .text-field:focused,
+.admin-dialog .text-area:focused, .admin-data-view .combo-box:focused,
+.admin-dialog .combo-box:focused, .date-picker:focused { -fx-border-color: -admin-accent; }
+.date-picker > .text-field { -fx-border-width: 0; -fx-min-height: 28; }
+.date-picker > .arrow-button { -fx-background-color: -admin-soft; }
+.date-picker-popup { -fx-background-color: -admin-surface; }
+.date-picker-popup > .month-year-pane { -fx-background-color: -admin-soft; }
+.date-picker-popup .day-cell { -fx-background-color: -admin-surface; -fx-text-fill: -admin-text; }
+.date-picker-popup .day-cell:hover { -fx-background-color: -admin-soft; }
+.date-picker-popup .day-cell.selected { -fx-background-color: -admin-selection; -fx-text-fill: -admin-on-selection; }
+.date-picker-popup .previous-month,
+.date-picker-popup .next-month { -fx-text-fill: -admin-muted; }
+.date-picker-popup .day-name-cell,
+.date-picker-popup .week-number-cell { -fx-background-color: -admin-soft; -fx-text-fill: -admin-muted; }
+.date-picker-popup .day-cell:focused { -fx-border-color: -admin-accent; }
+.date-picker-popup .spinner .button .left-arrow,
+.date-picker-popup .spinner .button .right-arrow { -fx-background-color: -admin-text; -fx-background-insets: 0; -fx-effect: null; }
+.admin-data-view .combo-box .list-cell, .admin-dialog .combo-box .list-cell { -fx-text-fill: -admin-text; -fx-background-color: -admin-surface; }
+.admin-data-view .combo-box-popup .list-cell:hover, .admin-dialog .combo-box-popup .list-cell:hover { -fx-background-color: -admin-soft; }
+.admin-data-view .combo-box-popup .list-cell:filled:selected,
 .admin-dialog .combo-box-popup .list-cell:filled:selected { -fx-background-color: -admin-selection; -fx-text-fill: -admin-on-selection; }
 .filter-label { -fx-text-fill: -admin-muted; -fx-font-size: 12px; }
 .primary-button { -fx-background-color: -admin-primary; -fx-text-fill: -admin-on-primary; -fx-border-color: -admin-primary; }

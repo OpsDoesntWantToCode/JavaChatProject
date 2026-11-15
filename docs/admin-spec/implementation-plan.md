@@ -4,7 +4,7 @@
 
 - Yêu cầu và chính sách dữ liệu: [đặc tả màn hình](admin-screens.md).
 - Chuẩn giao diện: [chuẩn thiết kế Admin](admin-design-system.md).
-- Đây là bước Plan; checklist thực hiện ở [Tasks](implementation-tasks.md). Chưa bắt đầu implement.
+- Đây là phương án kỹ thuật đã thống nhất; trạng thái triển khai và bằng chứng kiểm tra ghi ở [Tasks](implementation-tasks.md).
 - Chỉ triển khai trong `src/admin/` và tài liệu Admin. Giữ Java 21, JavaFX 21.0.5 và POM hiện tại; không thêm framework.
 - Không sửa User UI, Socket/DTO, Server hoặc SQL/schema dùng chung trong lượt triển khai UI này. Những thay đổi chung cần review riêng.
 
@@ -35,6 +35,7 @@ Các tên lớp mới là tên dự kiến, không phải API dùng chung với 
 - Chuyển khoảng ngày UI sang đầu ngày bắt đầu và đầu ngày sau ngày kết thúc theo `Asia/Ho_Chi_Minh`; dùng khoảng đóng/mở để bao trọn ngày cuối.
 - Logic thống kê nhận thời gian/nguồn dữ liệu làm đầu vào để kiểm tra độc lập với giao diện; dùng `Clock` cố định trong kiểm tra khi cần.
 - Chuẩn bị dữ liệu qua hai năm, thời điểm biên, tháng rỗng, nhiều lượt OPEN_APP cùng user/tháng, nhiều tin tới cùng đối tượng và đồ thị bạn bè có vòng/đường trùng.
+- T02 giữ nguyên 10 hồ sơ gốc tạo trong 2026 nên lịch sử ban đầu chỉ có 2026. Dữ liệu năm thứ hai cần được bổ sung hợp lệ khi làm A10/A11; không đặt sự kiện trước ngày đăng ký hoặc tự đổi ngày tạo của 10 hồ sơ hiện có.
 - Ghi trước kết quả mong đợi của một số trường hợp, không tính kỳ vọng bằng chính hàm đang kiểm tra.
 - Cách chọn năm ban đầu vẫn cần Hải chốt: đề xuất năm hiện tại; danh sách gồm năm hiện tại và các năm có dữ liệu. Chưa khóa lựa chọn này vào code.
 

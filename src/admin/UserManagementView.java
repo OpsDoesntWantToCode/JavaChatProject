@@ -33,6 +33,7 @@ public final class UserManagementView extends VBox {
     private static final DateTimeFormatter DATE_FORMAT = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm")
             .withZone(ZoneId.of("Asia/Ho_Chi_Minh"));
     private final AdminUserStore store;
+    private final AdminDemoData demoData;
     private final TableView<UserRow> table = new TableView<>();
     private final TextField nameFilter = new TextField();
     private final TextField usernameFilter = new TextField();
@@ -46,14 +47,32 @@ public final class UserManagementView extends VBox {
     private final Button remove = button("Xóa mềm", "user-delete");
     private final Button lock = button("Khóa", "user-lock");
     private final Button password = button("Cập nhật mật khẩu", "user-password");
+    private final Button loginHistory = button("Lịch sử đăng nhập", "user-login-history");
+    private final Button friends = button("Bạn bè", "user-friends");
     private final FilteredList<UserRow> filtered;
+    private Long selectedUserIdBeforeStoreChange;
 
-    public UserManagementView(AdminUserStore store) {
-        this.store = store;
+    public UserManagementView(AdminUserStore store)
+    {
+        this(new AdminDemoData(store));
+    }
+
+    UserManagementView(AdminDemoData demoData)
+    {
+        this.demoData = java.util.Objects.requireNonNull(demoData);
+        this.store = demoData.userStore();
+        AdminUserStore store = this.store;
         setId("user-management");
         getStyleClass().add("user-management");
+        getStyleClass().add("admin-data-view");
         setSpacing(12);
         setMinSize(0, 0);
+        // Ghi ID trước khi FilteredList/SortedList thay bản ghi và có thể xóa selection.
+        store.users().addListener((javafx.collections.ListChangeListener<UserRow>) change ->
+        {
+            UserRow selected = table.getSelectionModel().getSelectedItem();
+            selectedUserIdBeforeStoreChange = selected == null ? null : selected.id();
+        });
         filtered = new FilteredList<>(store.users());
         SortedList<UserRow> sorted = new SortedList<>(filtered);
         sorted.comparatorProperty().bind(table.comparatorProperty());
@@ -95,7 +114,9 @@ public final class UserManagementView extends VBox {
         lock.setOnAction(event -> changeStatus(false));
         remove.setOnAction(event -> changeStatus(true));
         password.setOnAction(event -> previewPassword());
-        FlowPane actions = new FlowPane(8, 8, add, detail, edit, lock, remove, password);
+        loginHistory.setOnAction(event -> openRelatedDialog(true));
+        friends.setOnAction(event -> openRelatedDialog(false));
+        FlowPane actions = new FlowPane(8, 8, add, detail, edit, lock, remove, password, loginHistory, friends);
         remove.getStyleClass().add("danger-button");
         resultCount.setId("user-result-count");
         resultCount.getStyleClass().add("muted");
@@ -126,11 +147,31 @@ public final class UserManagementView extends VBox {
             }
         });
         store.users().addListener((javafx.collections.ListChangeListener<UserRow>) change -> {
+            refreshSelectedUser();
             updateCounts();
             updateActions();
         });
         updateCounts();
         updateActions();
+    }
+
+    /** Hồ sơ là record bất biến: thay bản ghi trong store phải cập nhật cả selectedItem. */
+    private void refreshSelectedUser()
+    {
+        if (selectedUserIdBeforeStoreChange == null)
+        {
+            return;
+        }
+        UserRow current = table.getItems().stream().filter(row -> row.id() == selectedUserIdBeforeStoreChange)
+                .findFirst().orElse(null);
+        if (current != table.getSelectionModel().getSelectedItem())
+        {
+            table.getSelectionModel().clearSelection();
+            if (current != null)
+            {
+                table.getSelectionModel().select(current);
+            }
+        }
     }
 
     private void buildTable() {
@@ -238,6 +279,8 @@ public final class UserManagementView extends VBox {
         boolean deleted = !missing && row.status() == UserRow.Status.DELETED;
         boolean protectedAdmin = !missing && store.isLastActiveAdmin(row);
         detail.setDisable(missing);
+        loginHistory.setDisable(missing);
+        friends.setDisable(missing);
         edit.setDisable(missing || deleted);
         password.setDisable(missing || deleted);
         lock.setDisable(missing || deleted || protectedAdmin);
@@ -257,6 +300,23 @@ public final class UserManagementView extends VBox {
         if (row == null) { return; }
         new UserEditDialog(this, store, row, readOnly).showAndWait()
                 .ifPresent(saved -> afterMutation(saved, "Đã cập nhật hồ sơ mẫu: " + saved.username()));
+    }
+
+    private void openRelatedDialog(boolean history)
+    {
+        UserRow row = table.getSelectionModel().getSelectedItem();
+        if (row == null)
+        {
+            return;
+        }
+        if (history)
+        {
+            new UserLoginHistoryDialog(this, demoData, row.id()).showAndWait();
+        }
+        else
+        {
+            new UserFriendsDialog(this, demoData, row.id()).showAndWait();
+        }
     }
 
     private void changeStatus(boolean deleting) {

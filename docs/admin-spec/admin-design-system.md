@@ -1,6 +1,6 @@
 # Chuẩn thiết kế giao diện Admin
 
-Chuẩn dùng chung cho A1/A2 và các màn hình Admin tiếp theo. Mã định nghĩa giao diện nằm tại [`src/admin/admin.css`](../../src/admin/admin.css); khi đổi màu hoặc trạng thái, cập nhật CSS và tài liệu này cùng nhau. Yêu cầu nghiệp vụ và lịch công việc tiếp tục theo [`docs/plan.md`](../plan.md), không lấy tài liệu thiết kế này làm bằng chứng hoàn thành các task khác.
+Chuẩn dùng chung cho A1–A4 và các màn hình Admin tiếp theo. Mã định nghĩa giao diện nằm tại [`src/admin/admin.css`](../../src/admin/admin.css); khi đổi màu hoặc trạng thái, cập nhật CSS và tài liệu này cùng nhau. Yêu cầu nghiệp vụ và lịch công việc tiếp tục theo [`docs/plan.md`](../plan.md), không lấy tài liệu thiết kế này làm bằng chứng hoàn thành các task khác.
 
 ## 1. Phạm vi và nền tảng
 
@@ -8,7 +8,8 @@ Chuẩn dùng chung cho A1/A2 và các màn hình Admin tiếp theo. Mã định
 - Giữ khung `AdminApplication` → `AdminMainView` → `AdminNavigation` và các trang được giữ trong bộ nhớ khi chuyển mục.
 - Thiết kế gọn, dễ đọc bảng dữ liệu, giữ nhận diện xanh dương và sidebar xanh đậm của A1. Không thêm thư viện, font tải qua mạng hoặc hệ thống giao diện song song.
 - A2 dùng `AdminUserStore` trong bộ nhớ và 10 hồ sơ mẫu hiện có. Việc làm đẹp không thay đổi dữ liệu, điều kiện lọc, xác nhận, quyền thao tác hoặc cơ chế lưu trữ.
-- Các trang ngoài quản lý người dùng hiện là bản xem trước; không trình bày chúng như chức năng đã triển khai.
+- Các trang chưa triển khai phải giữ nhãn bản xem trước; trạng thái và bằng chứng kiểm tra nằm trong [checklist Admin](implementation-tasks.md).
+- A3/A4 dùng `AdminTableSupport` và class CSS `.admin-data-view`, cùng bảng màu/bảng dữ liệu với A2. Các quy tắc DatePicker trong stylesheet Admin được dùng cả trong trang và dialog; giữ kiểm tra popup ở theme tối.
 
 ## 2. Cách áp dụng ui-ux-pro-max
 

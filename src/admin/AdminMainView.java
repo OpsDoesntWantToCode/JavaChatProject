@@ -19,17 +19,24 @@ import javafx.scene.layout.Region;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 
-/** Khung Admin: quản lý user mẫu ở A2, các trang còn lại là bản xem trước. */
+/** Khung Admin: quản lý user và lịch sử đăng nhập mẫu; các trang còn lại là bản xem trước. */
 public final class AdminMainView extends BorderPane {
     private final Label pageTitle = new Label();
     private final Label pageDescription = new Label();
     private final StackPane content = new StackPane();
-    private final AdminUserStore userStore = new AdminUserStore();
+    private final AdminDemoData demoData;
     private final Map<AdminNavigation.Page, Node> pages =
             new EnumMap<>(AdminNavigation.Page.class);
 
-    public AdminMainView(Runnable onExit) {
+    public AdminMainView(Runnable onExit)
+    {
+        this(onExit, new AdminDemoData(new AdminUserStore()));
+    }
+
+    AdminMainView(Runnable onExit, AdminDemoData demoData)
+    {
         Objects.requireNonNull(onExit);
+        this.demoData = Objects.requireNonNull(demoData);
         getStyleClass().add("admin-root");
         setId("admin-root");
         setCenter(createWorkspace(onExit));
@@ -88,8 +95,12 @@ public final class AdminMainView extends BorderPane {
     private void showPage(AdminNavigation.Page page) {
         pageTitle.setText(page.title());
         pageDescription.setText(page.description());
-        content.getChildren().setAll(pages.computeIfAbsent(page, selected ->
-                selected == AdminNavigation.Page.USERS ? new UserManagementView(userStore) : createPreview(selected)));
+        content.getChildren().setAll(pages.computeIfAbsent(page, selected -> switch (selected)
+        {
+            case USERS -> new UserManagementView(demoData);
+            case LOGIN_HISTORY -> new GlobalLoginHistoryView(demoData);
+            default -> createPreview(selected);
+        }));
     }
 
     private Node createPreview(AdminNavigation.Page page) {
