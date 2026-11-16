@@ -113,7 +113,7 @@
 
 ### 3.4 Tích hợp, Báo cáo & Đóng gói Nghiệm thu 20% (Làm chung)
 - [ ] **Task C1 — Khung Báo cáo Đồ án (`bao-cao-draft.docx` / LaTeX)** *(Hạn chót: 03/11/2026)*: Minh dựng khung báo cáo đầy đủ 5 mục bắt buộc: (1) Thông tin nhóm, (2) Bảng phân công, (3) Bảng đóng góp tổng 100% theo thực tế (50-50 mới là dự kiến), (4) Thiết kế CSDL (Hải viết và dán ERD), (5) Danh sách màn hình (chụp ảnh Admin và User).
-- [ ] **Task C2 — Ghép mã nguồn & Kiểm thử biên dịch** *(Hạn chót: 03/11/2026)*: Tạo PR gộp `feat/admin-db` và `feat/user-ui` vào nhánh `main`. Kiểm tra biên dịch không có bất kỳ lỗi cú pháp nào.
+- [x] **Task C2 — Ghép mã nguồn & Kiểm thử biên dịch** *(Kiểm chứng: 16/11/2026)*: Ghép Admin `99a86cf` và User `eb141ac` qua nhánh tích hợp, merge commit `89f41fe`; build 42 tệp Java và chạy hồi quy Admin thành công. Hải xác nhận Minh đồng ý tự xử lý và merge. Kết nối GitHub từ chối tạo PR (403), nên đưa bản ghép lên `main` bằng Git, giữ lịch sử và không force push; bằng chứng/giới hạn tại `docs/admin-spec/handoff-checklist.md`.
 - [ ] **Task C3 — Chụp minh chứng Git (`git/`)** *(Hạn chót: 04/11/2026)*: Chụp lịch sử commit của Hải lưu vào `git/commits_Hai.png`, chụp commit của Minh lưu vào `git/commits_Minh.png`.
 - [ ] **Task C4 — Xuất Báo cáo PDF & Đóng gói ZIP** *(Hạn chót: 05/11/2026)*: Xuất file `BaoCao.pdf`, kiểm tra nén file zip gồm đúng 3 thư mục `src/`, `script/`, `git/` và `BaoCao.pdf`.
 
