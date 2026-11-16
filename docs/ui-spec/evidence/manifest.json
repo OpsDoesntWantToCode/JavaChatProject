@@ -1,0 +1,88 @@
+{
+  "captured_on": "2026-11-16",
+  "source": "JavaFX UserScreenshotsRunner automated capture via offscreen scene snapshot",
+  "branch": "feat/user-ui",
+  "author": "Tran Nguyen Tuan Minh (24127084)",
+  "images": [
+    {
+      "file": "u1-login.png",
+      "bytes": 35255,
+      "sha256": "99ba5f057b8aad68905d86ecbd5551a8680e6d6e147c89831fc76e78b992d782"
+    },
+    {
+      "file": "u1-register.png",
+      "bytes": 31458,
+      "sha256": "7420d5685fdd098bffc19ee696cb3a8e3117f2ac9ec7195de2f51a85e8c42dbb"
+    },
+    {
+      "file": "u12-group-create.png",
+      "bytes": 17802,
+      "sha256": "c774e038c87da0c070054b3d263b23e6d6e480bd21703875cbd1d5b15827f89a"
+    },
+    {
+      "file": "u12-member-add.png",
+      "bytes": 6719,
+      "sha256": "b7fd3966efa4c81a84b2c117a776a525deba53e096752bcd68f1c2917aebcc4d"
+    },
+    {
+      "file": "u13-spam-report.png",
+      "bytes": 18231,
+      "sha256": "3229d58bc73ab468eb7442a7140545329a76038f18e2ec624a98a0c9e52ee39c"
+    },
+    {
+      "file": "u2-forgot-password.png",
+      "bytes": 15138,
+      "sha256": "6222367b39dd89bdee0f39de45a08c44f710ae3de5c0041b1ba6280f63ad5f4f"
+    },
+    {
+      "file": "u2-profile-settings.png",
+      "bytes": 15146,
+      "sha256": "8cb43a29847f9143a29a9665c4f257d97282c71048dd3debdb8f7de7faef9a40"
+    },
+    {
+      "file": "u2-security-password.png",
+      "bytes": 13450,
+      "sha256": "25f4b79d549e33eb8faa85402b10fb78c0c8d582af790fa0047d854d88498dce"
+    },
+    {
+      "file": "u3-workspace-direct.png",
+      "bytes": 93683,
+      "sha256": "dd4a2f4c6d3dda7e0f396be33d35bb939d9bb1e35f64cda40213a860f6ec35d6"
+    },
+    {
+      "file": "u3-workspace-group.png",
+      "bytes": 109645,
+      "sha256": "cc509cb0539a8524ca560fac25d1a7946df4cec90c0f5a85fea390a3536e191e"
+    },
+    {
+      "file": "u4-friends-all.png",
+      "bytes": 66502,
+      "sha256": "f2a99c98ef692b6d80af4f220d8766d9305b0e01fe1a097c157b8515679674f7"
+    },
+    {
+      "file": "u5-friends-pending.png",
+      "bytes": 32442,
+      "sha256": "1a9e42e0fd365152a1ab7eac899b4786a80a12bba356478e2c24cfdcff7686e3"
+    },
+    {
+      "file": "u6-friends-online.png",
+      "bytes": 45271,
+      "sha256": "d9208132b4a2841ff76b813b73be805f1d3b6ba3573f0842500da9193eb34880"
+    },
+    {
+      "file": "u7-friends-search.png",
+      "bytes": 52103,
+      "sha256": "022af2ae020f9f642b8a766a000c0f91c472ffd51cb398061bc5a3eb7a03261c"
+    },
+    {
+      "file": "u8-direct-chat-details.png",
+      "bytes": 21629,
+      "sha256": "eebd879964611b264a5a92e9afb5f7149547255d90ce69e1790aefed99917560"
+    },
+    {
+      "file": "u9-global-search.png",
+      "bytes": 18390,
+      "sha256": "2b853fbf1eb7e445ec0695ab96df4a6eac2265d3c2be325f49bf5a69d285d6dd"
+    }
+  ]
+}
