@@ -36,7 +36,7 @@
 
 ### 1.4 Cột Hero Branding Showcase (`UserHeroSection.java`)
 * **Bố cục:** Rộng `45%` khi mở rộng. Tiêu đề thương hiệu + 3 thẻ tính năng chữ nhật bo góc `10px`, nền `-bg-chip: #1E2026`:
-  1. *Mã hóa AES-GCM*: Icon Khóa vector trắng.
+  1. *Mã hóa nhóm · Mô phỏng*: Icon Khóa vector trắng; ghi rõ bản mẫu chưa mã hóa tin nhắn.
   2. *TCP Socket thuần*: Icon Tia sét vector trắng.
   3. *Quản lý hội thoại*: Icon Người dùng vector trắng.
   * Hộp chứa Icon Badge: `38x38px`, bo góc `8px`, icon vector SVG Lucide màu trắng thuần túy (`#FFFFFF`).
@@ -115,11 +115,11 @@
 
 ---
 
-## 6. Cụm 6: Quản trị Nhóm Chat & Mã hóa Đầu cuối (Group & E2EE)
+## 6. Cụm 6: Quản trị Nhóm Chat & Tùy chọn Mã hóa Mô phỏng
 
 * **Tệp mã nguồn:** `GroupManagementDrawer.java`, `GroupCreateDialog.java`, `SpamReportDialog.java`.
 * **Hộp thoại Tạo Nhóm (`GroupCreateDialog.java`):**
-  * Modal Dialog bo góc `14px`, hiệu ứng mở `applyModalEntrance` (180ms), hiệu ứng đóng `closeModalWithAnimation` (120ms), ô nhập Tên nhóm, công tắc toggle *"Bật mã hóa nhóm (E2EE Messenger Style)"* chuẩn phong cách phẳng Obsidian Dark.
+  * Modal Dialog bo góc `14px`, hiệu ứng mở `applyModalEntrance` (180ms), hiệu ứng đóng `closeModalWithAnimation` (120ms), ô nhập Tên nhóm, công tắc *"Bật mã hóa nhóm (mô phỏng)"*. Chỉ lưu cờ trong dữ liệu mẫu, chưa mã hóa tin nhắn.
   * Danh sách chọn bạn bè kèm `CheckBox` tùy biến (nền phẳng `-bg-input`, khi tick chuyển sắc xanh Sapphire `#4E6BF2` kèm dấu kiểm trắng sắc nét, loại bỏ hoàn toàn ô 3D dập nổi của Modena).
   * Thanh cuộn ẩn rãnh chuẩn Desktop Minimalist 8px với con lăn pill bo tròn `#2E323D`, tương thích hoàn hảo với nền tối.
   * Hỗ trợ nhấp chuột chọn trực tiếp cả dòng bạn bè (Row Click Toggle) kèm hiệu ứng hover `#1E2129`.
@@ -136,4 +136,4 @@
   * **Ràng buộc Quyền Admin:** Nút thao tác quản trị viên chỉ hiển thị cho Quản trị viên (`btnMore.visibleProperty().bind(isCurrentUserAdmin)`).
   * Nút *"Xóa lịch sử trò chuyện"* và *"Rời khỏi nhóm"* (`applyTactileButton`).
   * Rời nhóm & Giải tán nhóm: Cảnh báo chuyển giao Admin nếu là Quản trị viên cuối cùng.
-  * **Banner Mã hóa E2EE:** Icon khiên bảo mật xanh lá, hiển thị thông điệp xác thực khóa đối xứng AES-GCM kiểu Messenger.
+  * **Nhãn mã hóa nhóm mô phỏng:** hiển thị khi cờ mã hóa mẫu được bật; ghi rõ chưa mã hóa tin nhắn. Không tuyên bố E2EE; phương án AES-GCM phía Server tiếp tục chờ xác nhận theo `docs/tech-stack.md`.

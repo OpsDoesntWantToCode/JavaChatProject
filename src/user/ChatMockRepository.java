@@ -94,11 +94,11 @@ public class ChatMockRepository {
     private static void initMockData() {
         CONVERSATIONS.clear();
 
-        // 1. Nhóm Đồ Án Java 2026 (Group, E2EE)
+        // 1. Nhóm Đồ Án Java 2026 (nhóm, cờ mã hóa mô phỏng)
         ConversationMeta c1 = new ConversationMeta(
             "group_project",
             "Nhóm Đồ Án Java 2026",
-            "3 thành viên • Mã hóa đầu cuối AES-GCM 256-bit",
+            "3 thành viên • Mã hóa nhóm — mô phỏng",
             "💡 Các bạn nhớ chụp ảnh minh chứng...",
             "10:19",
             true,

@@ -810,7 +810,7 @@ public final class JavaFXTheme {
         // Huy hiệu bảo mật / thành viên
         HBox badgeRow = new HBox(6);
         badgeRow.setAlignment(Pos.CENTER_LEFT);
-        Label badgeE2EE = new Label("🔒 Mã hóa E2EE");
+        Label badgeE2EE = new Label("🔒 Mã hóa nhóm · Mẫu");
         badgeE2EE.setStyle("-fx-font-size: 10.5px; -fx-text-fill: #8E929B; -fx-background-color: #22252C; -fx-padding: 2px 7px; -fx-background-radius: 4px;");
         Label badgeRole = new Label(username != null && username.contains("minh") ? "👑 Chủ nhóm" : "🛡️ Thành viên");
         badgeRole.setStyle("-fx-font-size: 10.5px; -fx-text-fill: #A78BFA; -fx-background-color: rgba(139, 92, 246, 0.15); -fx-padding: 2px 7px; -fx-background-radius: 4px;");

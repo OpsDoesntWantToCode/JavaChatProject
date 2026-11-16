@@ -64,7 +64,7 @@ public final class UserHeroSection {
         // 3. Danh sách 3 Thẻ tính năng với Icon Vector đơn sắc trắng thuần túy (Minimalist, không màu mè)
         VBox featuresBox = new VBox(10);
         featuresBox.getChildren().addAll(
-            createFeatureChip(SVG_LOCK, "Mã hóa AES-GCM", "Khóa riêng từng phiên chat, an toàn dữ liệu."),
+            createFeatureChip(SVG_LOCK, "Mã hóa nhóm · Mô phỏng", "Bản mẫu chưa mã hóa tin nhắn."),
             createFeatureChip(SVG_ZAP, "TCP Socket thuần", "Độ trễ thấp, kết nối liên tục không gián đoạn."),
             createFeatureChip(SVG_USERS, "Quản lý hội thoại", "Nhắn tin trực tiếp, nhóm chat và danh bạ trực tuyến.")
         );

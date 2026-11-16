@@ -309,7 +309,7 @@ public class UserMainWorkspace extends BorderPane {
             new GroupCreateDialog(primaryStage, result -> {
                 conversationListBox.getChildren().add(0, createConversationItem(
                     "group_" + System.currentTimeMillis(), result.getGroupName(),
-                    result.isEncrypted() ? "🔒 Nhóm mã hóa E2EE vừa tạo..." : "Nhóm mới tạo...",
+                    result.isEncrypted() ? "🔒 Nhóm vừa tạo · Mã hóa mô phỏng" : "Nhóm mới tạo...",
                     "Vừa xong", result.isEncrypted(), 0, true, "#3F51B5", "GP"
                 ));
                 loadConversation("group_project");

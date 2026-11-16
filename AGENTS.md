@@ -140,7 +140,11 @@ Mọi tệp tin, thư mục và thành phần mã nguồn trong dự án BẮT B
 
 ---
 
-## 8. Hướng dẫn Phát triển Giao diện UI/UX (UI/UX Development Guidelines)
+## 8. Phạm vi Quy chuẩn Giao diện
+
+- BẮT BUỘC dùng JavaFX 21 cho cả hai phân hệ.
+- PHẢI áp dụng chuẩn Admin tại `docs/admin-spec/admin-design-system.md` và `src/admin/admin.css` cho `src/admin/` theo mục 2.
+- PHẢI áp dụng các quy chuẩn bên dưới cho `src/user/`; TUYỆT ĐỐI KHÔNG tự áp đặt bảng màu, kích thước hoặc bố cục User lên Admin khi chưa có thống nhất mới.
 
 1. **Chuẩn Công nghệ & Nguồn Chân lý Duy nhất (Single Source of Truth for UI):**
    - Tối đa hóa việc sử dụng các Layout Pane chuẩn của **JavaFX 21** (`BorderPane`, `HBox`, `VBox`, `StackPane`, `GridPane`).

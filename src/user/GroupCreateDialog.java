@@ -26,7 +26,7 @@ import java.util.function.Consumer;
  * Triển khai theo chuẩn docs/ui-spec/group-chat-encryption.md (Mục 12.a):
  * - Hộp thoại modal căn giữa, bo góc radius.2xl (14px), nền -bg-card (#1B1D22)
  * - Ô nhập Tên nhóm (cao 44px, bo góc 9px)
- * - Công tắc bật mã hóa nhóm E2EE phong cách Facebook Messenger
+ * - Công tắc lựa chọn mã hóa nhóm mô phỏng
  * - Danh sách chọn bạn bè với CheckBox (lấy từ ma trận dummy-data-matrix.md)
  * - Ràng buộc: Nút "Tạo nhóm" chỉ kích hoạt khi có tên nhóm và tối thiểu 1 thành viên được chọn
  */
@@ -138,7 +138,7 @@ public class GroupCreateDialog {
 
         nameGroup.getChildren().addAll(lblName, txtGroupName);
 
-        // 3. Công tắc bật mã hóa nhóm E2EE Messenger style (Mục 12.g)
+        // 3. Công tắc mã hóa nhóm mô phỏng (Mục 12.g).
         HBox e2eeBox = new HBox(10);
         e2eeBox.setAlignment(Pos.CENTER_LEFT);
         e2eeBox.setStyle("-fx-background-color: #141824; -fx-border-color: #263354; -fx-border-radius: 8px; -fx-background-radius: 8px; -fx-padding: 12px 14px;");
@@ -150,7 +150,7 @@ public class GroupCreateDialog {
         chkE2ee.setStyle("-fx-text-fill: #A0C0FF; -fx-font-size: 13px; -fx-font-weight: bold;");
 
         VBox e2eeInfo = new VBox(2);
-        Label lblSubE2ee = new Label("Mọi tin nhắn sẽ được bảo vệ bằng mã hóa đối xứng AES-GCM 256-bit.");
+        Label lblSubE2ee = new Label("Chỉ lưu lựa chọn mẫu; chưa mã hóa tin nhắn.");
         lblSubE2ee.setStyle("-fx-font-size: 11px; -fx-text-fill: -text-muted;");
         e2eeInfo.getChildren().addAll(chkE2ee, lblSubE2ee);
         e2eeBox.getChildren().add(e2eeInfo);

@@ -16,14 +16,14 @@ import java.util.List;
 import java.util.function.Consumer;
 
 /**
- * Ngăn kéo Cột 4 Quản trị Nhóm Chat & Mã hóa E2EE (Task U12 — GroupManagementDrawer)
+ * Ngăn kéo Cột 4 Quản trị Nhóm Chat & Tùy chọn mã hóa mẫu (Task U12 — GroupManagementDrawer)
  * Triển khai theo chuẩn docs/ui-spec/group-chat-encryption.md & base-ui-spec.md:
  * - Chiều rộng cố định 280px, chỉ có viền trái (Single Border Source: 1px solid #2A2D35)
  * - Đổi tên nhóm trực tiếp bằng icon bút ✏️ (Mục 12.b)
  * - Thêm thành viên mới từ danh bạ (Mục 12.c)
  * - Phân quyền Quản trị viên nhóm: Huy hiệu [Admin] màu vàng (Mục 12.d)
  * - Xóa thành viên khỏi nhóm: Ràng buộc bảo mật btnRemoveMember.visibleProperty().bind(isCurrentUserAdmin) (Mục 12.e)
- * - Trải nghiệm mã hóa nhóm E2EE phong cách Messenger: Icon 🔒, khóa DEK AES-GCM 256-bit, fingerprint (Mục 12.g)
+ * - Biểu thị tùy chọn mã hóa nhóm mẫu bằng icon 🔒; chưa triển khai mã hóa (Mục 12.g).
  */
 public class GroupManagementDrawer extends VBox {
 

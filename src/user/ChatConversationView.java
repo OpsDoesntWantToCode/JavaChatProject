@@ -56,7 +56,7 @@ import javafx.util.Duration;
  * - Kiến trúc ảo hóa VirtualFlow: Dùng ListView<MessageItem> thay cho ScrollPane giữ vững 60fps
  * - Chuẩn thẩm mỹ Telegram Desktop & Zalo:
  *   + Khung chat tràn viền tự nhiên (De-boxing), không viền sáng bao quanh lịch sử
- *   + Thông báo E2EE thu gọn thành pill badge tinh tế chính giữa
+ *   + Nhãn mã hóa nhóm mô phỏng ở giữa vùng chat
  *   + Dải màu Avatar băm ngẫu nhiên theo tên người dùng phân biệt người gửi tức thì
  *   + Timestamp (10px, 65% opacity) đặt gọn góc dưới bên phải bên trong bong bóng chat
  *   + Thanh nhập tin nhắn tích hợp Capsule (gắn nút 📎, ✨, ô nhập mở rộng và nút gửi ➤ bên trong)
@@ -204,7 +204,7 @@ public class ChatConversationView extends BorderPane {
     private final List<Integer> searchMatchIndices = new ArrayList<>();
     private int currentSearchPointer = -1;
 
-    // 3. Banner Mã hóa Đầu cuối E2EE (Dạng Pill tinh tế, không bao viền gắt toàn màn hình)
+    // 3. Nhãn mã hóa nhóm mô phỏng; tên biến cũ không xác nhận có E2EE.
     private final HBox e2eeBannerContainer = new HBox();
     private final HBox e2eePill = new HBox(6);
 
@@ -257,7 +257,7 @@ public class ChatConversationView extends BorderPane {
         setTop(topContainer);
         setBottom(bottomBar);
 
-        // Nạp kịch bản mẫu mặc định: Nhóm Đồ Án Java 2026 có mã hóa E2EE
+        // Nạp kịch bản mặc định: Nhóm Đồ Án Java 2026 có cờ mã hóa mẫu.
         loadConversation("group_project");
     }
 
@@ -495,10 +495,10 @@ public class ChatConversationView extends BorderPane {
     }
 
     // =========================================================================
-    // 3. KHU VỰC CHAT TRUNG TÂM (De-boxing & Pill E2EE Tinh tế)
+    // 3. KHU VỰC CHAT TRUNG TÂM VÀ NHÃN MÃ HÓA MÔ PHỎNG
     // =========================================================================
     private void buildCenterChatArea() {
-        // Banner E2EE Messenger/Telegram style: Dạng Pill nhỏ gọn căn giữa, không viền gắt toàn màn hình
+        // Nhãn nhỏ gọn căn giữa; dữ liệu hiện tại chưa được mã hóa.
         e2eeBannerContainer.setAlignment(Pos.CENTER);
         e2eeBannerContainer.setMaxWidth(Double.MAX_VALUE);
         e2eeBannerContainer.setPadding(new Insets(8, 0, 4, 0));
@@ -517,7 +517,7 @@ public class ChatConversationView extends BorderPane {
         Label lblLockIcon = new Label("🔒");
         lblLockIcon.setStyle("-fx-font-size: 11px;");
 
-        Label lblBanner = new Label("Tin nhắn được mã hóa đầu cuối AES-GCM 256-bit");
+        Label lblBanner = new Label("Mã hóa nhóm — mô phỏng, chưa mã hóa tin nhắn");
         lblBanner.setStyle("-fx-font-size: 11.5px; -fx-text-fill: #8E929B;");
         e2eePill.getChildren().addAll(lblLockIcon, lblBanner);
         e2eeBannerContainer.getChildren().setAll(e2eePill);

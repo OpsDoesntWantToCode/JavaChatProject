@@ -25,23 +25,31 @@
   ├── git/            # Ảnh chụp màn hình git log / commit của Hải và Minh
   └── BaoCao.pdf      # Báo cáo nhóm đầy đủ 5 phần bắt buộc
   ```
-- **Quy chuẩn UI (JavaFX 21 + CSS):**
-  - Kích thước cửa sổ chính: Chuẩn 1000x700 px (hoặc tỷ lệ tương đương, có khả năng co giãn responsive).
-  - Look & Feel: JavaFX CSS (hỗ trợ Light / Dark theme), font chữ hệ thống rõ ràng (`Segoe UI` / `Inter`).
-  - Dữ liệu mẫu: Bắt buộc đổ sẵn dữ liệu vào `TableView`, danh sách bạn bè `ListView` và vùng bong bóng chat trong `ScrollPane` để phục vụ chụp hình báo cáo.
+- **Tiêu chí nghiệm thu mốc 20%:**
+  1. File `BaoCao.pdf` đủ 5 phần theo đề bài (Thông tin nhóm, Bảng phân công, Bảng đóng góp tổng 100%, Thiết kế CSDL, Danh sách màn hình).
+  2. Mã nguồn mở lên là chạy được (không phụ thuộc IDE, không lỗi package/đường dẫn tuyệt đối cá nhân).
+  3. Đổ sẵn dữ liệu mẫu (mock/dummy data) để chụp hình giao diện vào báo cáo.
+  4. Script SQL tạo CSDL sạch sẽ, chạy 1 lần là tạo đủ bảng và quan hệ trên database rỗng.
+  5. Minh chứng Git rõ ràng, thể hiện sự cộng tác liên tục của cả 2 thành viên.
 
 ---
 
-## 2. Tiến độ Thực hiện Tổng quan (Lộ trình Rút gọn)
+## 2. Phân công Công việc Cụ thể (Ma trận Trách nhiệm)
 
-- **Chặng 1 (22/10 – 24/10):** Khởi tạo, thống nhất ERD, làm sạch repo, chốt giao thức và công nghệ.
-- **Chặng 2 (25/10 – 02/11):** Triển khai giao diện tĩnh độc lập song song (Hải làm Admin, Minh làm User).
-- **Chặng 3 (03/11 – 16/11):** Ghép mã nguồn vào nhánh làm việc chung, chụp minh chứng Git, hoàn thiện Báo cáo PDF và đóng gói nộp mốc 20%.
-- **Chặng 4 (17/11 – 12/12):** Dồn toàn lực cho mốc 80% (TCP Socket Server, pgJDBC, Transaction, AES-GCM, Mail, LLM, đóng gói JAR).
+| Hạng mục công việc | Người phụ trách chính | Người phối hợp | Sản phẩm đầu ra | Trạng thái |
+| :--- | :--- | :--- | :--- | :--- |
+| **Setup Project, Git, Maven** | Minh (Thành viên B) | Hải | `pom.xml`, cấu trúc `src/`, `.gitignore` | **Hoàn thành** |
+| **Thiết kế CSDL (13 bảng) & SQL Script** | Hải (Thành viên A) | Minh | `script/database.sql`, `docs/database/schema.md` | **Hoàn thành** |
+| **Màn hình Admin (9 nhóm chức năng)** | Hải (Thành viên A) | — | Thư mục `src/admin/` (JavaFX 21 + CSS) | **Hoàn thành** |
+| **Màn hình User (12 nhóm chức năng)** | Minh (Thành viên B) | — | Thư mục `src/user/` (JavaFX 21 + CSS) | **Hoàn thành** |
+| **Viết Báo cáo mốc 20% (Khung + User)**| Minh (Thành viên B) | — | File `BaoCao.pdf` (Tổng hợp chung) | **Đang hoàn thiện** |
+| **Viết Báo cáo mốc 20% (DB + Admin)**  | Hải (Thành viên A) | — | Nội dung mục 4 & 5 trong Báo cáo | **Đang hoàn thiện** |
+| **Chụp ảnh Git commit 2 thành viên** | Cả hai | Cả hai | `git/commits_Hai.png`, `git/commits_Minh.png` | **Hoàn thành** |
+| **Đóng gói file nộp bài ZIP** | Minh (Thành viên B) | Hải review | File zip nộp môn học | **Chờ nộp** |
 
 ---
 
-## 3. Danh mục Nhiệm vụ & Hạn chót Từng Task (Task Matrix)
+## 3. Danh mục Công việc Chi tiết (Checklist Từng Task)
 
 ### 3.1 Khởi tạo & Cơ sở Dữ liệu (Dùng chung)
 - [x] **Setup Repository & Cấu trúc thư mục** *(Hoàn thành: 22/10/2026)*: Khởi tạo Git repo, tạo các thư mục chuẩn `src/admin`, `src/user`, `script`, `git`, `docs`.

@@ -78,10 +78,10 @@ public class EmptyChatWelcomeView extends StackPane {
     }
 
     private void initSlides() {
-        // Slide 1: Bảo mật & Mã hóa E2EE AES-GCM
+        // Slide 1: bản mẫu và tùy chọn mã hóa nhóm mô phỏng.
         slides.add(new CarouselSlide(
             "Chào mừng đến với Java Chat System!",
-            "Khám phá ứng dụng trò chuyện và làm việc nhóm hiện đại, hỗ trợ mã hóa đầu cuối AES-GCM 256-bit tối ưu cho máy tính của bạn.",
+            "Khám phá bản mẫu trò chuyện và làm việc nhóm. Tùy chọn mã hóa nhóm đang được mô phỏng, chưa mã hóa tin nhắn.",
             "Bảo mật thông tin & Truyền tải Socket thời gian thực",
             createShieldIllustration()
         ));

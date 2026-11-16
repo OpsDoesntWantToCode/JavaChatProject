@@ -159,6 +159,7 @@
 - [ ] T22: Bàn giao Minh phần báo cáo/minh chứng; phối hợp review PR, build tích hợp và kiểm tra cấu trúc bộ nộp theo đề. Không tự merge hoặc đóng gói khi chưa phối hợp.
   - Đã chuẩn bị [bảng bàn giao và việc cần phối hợp](handoff-checklist.md). Fetch nhánh Minh tới `5ce5b07`; kiểm tra ghép tạm với Hải tại `8725388` xác định xung đột `docs/plan.md`. Không sửa tài liệu chung hoặc merge nhánh.
   - Trích riêng `pom.xml` và `src/` từ cây ghép tạm vào `build/`, biên dịch offline bằng Maven 3.9.11: **BUILD SUCCESS, 40 tệp Java, 2 tài nguyên CSS**. Chưa chạy nghiệm thu User hoặc hai UI từ bản ghép; chưa coi T22 hoàn tất. Cần phối hợp giải quyết xung đột, review, báo cáo PDF và minh chứng riêng của Minh.
+  - Cập nhật 16/11/2026: Hải xác nhận Minh đồng ý tự xử lý và merge. Tích hợp Admin `99a86cf` với User mới nhất `eb141ac`, giải quyết 6 khối xung đột trong `docs/plan.md`, phân định chuẩn UI và sửa nhãn E2EE thành mã hóa nhóm mô phỏng. Build **42 tệp Java/2 CSS thành công**; chạy lại **45 A2 + 88 thống kê + 28 dữ liệu + 706 JavaFX PASS**. Mở thử cả hai UI, kiểm tra biểu đồ Admin, workspace và dialog tạo nhóm User; đóng các phiên bình thường. Merge commit `89f41fe` giữ hai nhánh cha; API tạo PR bị từ chối 403 nên dùng Git để đưa bản ghép lên `main` theo lệnh người dùng, không force push. T22 tiếp tục mở cho báo cáo, ảnh Minh và bộ nộp; chi tiết trong bảng bàn giao.
 
 ## Trạng thái SDD
 
@@ -166,5 +167,5 @@
 |---|---|
 | Specify | Đã ghi yêu cầu và quyết định chính; các đề xuất còn mở được ghi riêng. |
 | Plan | Đã có phương án kỹ thuật để review. |
-| Tasks | T00–T21 đã hoàn tất theo phạm vi và giới hạn kiểm chứng ghi trên; T22 chưa thực hiện. |
+| Tasks | T00–T21 đã hoàn tất theo phạm vi và giới hạn kiểm chứng ghi trên; T22 đã xử lý tích hợp, còn báo cáo chung và bộ nộp. |
 | Implement | Đã có A3–A11, logic thống kê, nghiệm thu UI/SQL, bản nội dung báo cáo Admin/CSDL kèm ảnh và minh chứng Git hiện tại; còn phối hợp tích hợp/báo cáo chung và cập nhật minh chứng khi chốt bản nộp. |

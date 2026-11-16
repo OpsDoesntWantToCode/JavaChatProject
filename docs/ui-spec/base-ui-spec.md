@@ -3,7 +3,7 @@
 > **Cấp bậc tài liệu:** TÀI LIỆU CHA NỀN TẢNG (PARENT SPECIFICATION)  
 > **Kiến trúc quản trị:** Three-Tier Design Tokens Architecture (W3C Design Tokens Community Group Standard)  
 > **Tiêu chuẩn thẩm định:** Microsoft Fluent 2, NN/g Usability Heuristics, Refactoring UI, Linear-Style Desktop Tooling  
-> **Phạm vi áp dụng:** Toàn bộ thành phần giao diện JavaFX và stylesheet CSS thuộc hệ thống Desktop Chat (`src/user/`, `src/admin/`)  
+> **Phạm vi áp dụng:** Thành phần giao diện JavaFX và stylesheet CSS của phân hệ User (`src/user/`). Phân hệ Admin áp dụng [chuẩn thiết kế Admin](../admin-spec/admin-design-system.md) và `src/admin/admin.css`; các quyết định chung tiếp tục theo `AGENTS.md` và `docs/tech-stack.md`.
 > **Mục tiêu:** Định hình một sản phẩm máy tính để bàn chuẩn mực công nghiệp, thân thiện tối đa với người dùng (User-Friendly), loại bỏ hoàn toàn các biểu hiện "AI slop", vận hành mượt mà 60fps – 120fps trên Windows.
 
 ---
@@ -90,7 +90,7 @@ Bảng ánh xạ trực tiếp từ Primitive Token sang Semantic Token (CSS tro
 | | `-accent-hover` | `color.sapphire.600`| `#3D5AE0` | Trạng thái hover nút CTA |
 | | `-accent-active` | `color.sapphire.700`| `#2E48C7` | Trạng thái nhấn giữ nút CTA |
 | | `-accent-ai` | `color.violet.500` | `#8B5CF6` | Điểm nhấn Trợ lý AI và huy hiệu `[AI BOT]` |
-| **Trạng thái** | `-status-online` | `color.emerald.500` | `#23A55A` | Trực tuyến, thành công, an toàn E2EE |
+| **Trạng thái** | `-status-online` | `color.emerald.500` | `#23A55A` | Trực tuyến, thành công; không dùng màu để khẳng định có mã hóa thực tế |
 | | `-status-danger` | `color.ruby.500` | `#FA777C` | Báo lỗi, nút xóa/rời nhóm, sao đỏ bắt buộc |
 | | `-status-warning`| `color.amber.500` | `#F0B232` | Cảnh báo, huy hiệu `[Admin]` nhóm |
 | | `-status-offline`| `color.neutral.500`| `#80848E` | Ngoại tuyến, trạng thái trung tính |

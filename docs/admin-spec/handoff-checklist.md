@@ -30,4 +30,15 @@ Các kết quả đã ghi: 45 kiểm tra A2, 88 kiểm tra logic thống kê, 28
 - [ ] Sau xử lý xung đột, build lại phiên bản đã review và mở cả Admin/User để kiểm tra tài nguyên, launcher và giao diện.
 - [ ] Kiểm tra bản nộp theo đề: `src/`, `script/database.sql`, `git/` chứa ảnh hai thành viên và `BaoCao.pdf`. Các SQL test phục vụ phát triển không đưa vào thư mục script của bộ nộp.
 
-T22 còn mở đến khi có phối hợp và kiểm chứng các mục trên. Chưa merge, chưa tạo bộ ZIP nộp bài, chưa xuất hoặc ghi đè báo cáo chung.
+## Cập nhật tích hợp được hai thành viên đồng ý
+
+- Ngày 16/11/2026, Hải xác nhận Minh đồng ý các phương án xử lý và yêu cầu tự sửa rồi merge. Nhánh tích hợp `feat/integrate-ui-milestone-20` ghép Admin `99a86cf` với **User mới nhất `eb141ac`**, thay cho bản User `5ce5b07` đã kiểm tra trước đó.
+- Đã xử lý 6 khối xung đột trong `docs/plan.md`: giữ mô tả Admin JavaFX, cập nhật tên class thật và giữ trạng thái User từ nhánh Minh. Trạng thái UI không xác nhận chức năng backend đã hoàn thành. Phạm vi chuẩn User/Admin được phân biệt trong `AGENTS.md` và `base-ui-spec.md`.
+- Biên dịch bản ghép: **BUILD SUCCESS, 42 tệp Java, 2 tài nguyên CSS**. Chạy lại trên bản ghép: **45 PASS A2, 88 PASS thống kê, 28 PASS dữ liệu mẫu, 706 PASS JavaFX**. Không thay đổi `pom.xml`, DDL hoặc giao thức/Server trong lần tích hợp này.
+- Mở trực tiếp cả hai launcher từ `target/classes` với JavaFX 21. Admin hiện dữ liệu mẫu, chuyển từ danh sách người dùng sang biểu đồ hoạt động đúng. User mở trang đăng nhập, chuyển vào workspace bằng đăng nhập mô phỏng. Đã đóng các phiên kiểm tra bình thường, mã thoát 0.
+- Phát hiện nhãn User đang khẳng định E2EE, trái với quyết định mã hóa còn chờ xác nhận. Sửa nhãn hội thoại, tạo nhóm, thẻ giới thiệu và tài liệu thành mã hóa nhóm mô phỏng; không thay cờ dữ liệu hoặc triển khai mã hóa. Biên dịch lại thành công; mở lại User xác nhận nhãn ở workspace và dialog tạo nhóm đọc được, Hủy không tạo nhóm, đóng bình thường. Các tên biến `e2ee...` cũ được giữ để tránh đổi API không cần thiết; chúng không chứng minh có E2EE.
+- Áp dụng nguyên tắc chữ rõ và nhất quán của hai skill UI/UX đã cài; kiểm tra bằng JavaFX thực tế. Không áp dụng bố cục web hoặc quy trình trình duyệt của skill cho ứng dụng desktop này. Chưa nghiệm thu toàn bộ User, mọi DPI, bàn phím hoặc trình đọc màn hình; kết quả trên là kiểm tra khởi chạy và chuyển màn hình.
+- Merge commit `89f41fe` giữ hai nhánh cha Admin `99a86cf` và User `eb141ac`. Kết nối GitHub từ chối tạo PR với lỗi 403 `Resource not accessible by integration`; máy không có `gh`. Theo lệnh merge trực tiếp của Hải sau khi xác nhận Minh đồng ý, bản tích hợp được đưa lên `main` qua Git bằng fast-forward, không force push hoặc xóa nhánh thành viên. Không tuyên bố đã có PR hoặc review được ghi nhận trên GitHub.
+- Không gửi thông báo đại diện cho Hải hoặc Minh, không tự chốt tỷ lệ đóng góp, không xuất PDF hoặc đóng gói ZIP trong đợt sửa/merge.
+
+T22 vẫn còn phần báo cáo chung, ảnh riêng của Minh và kiểm tra bộ nộp. Các mục chưa đánh dấu trong bảng phía trên là danh sách bàn giao ban đầu; phần giải quyết xung đột, build và kiểm tra khởi chạy được cập nhật bằng bằng chứng ở mục này. Trạng thái tích hợp chính thức tra cứu trong lịch sử `main`.
