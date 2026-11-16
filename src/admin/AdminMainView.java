@@ -101,6 +101,9 @@ public final class AdminMainView extends BorderPane {
             case LOGIN_HISTORY -> new GlobalLoginHistoryView(demoData);
             case GROUPS -> new GroupManagementView(demoData);
             case SPAM_REPORTS -> new SpamReportView(demoData);
+            case NEW_USERS -> new NewUsersView(demoData);
+            case FRIEND_STATISTICS -> new FriendStatisticsView(demoData);
+            case ACTIVE_USERS -> new ActiveUsersView(demoData);
             default -> createPreview(selected);
         }));
     }

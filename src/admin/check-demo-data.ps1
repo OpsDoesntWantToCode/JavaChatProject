@@ -448,6 +448,11 @@ public final class AdminDemoDataCheck
 
     private static void respondToLock(Button lock, Stage owner, boolean confirm, Runnable beforeAnswer)
     {
+        respondToUserAction(lock, owner, confirm, "an.report", beforeAnswer);
+    }
+
+    private static void respondToUserAction(Button lock, Stage owner, boolean confirm, String username, Runnable beforeAnswer)
+    {
         check(!lock.isDisabled(), "confirmation test requires an eligible target");
         AtomicReference<Throwable> failure = new AtomicReference<>();
         boolean[] answered = {false};
@@ -460,7 +465,7 @@ public final class AdminDemoDataCheck
                         && window instanceof Stage stage && stage.getOwner() == owner).toList();
                 check(dialogs.size() == 1, "exactly one confirmation owned by Admin");
                 pane = (DialogPane) dialogs.getFirst().getScene().lookup(".dialog-pane");
-                check(pane != null && pane.getContentText().contains("an.report"), "confirmation names reported user");
+                check(pane != null && pane.getContentText().contains(username), "confirmation names intended user");
                 boolean dark = owner.getScene().getRoot().getStyleClass().contains("theme-dark");
                 check(pane.getStyleClass().contains("theme-dark") == dark, "confirmation theme");
                 ButtonType cancel = pane.getButtonTypes().stream()
@@ -629,6 +634,419 @@ public final class AdminDemoDataCheck
         }
     }
 
+    @SuppressWarnings("unchecked")
+    private static void newUsersChecks(boolean dark)
+    {
+        AdminDemoData data = new AdminDemoData(store());
+        AdminMainView root = new AdminMainView(() ->
+        {
+        }, data);
+        Scene scene = new Scene(root, 1000, 700);
+        scene.getStylesheets().add(Objects.requireNonNull(AdminMainView.class.getResource("/admin/admin.css")).toExternalForm());
+        if (dark)
+        {
+            root.getStyleClass().add("theme-dark");
+        }
+        root.applyCss();
+        root.layout();
+        ((ToggleButton) root.lookup("#nav-new_users")).fire();
+        Node cached = root.lookup("#new-users");
+        TableView<UserRow> table = (TableView<UserRow>) root.lookup("#new-users-table");
+        TextField name = (TextField) root.lookup("#new-users-name");
+        DatePicker from = (DatePicker) root.lookup("#new-users-from");
+        DatePicker to = (DatePicker) root.lookup("#new-users-to");
+        Button clear = (Button) root.lookup("#new-users-clear");
+        Label error = (Label) root.lookup("#new-users-error");
+        check(table.getItems().size() == 10 && table.getItems().getFirst().id() == 10, "registrations default latest first");
+        from.getEditor().setText("31/10/2026");
+        to.getEditor().setText("01/11/2026");
+        check(table.getItems().stream().map(UserRow::id).toList().equals(List.of(10L, 9L, 8L)), "registration date boundaries and deleted user");
+        name.setText("  PH\u00daC  ");
+        check(table.getItems().size() == 1 && table.getItems().getFirst().id() == 10, "name and dates combined");
+        name.setText("no.match");
+        check(table.getItems().isEmpty() && !error.isVisible(), "valid registration empty result");
+        clear.fire();
+        from.getEditor().setText("31/02/2026");
+        from.commitValue();
+        check(error.isVisible() && table.getItems().isEmpty(), "invalid registration date");
+        from.getEditor().setText("02/11/2026");
+        to.getEditor().setText("01/11/2026");
+        check(error.isVisible() && table.getItems().isEmpty(), "reversed registration range");
+        clear.fire();
+        check(table.getItems().size() == 10 && !error.isVisible(), "registration clear recovers");
+        from.getEditor().setText("01/11/2026");
+        check(table.getItems().size() == 2, "registration unbounded end");
+        clear.fire();
+        to.getEditor().setText("31/10/2026");
+        check(table.getItems().size() == 8, "registration unbounded start");
+        clear.fire();
+        TableColumn<UserRow, String> fullName = (TableColumn<UserRow, String>) table.getColumns().get(1);
+        fullName.setSortType(TableColumn.SortType.ASCENDING);
+        table.getSortOrder().setAll(List.of(fullName));
+        table.sort();
+        check(table.getItems().getFirst().id() == 10, "Vietnamese name ascending");
+        fullName.setSortType(TableColumn.SortType.DESCENDING);
+        table.sort();
+        check(table.getItems().getLast().id() == 10, "name descending");
+        name.setText("statistics");
+        ((ToggleButton) root.lookup("#nav-users")).fire();
+        data.userStore().update(2, draft("minh.new", "Statistics Minh", "minh.new@example.test"));
+        ((ToggleButton) root.lookup("#nav-new_users")).fire();
+        check(root.lookup("#new-users") == cached && name.getText().equals("statistics")
+                && table.getItems().size() == 1, "cached registration page follows rename while hidden");
+        data.userStore().changeStatus(2, UserRow.Status.LOCKED);
+        check(table.getItems().getFirst().status() == UserRow.Status.LOCKED, "registration shows current locked status");
+        data.userStore().changeStatus(2, UserRow.Status.DELETED);
+        check(table.getItems().size() == 1 && table.getItems().getFirst().status() == UserRow.Status.DELETED,
+                "soft delete preserves registration");
+        clear.fire();
+        UserRow added = data.userStore().add(draft("new.registered", "New registered", "registered@example.test"));
+        check(table.getItems().size() == 11 && table.getItems().contains(added), "new profile appears immediately");
+        TableColumn<UserRow, OffsetDateTime> created = (TableColumn<UserRow, OffsetDateTime>) table.getColumns().get(4);
+        created.setSortType(TableColumn.SortType.DESCENDING);
+        table.getSortOrder().setAll(List.of(created));
+        table.sort();
+        check(table.getItems().getFirst().id() == added.id(), "newest created date order");
+        created.setSortType(TableColumn.SortType.ASCENDING);
+        table.sort();
+        check(table.getItems().getFirst().id() == 1, "oldest created date order");
+        ((NewUsersView) cached).close();
+    }
+
+    @SuppressWarnings("unchecked")
+    private static void friendStatsChecks(boolean dark)
+    {
+        AdminDemoData data = new AdminDemoData(store());
+        AdminMainView root = new AdminMainView(() ->
+        {
+        }, data);
+        Scene scene = new Scene(root, 1000, 700);
+        scene.getStylesheets().add(Objects.requireNonNull(AdminMainView.class.getResource("/admin/admin.css")).toExternalForm());
+        if (dark)
+        {
+            root.getStyleClass().add("theme-dark");
+        }
+        ((ToggleButton) root.lookup("#nav-friend_statistics")).fire();
+        root.applyCss();
+        root.layout();
+        Node cached = root.lookup("#friend-statistics");
+        TableView<AdminStatistics.FriendStats> table = (TableView<AdminStatistics.FriendStats>) root.lookup("#friend-statistics-table");
+        TextField name = (TextField) root.lookup("#friend-stats-name");
+        TextField number = (TextField) root.lookup("#friend-stats-number");
+        ComboBox<String> operator = (ComboBox<String>) root.lookup("#friend-stats-operator");
+        Button clear = (Button) root.lookup("#friend-stats-clear");
+        Label error = (Label) root.lookup("#friend-stats-error");
+        check(table.getItems().size() == 9 && table.getItems().stream().noneMatch(row -> row.user().id() == 8), "friend stats excludes deleted owner");
+        check(table.getItems().stream().anyMatch(row -> row.user().id() == 7), "friend stats keeps locked owner");
+        number.setText("0");
+        check(table.getItems().stream().map(row -> row.user().id()).collect(java.util.stream.Collectors.toSet())
+                .equals(Set.of(6L, 9L, 10L)), "zero direct friends equality");
+        operator.setValue("<");
+        number.setText("2");
+        check(table.getItems().size() == 4, "less than direct friend count");
+        operator.setValue(">");
+        check(table.getItems().size() == 2, "greater than direct friend count");
+        name.setText("  H\u1ea2I  ");
+        check(table.getItems().isEmpty() && !error.isVisible(), "name and numeric filters combine");
+        number.clear();
+        check(table.getItems().size() == 1 && table.getItems().getFirst().user().id() == 1, "blank number disables numeric filter");
+        for (String invalid : List.of("-1", "1.5", "hello", "99999999999999999999999"))
+        {
+            number.setText(invalid);
+            check(error.isVisible() && table.getItems().isEmpty(), "invalid numeric friend filter: " + invalid);
+        }
+        clear.fire();
+        check(!error.isVisible() && table.getItems().size() == 9 && operator.getValue().equals("="), "friend clear recovers");
+        TableColumn<AdminStatistics.FriendStats, Integer> direct = (TableColumn<AdminStatistics.FriendStats, Integer>) table.getColumns().get(3);
+        direct.setSortType(TableColumn.SortType.DESCENDING);
+        table.getSortOrder().setAll(List.of(direct));
+        table.sort();
+        check(table.getItems().getFirst().user().id() == 2, "sort friend count numerically");
+        TableColumn<AdminStatistics.FriendStats, OffsetDateTime> date = (TableColumn<AdminStatistics.FriendStats, OffsetDateTime>) table.getColumns().get(2);
+        date.setSortType(TableColumn.SortType.ASCENDING);
+        table.getSortOrder().setAll(List.of(date));
+        table.sort();
+        check(table.getItems().getFirst().user().id() == 1, "sort friend user creation date");
+        name.setText("updated");
+        ((ToggleButton) root.lookup("#nav-users")).fire();
+        data.userStore().update(1, draft("hai.admin", "Updated Hai", "hai.admin@example.test"));
+        ((ToggleButton) root.lookup("#nav-friend_statistics")).fire();
+        check(root.lookup("#friend-statistics") == cached && name.getText().equals("updated")
+                && table.getItems().size() == 1, "friend page follows rename while hidden and retains filters");
+        check(table.getItems().getFirst().directFriends() == 2 && table.getItems().getFirst().friendsOfFriends() == 3,
+                "expected two-hop totals visible");
+        data.userStore().changeStatus(2, UserRow.Status.LOCKED);
+        check(table.getItems().getFirst().directFriends() == 2, "locking preserves current friend counts");
+        data.userStore().changeStatus(2, UserRow.Status.DELETED);
+        check(table.getItems().getFirst().directFriends() == 1 && table.getItems().getFirst().friendsOfFriends() == 1,
+                "deleting intermediate recomputes both degrees on open page");
+        clear.fire();
+        check(table.getItems().size() == 8 && data.records().friendships().size() == 9, "soft delete filters graph without deleting raw relations");
+        UserRow added = data.userStore().add(draft("friend.new", "New friend user", "friend.new@example.test"));
+        check(table.getItems().stream().anyMatch(row -> row.user().id() == added.id()
+                && row.directFriends() == 0 && row.friendsOfFriends() == 0), "new user appears with zero friends");
+        ((FriendStatisticsView) cached).close();
+    }
+
+    @SuppressWarnings("unchecked")
+    private static void activeUsersChecks(boolean dark)
+    {
+        AdminDemoData data = new AdminDemoData(store());
+        AdminMainView root = new AdminMainView(() ->
+        {
+        }, data);
+        Scene scene = new Scene(root, 1000, 700);
+        scene.getStylesheets().add(Objects.requireNonNull(AdminMainView.class.getResource("/admin/admin.css")).toExternalForm());
+        if (dark)
+        {
+            root.getStyleClass().add("theme-dark");
+        }
+        ((ToggleButton) root.lookup("#nav-active_users")).fire();
+        root.applyCss();
+        root.layout();
+        Node cached = root.lookup("#active-users");
+        TableView<AdminStatistics.ActivityStats> table = (TableView<AdminStatistics.ActivityStats>) root.lookup("#active-users-table");
+        TextField name = (TextField) root.lookup("#active-users-name");
+        TextField number = (TextField) root.lookup("#active-users-number");
+        ComboBox<?> metric = (ComboBox<?>) root.lookup("#active-users-metric");
+        ComboBox<String> operator = (ComboBox<String>) root.lookup("#active-users-operator");
+        DatePicker from = (DatePicker) root.lookup("#active-users-from");
+        DatePicker to = (DatePicker) root.lookup("#active-users-to");
+        Button clear = (Button) root.lookup("#active-users-clear");
+        Label error = (Label) root.lookup("#active-users-error");
+        check(table.getItems().stream().map(row -> row.user().id()).collect(java.util.stream.Collectors.toSet())
+                .equals(Set.of(2L, 3L, 4L, 7L, 8L)), "only active users including locked and deleted");
+        AdminStatistics.ActivityStats minh = table.getItems().stream().filter(row -> row.user().id() == 2).findFirst().orElseThrow();
+        check(minh.openAppCount() == 3 && minh.chatPartners() == 2 && minh.chatGroups() == 2,
+                "repeated messages do not inflate distinct partner or group counts");
+        number.setText("0");
+        check(table.getItems().size() == 1 && table.getItems().getFirst().user().id() == 4,
+                "zero opens keeps users with outbound chat activity");
+        metric.getSelectionModel().select(1);
+        check(table.getItems().size() == 1 && table.getItems().getFirst().user().id() == 3, "switch numeric filter to distinct people");
+        metric.getSelectionModel().select(2);
+        check(table.getItems().size() == 4, "switch numeric filter to distinct groups");
+        number.setText("1");
+        operator.setValue(">");
+        check(table.getItems().size() == 1 && table.getItems().getFirst().user().id() == 2, "greater than group count");
+        operator.setValue("<");
+        check(table.getItems().size() == 4, "less than group count");
+        name.setText("no.match");
+        check(table.getItems().isEmpty() && !error.isVisible(), "activity valid empty name result");
+        clear.fire();
+        name.setText("  MINH  ");
+        number.setText("3");
+        check(table.getItems().size() == 1 && table.getItems().getFirst().user().id() == 2, "activity name case and trim AND number");
+        from.getEditor().setText("01/11/2026");
+        to.getEditor().setText("01/11/2026");
+        check(table.getItems().isEmpty(), "date change recomputes numbers before numeric filter");
+        number.clear();
+        check(table.getItems().size() == 1 && table.getItems().getFirst().openAppCount() == 2
+                && table.getItems().getFirst().chatPartners() == 0 && table.getItems().getFirst().chatGroups() == 0,
+                "blank number disables numeric filter and both day boundaries count");
+        name.clear();
+        check(table.getItems().size() == 2, "only two users active on selected day");
+        clear.fire();
+        from.getEditor().setText("03/11/2026");
+        check(table.getItems().size() == 3 && table.getItems().stream().allMatch(row -> row.openAppCount() == 0), "activity unbounded end and chat-only users");
+        clear.fire();
+        to.getEditor().setText("31/10/2026");
+        check(table.getItems().size() == 1 && table.getItems().getFirst().openAppCount() == 1, "activity unbounded start");
+        clear.fire();
+        from.getEditor().setText("01/01/2027");
+        check(table.getItems().isEmpty() && !error.isVisible(), "no events in range gives valid empty result");
+        from.getEditor().setText("31/02/2026");
+        from.commitValue();
+        check(error.isVisible() && table.getItems().isEmpty(), "activity invalid typed date persists after commit");
+        from.getEditor().setText("03/11/2026");
+        to.getEditor().setText("01/11/2026");
+        check(error.isVisible() && table.getItems().isEmpty(), "activity reversed range");
+        clear.fire();
+        for (String invalid : List.of("-1", "1.5", "hello", "99999999999999999999999"))
+        {
+            number.setText(invalid);
+            check(error.isVisible() && error.isManaged() && table.getItems().isEmpty(), "activity invalid numeric input: " + invalid);
+        }
+        clear.fire();
+        check(!error.isVisible() && !error.isManaged() && table.getItems().size() == 5
+                && metric.getSelectionModel().getSelectedIndex() == 0 && operator.getValue().equals("="), "activity clear restores all filter defaults");
+        TableColumn<AdminStatistics.ActivityStats, Long> opens = (TableColumn<AdminStatistics.ActivityStats, Long>) table.getColumns().get(3);
+        opens.setSortType(TableColumn.SortType.DESCENDING);
+        table.getSortOrder().setAll(List.of(opens));
+        table.sort();
+        check(table.getItems().getFirst().user().id() == 2, "activity numeric descending sort");
+        opens.setSortType(TableColumn.SortType.ASCENDING);
+        table.sort();
+        check(table.getItems().getFirst().user().id() == 4, "activity numeric ascending sort");
+        TableColumn<AdminStatistics.ActivityStats, OffsetDateTime> created = (TableColumn<AdminStatistics.ActivityStats, OffsetDateTime>) table.getColumns().get(2);
+        created.setSortType(TableColumn.SortType.DESCENDING);
+        table.getSortOrder().setAll(List.of(created));
+        table.sort();
+        check(table.getItems().getFirst().user().id() == 8, "activity creation date descending sort");
+        created.setSortType(TableColumn.SortType.ASCENDING);
+        table.sort();
+        check(table.getItems().getFirst().user().id() == 2, "activity creation date ascending sort");
+        TableColumn<AdminStatistics.ActivityStats, String> fullName = (TableColumn<AdminStatistics.ActivityStats, String>) table.getColumns().get(1);
+        fullName.setSortType(TableColumn.SortType.ASCENDING);
+        table.getSortOrder().setAll(List.of(fullName));
+        table.sort();
+        long firstNameId = table.getItems().getFirst().user().id();
+        fullName.setSortType(TableColumn.SortType.DESCENDING);
+        table.sort();
+        check(table.getItems().getLast().user().id() == firstNameId, "activity name sort reverses");
+        name.setText("updated");
+        ((ToggleButton) root.lookup("#nav-users")).fire();
+        data.userStore().update(2, draft("minh.new", "Updated Minh", "minh.new@example.test"));
+        ((ToggleButton) root.lookup("#nav-active_users")).fire();
+        check(root.lookup("#active-users") == cached && name.getText().equals("updated")
+                && table.getItems().size() == 1 && table.getItems().getFirst().user().username().equals("minh.new"),
+                "cached activity page follows rename while hidden and retains filters");
+        data.userStore().changeStatus(3, UserRow.Status.DELETED);
+        check(table.getItems().getFirst().chatPartners() == 2, "deleted target still counts in historic chat");
+        data.userStore().changeStatus(2, UserRow.Status.LOCKED);
+        check(table.getItems().getFirst().user().status() == UserRow.Status.LOCKED
+                && table.getItems().getFirst().openAppCount() == 3, "lock preserves activity and refreshes owner");
+        data.userStore().changeStatus(2, UserRow.Status.DELETED);
+        check(table.getItems().getFirst().user().status() == UserRow.Status.DELETED
+                && table.getItems().getFirst().chatGroups() == 2, "delete preserves owner activity");
+        clear.fire();
+        UserRow added = data.userStore().add(draft("activity.new", "No events", "activity@example.test"));
+        check(table.getItems().size() == 5 && table.getItems().stream().noneMatch(row -> row.user().id() == added.id())
+                && data.records().activities().size() == 15, "new inactive user excluded and raw events preserved");
+        ((ActiveUsersView) cached).close();
+    }
+
+    @SuppressWarnings("unchecked")
+    private static void statisticsIntegrationChecks(boolean dark)
+    {
+        AdminDemoData data = new AdminDemoData(store());
+        AdminDemoData.Records original = data.records();
+        AdminMainView root = new AdminMainView(() ->
+        {
+        }, data);
+        Stage stage = new Stage();
+        Scene scene = new Scene(root, 1000, 700);
+        scene.getStylesheets().add(Objects.requireNonNull(AdminMainView.class.getResource("/admin/admin.css")).toExternalForm());
+        stage.setScene(scene);
+        if (dark)
+        {
+            root.getStyleClass().add("theme-dark");
+        }
+        stage.show();
+        try
+        {
+            TableView<UserRow> users = (TableView<UserRow>) root.lookup("#users-table");
+            String[] nav = {"new_users", "friend_statistics", "active_users"};
+            String[] pageIds = {"new-users", "friend-statistics", "active-users"};
+            Node[] cached = new Node[3];
+            for (int i = 0; i < nav.length; i++)
+            {
+                ((ToggleButton) root.lookup("#nav-" + nav[i])).fire();
+                cached[i] = root.lookup("#" + pageIds[i]);
+                ((TextField) cached[i].lookup("#" + (i == 1 ? "friend-stats" : pageIds[i]) + "-name")).setText("tu\u1ea5n minh");
+            }
+            TableView<UserRow> registrations = (TableView<UserRow>) cached[0].lookup("#new-users-table");
+            TableView<AdminStatistics.FriendStats> friends = (TableView<AdminStatistics.FriendStats>) cached[1].lookup("#friend-statistics-table");
+            TableView<AdminStatistics.ActivityStats> activity = (TableView<AdminStatistics.ActivityStats>) cached[2].lookup("#active-users-table");
+            check(registrations.getItems().size() == 1 && registrations.getItems().getFirst().id() == 2,
+                    "T14 same user in A7");
+            check(friends.getItems().size() == 1 && friends.getItems().getFirst().directFriends() == 4
+                    && friends.getItems().getFirst().friendsOfFriends() == 1, "T14 same user in A8");
+            check(activity.getItems().size() == 1 && activity.getItems().getFirst().openAppCount() == 3
+                    && activity.getItems().getFirst().chatPartners() == 2 && activity.getItems().getFirst().chatGroups() == 2,
+                    "T14 same user in A9");
+            ((ToggleButton) root.lookup("#nav-users")).fire();
+            users.getSelectionModel().select(data.user(2));
+            Button lock = (Button) root.lookup("#user-lock");
+            respondToUserAction(lock, stage, false, "minh.dev", () ->
+            {
+            });
+            check(data.user(2).status() == UserRow.Status.ACTIVE && registrations.getItems().getFirst().status() == UserRow.Status.ACTIVE
+                    && friends.getItems().getFirst().directFriends() == 4 && activity.getItems().getFirst().openAppCount() == 3,
+                    "T14 cancel from A2 leaves all statistics unchanged");
+            respondToUserAction(lock, stage, true, "minh.dev", () ->
+            {
+            });
+            check(registrations.getItems().getFirst().status() == UserRow.Status.LOCKED
+                    && friends.getItems().getFirst().user().status() == UserRow.Status.LOCKED
+                    && activity.getItems().getFirst().user().status() == UserRow.Status.LOCKED,
+                    "T14 lock from A2 refreshes three hidden pages");
+            check(friends.getItems().getFirst().directFriends() == 4 && friends.getItems().getFirst().friendsOfFriends() == 1
+                    && activity.getItems().getFirst().openAppCount() == 3, "T14 lock preserves relationships and history");
+            respondToUserAction((Button) root.lookup("#user-delete"), stage, true, "minh.dev", () ->
+            {
+            });
+            check(registrations.getItems().getFirst().status() == UserRow.Status.DELETED
+                    && activity.getItems().getFirst().user().status() == UserRow.Status.DELETED
+                    && activity.getItems().getFirst().openAppCount() == 3 && activity.getItems().getFirst().chatPartners() == 2,
+                    "T14 delete from A2 keeps registration and activity history");
+            check(friends.getItems().isEmpty() && data.friendsOf(2).isEmpty(), "T14 deleted owner excluded from A8 and A3");
+            ((TextField) cached[1].lookup("#friend-stats-name")).setText("h\u1ea3i");
+            check(friends.getItems().size() == 1 && friends.getItems().getFirst().directFriends() == 1
+                    && friends.getItems().getFirst().friendsOfFriends() == 1, "T14 deleting intermediate updates both friendship degrees");
+            for (int i = 0; i < nav.length; i++)
+            {
+                ((ToggleButton) root.lookup("#nav-" + nav[i])).fire();
+                check(root.lookup("#" + pageIds[i]) == cached[i], "T14 page cache survives mutations: " + nav[i]);
+                ((Button) cached[i].lookup("#" + (i == 1 ? "friend-stats" : pageIds[i]) + "-clear")).fire();
+            }
+            check(registrations.getItems().size() == 10 && friends.getItems().size() == 8 && activity.getItems().size() == 5,
+                    "T14 clear restores expected historical and current populations");
+            check(data.records().equals(original) && data.records().activities().size() == 15
+                    && data.records().friendships().size() == 9, "T14 mutations preserve original event and relationship records");
+            for (int i = 0; i < nav.length; i++)
+            {
+                ((ToggleButton) root.lookup("#nav-" + nav[i])).fire();
+                String prefix = i == 1 ? "friend-stats" : pageIds[i];
+                ((TextField) cached[i].lookup("#" + prefix + "-name")).setText("no.match");
+                check(((TableView<?>) cached[i].lookup("#" + pageIds[i] + "-table")).getItems().isEmpty()
+                        && !((Label) cached[i].lookup("#" + prefix + "-error")).isVisible(), "T14 valid empty result: " + nav[i]);
+                ((Button) cached[i].lookup("#" + prefix + "-clear")).fire();
+                if (i == 0)
+                {
+                    ((DatePicker) cached[i].lookup("#new-users-from")).getEditor().setText("31/02/2026");
+                }
+                else
+                {
+                    ((TextField) cached[i].lookup("#" + prefix + "-number")).setText("-1");
+                }
+                check(((TableView<?>) cached[i].lookup("#" + pageIds[i] + "-table")).getItems().isEmpty()
+                        && ((Label) cached[i].lookup("#" + prefix + "-error")).isVisible(), "T14 invalid filter hides old results: " + nav[i]);
+                root.applyCss();
+                root.layout();
+                Label validation = (Label) cached[i].lookup("#" + prefix + "-error");
+                check(validation.getHeight() + 1 >= validation.prefHeight(validation.getWidth()),
+                        "T14 validation label fits allocated height: " + nav[i]);
+                Label note = (Label) cached[i].lookup(".demo-note");
+                check(note.getHeight() + 1 >= note.prefHeight(note.getWidth()),
+                        "T14 explanatory note fits allocated height: " + nav[i]);
+                ((Button) cached[i].lookup("#" + prefix + "-clear")).fire();
+                root.applyCss();
+                root.layout();
+                check(!((Label) cached[i].lookup("#" + prefix + "-error")).isVisible(), "T14 filter recovery: " + nav[i]);
+            }
+        }
+        finally
+        {
+            stage.close();
+            for (AdminNavigation.Page page : List.of(AdminNavigation.Page.NEW_USERS,
+                    AdminNavigation.Page.FRIEND_STATISTICS, AdminNavigation.Page.ACTIVE_USERS))
+            {
+                ((ToggleButton) root.lookup("#nav-" + page.name().toLowerCase(Locale.ROOT))).fire();
+                Node view = root.lookup(page == AdminNavigation.Page.NEW_USERS ? "#new-users"
+                        : page == AdminNavigation.Page.FRIEND_STATISTICS ? "#friend-statistics" : "#active-users");
+                try
+                {
+                    ((AutoCloseable) view).close();
+                }
+                catch (Exception exception)
+                {
+                    throw new AssertionError("T14 cleanup failed", exception);
+                }
+            }
+        }
+    }
+
     public static void main(String[] args) throws Exception
     {
         dataChecks();
@@ -655,6 +1073,22 @@ public final class AdminDemoDataCheck
                 spamChecks(false);
                 spamChecks(true);
                 System.out.println("PASS: " + (passed - beforeSpam) + " A6 spam/confirmation JavaFX checks across light/dark.");
+                int beforeNewUsers = passed;
+                newUsersChecks(false);
+                newUsersChecks(true);
+                System.out.println("PASS: " + (passed - beforeNewUsers) + " A7 registration JavaFX checks across light/dark.");
+                int beforeFriends = passed;
+                friendStatsChecks(false);
+                friendStatsChecks(true);
+                System.out.println("PASS: " + (passed - beforeFriends) + " A8 friend statistics JavaFX checks across light/dark.");
+                int beforeActivity = passed;
+                activeUsersChecks(false);
+                activeUsersChecks(true);
+                System.out.println("PASS: " + (passed - beforeActivity) + " A9 activity JavaFX checks across light/dark.");
+                int beforeStatisticsIntegration = passed;
+                statisticsIntegrationChecks(false);
+                statisticsIntegrationChecks(true);
+                System.out.println("PASS: " + (passed - beforeStatisticsIntegration) + " T14 cross-page JavaFX checks across light/dark.");
             }
             catch (Throwable error)
             {

@@ -73,15 +73,45 @@
 
 ## Đợt 3 — A7/A8/A9
 
-- [ ] T10: Thêm logic thống kê có trường hợp kỳ vọng độc lập cho ngày biên, FOF, số đối tượng chat và OPEN_APP.
-- [ ] T11: Dựng đăng ký mới với trạng thái, lọc ngày/tên, sort tên/ngày; giữ tài khoản đã xóa trong lịch sử.
-- [ ] T12: Dựng thống kê bạn bè; lọc số trực tiếp, FOF không trùng và loại nút DELETED ở mọi bậc.
-- [ ] T13: Dựng hoạt động với ba chỉ số, chọn cột lọc, toán tử/số và khoảng ngày; chỉ hiện user có hoạt động trong khoảng.
-- [ ] T14: Kiểm tra cùng user trước/sau khóa và xóa mềm: quan hệ hiện tại đổi đúng, lịch sử giữ nguyên; kiểm tra dữ liệu rỗng, nhập sai và hai theme.
+- [x] T10: Thêm logic thống kê có trường hợp kỳ vọng độc lập cho ngày biên, FOF, số đối tượng chat và OPEN_APP.
+  - Ngày 16/11/2026: thêm `AdminStatistics` với `registrations`, `friendStatistics`, `activeUsers`. Mỗi lần gọi đọc nguồn mẫu/store hiện tại, trả danh sách snapshot bất biến; không cache hoặc tự thay đổi dữ liệu.
+  - Đăng ký giữ hồ sơ LOCKED/DELETED và lọc theo `AdminDateRange`. Bạn bè xây đồ thị không có nút DELETED, giữ LOCKED, đếm bậc hai bằng tập hợp rồi loại chính mình/bạn trực tiếp. Hoạt động đếm OPEN_APP và hai tập ID riêng cho người/nhóm đã chủ động chat; chỉ trả user có sự kiện trong khoảng chọn, giữ cả lịch sử của user hiện đã khóa/xóa.
+  - Lệnh: `powershell -NoProfile -ExecutionPolicy Bypass -File src/admin/check-statistics.ps1 -MavenCommand ./build/tools/apache-maven-3.9.11/bin/mvn.cmd`.
+  - Kết quả: **BUILD SUCCESS, 54 PASS** kiểm tra logic. Kỳ vọng số bạn cho cả 9 user chưa xóa được ghi sẵn bằng tay; kiểm tra quan hệ vòng/đường trùng, nút trung gian đã xóa, đối chiếu số bạn trực tiếp với A3, user 0 bạn và user chỉ nhận tin.
+  - Kiểm tra thêm ngày biên và một đầu trống, timestamp UTC ở đầu/cuối ngày Việt Nam (cả phần giây lẻ), nhiều lượt mở app/nhiều tin cùng đối tượng, rename/khóa/xóa mềm, user mới theo Clock cố định, snapshot không sửa được và dữ liệu gốc không đổi.
+  - Giới hạn: chưa dựng/nối màn hình A7–A9, chưa thống kê theo tháng cho A10/A11. Lượt này không khởi tạo Toolkit hoặc kiểm tra UI/DB/Server; T11–T13 cần lắng nghe store và gọi lại logic khi dữ liệu thay đổi.
+- [x] T11: Dựng đăng ký mới với trạng thái, lọc ngày/tên, sort tên/ngày; giữ tài khoản đã xóa trong lịch sử.
+  - Ngày 16/11/2026: thêm `NewUsersView`, nối mục Người dùng đăng ký mới; cột username, họ tên, email, trạng thái và ngày tạo. Dùng `AdminStatistics.registrations` và `AdminDateRange`, lọc AND tên/ngày, mặc định mới nhất trước, sort tên tiếng Việt/ngày tạo qua tiêu đề cột.
+  - Có xóa bộ lọc, số kết quả, trạng thái rỗng và lỗi ngày; user đã khóa/xóa vẫn nằm trong lịch sử. Listener gọi lại thống kê khi store đổi, giữ bộ lọc và trang khi chuyển mục.
+  - `check-demo-data.ps1`: **BUILD SUCCESS, 34 PASS A7** (17 mỗi theme), cùng **28 PASS dữ liệu + 252 PASS JavaFX hồi quy**. Kiểm tra ngày biên/một đầu trống, tên kết hợp ngày, ngày sai/khoảng đảo, sort tăng/giảm, rename lúc trang ẩn, khóa/xóa mềm và user mới xuất hiện ngay.
+  - Đã chạy `run-admin.ps1` và build thành công. Chưa kiểm tra trực quan: Computer Use lỗi `native pipe is unavailable` (os error 2), thử lại và reset runtime vẫn không kết nối. Dừng phiên lệnh chạy UI bằng Ctrl+C; đây không phải lỗi build. Cần kiểm tra trực quan bố cục, lịch chọn ngày và hai theme ở T14 khi công cụ hoạt động lại.
+  - Chưa kiểm tra DB/Server, mọi DPI hoặc trình đọc màn hình. Kết quả trên là kiểm tra node/chức năng, không thay thế kiểm tra trực quan.
+- [x] T12: Dựng thống kê bạn bè; lọc số trực tiếp, FOF không trùng và loại nút DELETED ở mọi bậc.
+  - Ngày 16/11/2026: thêm `FriendStatisticsView`, nối mục Thống kê bạn bè. Dùng `AdminStatistics`, lọc AND họ tên/số bạn trực tiếp, toán tử =/< />; ô số trống bỏ điều kiện, số âm/thập phân/chữ hoặc quá lớn báo lỗi và không hiện kết quả cũ.
+  - Có xóa bộ lọc, số kết quả, sort tên/ngày/số liệu. Listener tính lại khi store đổi: giữ LOCKED, loại DELETED khỏi chủ thể và đường đi bậc hai, user mới có 0 bạn.
+  - `check-demo-data.ps1`: **BUILD SUCCESS, 40 PASS A8** (20 mỗi theme), cùng **28 PASS dữ liệu + 286 PASS JavaFX hồi quy**. Kiểm tra toán tử/0 bạn, nhập sai, lọc kết hợp, sort số/ngày, rename lúc trang ẩn, khóa/xóa nút trung gian, giữ dữ liệu quan hệ gốc và user mới.
+  - Chưa kiểm tra trực quan A8; ghi vào phần cần kiểm tra tại T14 cùng A7. Sau lượt kiểm tra, Hải yêu cầu cài và lập hướng dẫn hai skill UI/UX; chưa áp dụng một lượt chỉnh giao diện theo skill hoặc thực hiện T13.
+- [x] T13: Dựng hoạt động với ba chỉ số, chọn cột lọc, toán tử/số và khoảng ngày; chỉ hiện user có hoạt động trong khoảng.
+  - Ngày 16/11/2026: thêm `ActiveUsersView`, nối mục Người dùng hoạt động. Sáu cột theo spec; dùng `AdminStatistics.activeUsers` và `AdminDateRange`, lọc AND tên/ngày/chỉ số, toán tử =/< />. Số trống bỏ điều kiện số; số âm/thập phân/chữ/quá lớn và ngày sai/khoảng đảo báo lỗi, không giữ kết quả cũ.
+  - Hai hàng bộ lọc có nhãn liên kết control, nút xóa bộ lọc, số kết quả trong khoảng ngày, trạng thái rỗng và giải thích cách đếm. Dùng lại bảng/CSS Admin, sort tên tiếng Việt/ngày/số theo giá trị thực; giữ trang/bộ lọc và tính lại khi store đổi, kể cả lúc trang ẩn.
+  - Đã đối chiếu taste về căn lề, một hệ thống thành phần và nội dung cụ thể; Pro Max truy vấn `error validation feedback --domain ux` cho lỗi rõ và cách khắc phục. Chỉ tiếp nhận khuyến nghị phù hợp desktop, không dùng mã web hoặc thay thiết kế đã chốt; nhãn lỗi/ghi chú giữ chiều cao theo nội dung.
+  - Lệnh `check-demo-data.ps1` với Maven như T02: **BUILD SUCCESS, 64 PASS A9** (32 mỗi theme), cùng **28 PASS dữ liệu + 326 PASS JavaFX hồi quy**; tổng **390 PASS JavaFX**. Kiểm tra đổi cả ba chỉ số, =/< />, số 0/trống/sai, ngày biên/một đầu trống/rỗng/sai, sort tăng/giảm, rename khi ẩn, chủ thể/đối tượng đã khóa/xóa và user mới không có sự kiện. Dữ liệu gốc giữ nguyên 15 sự kiện.
+  - Giới hạn: đây là kiểm tra node/chức năng, chưa xem trực quan A9, lịch popup, DPI hoặc trình đọc màn hình; phần trực quan A7–A9 chờ T14. Không kiểm tra DB/Server, không commit/push.
+- [x] T14: Kiểm tra cùng user trước/sau khóa và xóa mềm: quan hệ hiện tại đổi đúng, lịch sử giữ nguyên; kiểm tra dữ liệu rỗng, nhập sai và hai theme.
+  - **Đã đạt phần chức năng và trực quan trong phạm vi ghi dưới đây.** Ngày 16/11/2026: bổ sung kịch bản `statisticsIntegrationChecks` trong `check-demo-data.ps1`, mở A7/A8/A9 từ cùng một khung/store và giữ cả ba trang trong bộ nhớ. Lọc chính xác Tuấn Minh, đối chiếu trước/sau Hủy khóa, xác nhận khóa và xác nhận xóa mềm từ nút A2.
+  - Kiểm tra dialog đúng chủ thể/owner/theme, Hủy là mặc định; khóa giữ nguyên số liệu, xóa giữ lịch sử A7/A9 nhưng loại chủ thể/nút trung gian khỏi A8. Các trang ẩn cập nhật ngay, giữ trang/bộ lọc; xóa bộ lọc trả đúng tập 10 hồ sơ đăng ký / 8 chủ thể quan hệ / 5 chủ thể hoạt động. Giữ nguyên 9 quan hệ và 15 sự kiện gốc.
+  - Kiểm tra thêm bộ lọc rỗng, nhập sai, phục hồi và chiều cao cấp cho nhãn lỗi/ghi chú so với nội dung tại Scene 1000×700. Đây là kiểm tra node/bố cục, không phải bằng chứng nhìn thấy giao diện.
+  - Lệnh `check-demo-data.ps1` với Maven như T02: **BUILD SUCCESS, 94 PASS T14** (47 mỗi theme), cùng **28 PASS dữ liệu + 390 PASS JavaFX hồi quy**; tổng **484 PASS JavaFX**. Lần đầu kịch bản dùng tên `minh` khớp cả Minh Châu nên kỳ vọng một dòng sai; sửa truy vấn test thành `tuấn minh`, không sửa hành vi tìm kiếm của app. Chỉ kết quả chạy cuối được tính PASS.
+  - Các lần trước bị lỗi kết nối Computer Use; ngày 16/11/2026 lúc 12:03, công cụ đã hoạt động và kiểm tra trực tiếp bản chạy từ `run-admin.ps1` (BUILD SUCCESS). Đã xem bảng, bộ lọc và ghi chú A7–A9 ở cả theme sáng/tối tại cửa sổ chuẩn, đối chiếu chuẩn Admin và nguyên tắc phù hợp desktop của hai skill. Không dùng browser gate để kiểm tra JavaFX.
+  - A7: chọn 01/11/2026 bằng lịch Từ ngày trả 2/10 hồ sơ; nhập 31/02/2026 báo lỗi và giữ lỗi sau Tab, focus chuyển sang Đến ngày. Chuyển tối thấy lỗi rõ; xóa bộ lọc trả 10/10. Đã mở lịch sáng và lịch Đến ngày tối, đóng popup bằng Escape.
+  - A8: theme tối nhập -1 báo lỗi đầy đủ; = 0 trả 3/9, dùng Down/Enter trong ComboBox chuyển sang < 0 trả 0/9 và trạng thái rỗng rõ. Chuyển sáng vẫn giữ điều kiện; xóa bộ lọc trả 9/9. Bảng và ghi chú nhìn rõ ở cả hai theme.
+  - A9: theme sáng đổi ba chỉ số với = 0 lần lượt trả 1/5, 1/5, 4/5; đổi chỉ số bằng chuột và phím Down. Nhập 1.5 báo lỗi và bỏ kết quả cũ; xóa bộ lọc trả 5/5. Chọn Từ ngày 03/11/2026 trả 3/3. Theme tối mở lịch Đến ngày, chọn 01/11/2026 báo khoảng đảo rõ; xóa bộ lọc phục hồi 5/5. Tab từ nút xóa chuyển focus sang bảng, viền rõ. Phóng to 1920×1032 thấy cột giãn và tên dài đầy đủ; ở cửa sổ chuẩn một số ô dài rút gọn bằng dấu ba chấm theo thành phần bảng hiện có.
+  - Không phát hiện lỗi cần sửa trong lượt trực quan này; đóng Admin bình thường, tiến trình thoát mã 0, không có exception trong output. Chưa kiểm tra mọi tổ hợp bộ lọc bằng tay, toàn bộ đường Tab/Shift+Tab, mọi DPI, trình đọc màn hình, DB/Server hoặc chụp bộ ảnh báo cáo; nghiệm thu rộng hơn vẫn thuộc T18/T20.
 
 ## Đợt 4 — A10/A11
 
 - [ ] T15: Chốt với Hải cách chọn năm ban đầu; triển khai biểu đồ đăng ký từ cùng ngày tạo với A7.
+  - Hải đã đồng ý ngày 16/11/2026: mặc định năm hiện tại, cho chọn thêm các năm có dữ liệu. Phần triển khai biểu đồ chưa thực hiện.
 - [ ] T16: Triển khai biểu đồ số user có OPEN_APP mỗi tháng; dùng cùng sự kiện với A9.
 - [ ] T17: Kiểm tra đủ 12 tháng, năm không có dữ liệu, đổi năm, tháng giá trị 0 và một user mở app nhiều lần; kiểm tra hai theme.
 
@@ -99,5 +129,5 @@
 |---|---|
 | Specify | Đã ghi yêu cầu và quyết định chính; các đề xuất còn mở được ghi riêng. |
 | Plan | Đã có phương án kỹ thuật để review. |
-| Tasks | T00–T09 hoàn thành theo phạm vi ghi ở trên; T10–T22 chưa thực hiện. |
-| Implement | Đã có nguồn dữ liệu chung, A3–A6; chưa triển khai A7–A11. |
+| Tasks | T00–T14 đã hoàn tất theo phạm vi và giới hạn kiểm chứng ghi trên. T15 đã chốt cách chọn năm, chưa triển khai; T16–T22 chưa thực hiện. |
+| Implement | Đã có A3–A9 và logic thống kê T10; chưa dựng A10/A11. |

@@ -141,8 +141,8 @@
 - Truy vấn FOF minh họa trong schema hiện chỉ loại chủ thể DELETED, chưa loại nút trung gian/đích DELETED. Bước Plan phải ghi nhận chênh lệch này; khi triển khai backend cần review và đồng bộ tài liệu/truy vấn dùng chung. Lượt này chưa sửa schema hoặc SQL.
 - Nghiệm thu bổ sung: xóa mềm một user mẫu làm giảm số bạn hiện tại phù hợp ở A3/A8 nhưng không làm mất đăng ký/lượt hoạt động cũ tại A7/A9/A10/A11; khóa user không làm mất quan hệ bạn bè.
 
-### 6.2 Đề xuất còn mở cho bước Plan
+### 6.2 Lựa chọn năm đã chốt
 
-- Thời điểm thêm user mẫu ở A2 dùng đồng hồ hiện tại; đề xuất chọn năm hiện tại ban đầu và cho chọn thêm các năm có dữ liệu, thay vì cố định một năm trong code. Chưa coi đây là quyết định đã duyệt.
+- Ngày 16/11/2026, Hải đồng ý: biểu đồ mặc định chọn năm hiện tại và cho chọn thêm các năm có dữ liệu. Thời điểm thêm user mẫu ở A2 dùng đồng hồ hiện tại; không cố định năm mặc định trong code.
 
 Không đánh dấu nhiệm vụ UI hoàn thành chỉ vì đã viết tài liệu này. Sau khi chốt các điểm mở mới lập kế hoạch kỹ thuật, chia task và xin Hải bắt đầu implement.

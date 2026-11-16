@@ -21,6 +21,8 @@
 
 Các tên lớp mới là tên dự kiến, không phải API dùng chung với User/Server. Mã mới theo Allman; không định dạng lại toàn bộ code cũ.
 
+T10 đã có `AdminStatistics`: kết quả là snapshot bất biến, lấy hồ sơ mới nhất ở mỗi lần gọi. Khi dựng A7–A9, listener của màn hình phải gọi lại hàm thống kê khi store hoặc khoảng ngày thay đổi; snapshot cũ không tự phát thông báo cập nhật. Bằng chứng kiểm tra nằm trong checklist, không dùng kế hoạch này làm bằng chứng UI đã hoàn thành.
+
 ## 3. Dòng dữ liệu và cập nhật màn hình
 
 1. Khởi tạo một `AdminUserStore` và một `AdminDemoData` cho mỗi phiên Admin.
@@ -37,7 +39,7 @@ Các tên lớp mới là tên dự kiến, không phải API dùng chung với 
 - Chuẩn bị dữ liệu qua hai năm, thời điểm biên, tháng rỗng, nhiều lượt OPEN_APP cùng user/tháng, nhiều tin tới cùng đối tượng và đồ thị bạn bè có vòng/đường trùng.
 - T02 giữ nguyên 10 hồ sơ gốc tạo trong 2026 nên lịch sử ban đầu chỉ có 2026. Dữ liệu năm thứ hai cần được bổ sung hợp lệ khi làm A10/A11; không đặt sự kiện trước ngày đăng ký hoặc tự đổi ngày tạo của 10 hồ sơ hiện có.
 - Ghi trước kết quả mong đợi của một số trường hợp, không tính kỳ vọng bằng chính hàm đang kiểm tra.
-- Cách chọn năm ban đầu vẫn cần Hải chốt: đề xuất năm hiện tại; danh sách gồm năm hiện tại và các năm có dữ liệu. Chưa khóa lựa chọn này vào code.
+- Hải đã chốt ngày 16/11/2026: năm hiện tại là lựa chọn ban đầu; danh sách gồm năm hiện tại và các năm có dữ liệu, không cố định năm mặc định trong code.
 
 ## 5. Thứ tự triển khai và kiểm tra
 

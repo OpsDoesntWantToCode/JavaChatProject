@@ -1,6 +1,6 @@
 # Chuẩn thiết kế giao diện Admin
 
-Chuẩn dùng chung cho A1–A6 và các màn hình Admin tiếp theo. Mã định nghĩa giao diện nằm tại [`src/admin/admin.css`](../../src/admin/admin.css); khi đổi màu hoặc trạng thái, cập nhật CSS và tài liệu này cùng nhau. Yêu cầu nghiệp vụ và lịch công việc tiếp tục theo [`docs/plan.md`](../plan.md), không lấy tài liệu thiết kế này làm bằng chứng hoàn thành các task khác.
+Chuẩn dùng chung cho A1–A7 và các màn hình Admin tiếp theo. Mã định nghĩa giao diện nằm tại [`src/admin/admin.css`](../../src/admin/admin.css); khi đổi màu hoặc trạng thái, cập nhật CSS và tài liệu này cùng nhau. Yêu cầu nghiệp vụ và lịch công việc tiếp tục theo [`docs/plan.md`](../plan.md), không lấy tài liệu thiết kế này làm bằng chứng hoàn thành các task khác.
 
 ## 1. Phạm vi và nền tảng
 
@@ -11,8 +11,12 @@ Chuẩn dùng chung cho A1–A6 và các màn hình Admin tiếp theo. Mã đị
 - Các trang chưa triển khai phải giữ nhãn bản xem trước; trạng thái và bằng chứng kiểm tra nằm trong [checklist Admin](implementation-tasks.md).
 - A3–A6 dùng `AdminTableSupport` và class CSS `.admin-data-view`, cùng bảng màu/bảng dữ liệu với A2. Các quy tắc DatePicker trong stylesheet Admin được dùng cả trong trang và dialog; giữ kiểm tra popup ở theme tối. A4/A6 dùng chung `AdminDateRange` cho nhập và lọc ngày.
 - A6 dùng lại hộp xác nhận `AdminDialogs`, Hủy là nút mặc định. Nhãn giải thích thao tác và lý do có chiều cao tối thiểu theo nội dung để không bị cắt khi bảng chiếm phần không gian còn lại.
+- A7 dùng cùng `.admin-data-view`, `AdminTableSupport` và `AdminDateRange`; không thêm theme hoặc selector riêng. Kiểm tra trực quan sáng/tối và popup lịch đã thực hiện tại T14, xem phạm vi trong checklist.
+- A8/A9 dùng cùng bảng và CSS; A9 chia bộ lọc thành hai hàng tên/ngày và chỉ số/toán tử/số để giữ thứ tự đọc. Nhãn lỗi/ghi chú A9 giữ chiều cao theo nội dung, có cách xóa bộ lọc và giải thích người/nhóm khác nhau. T14 đã kiểm tra liên thông chức năng, chiều cao nhãn và trực quan A7–A9 ở hai theme; xem bằng chứng và giới hạn trong checklist T14.
 
 ## 2. Cách áp dụng ui-ux-pro-max
+
+Hải yêu cầu dùng thêm taste-skill ngày 16/11/2026. Nguồn, trạng thái cài đặt, cách tra cứu và phạm vi áp dụng cả hai skill được ghi tại [hướng dẫn skill UI/UX](ui-ux-skills.md). Giữ chuẩn Admin này làm hệ thống thiết kế chính; hướng dẫn web của taste và ví dụ JavaFX 26 của Pro Max cần được chuyển đổi phù hợp trước khi áp dụng.
 
 Đã dùng danh sách rà soát của skill và tra cứu các chủ đề `keyboard focus contrast`, `enterprise tableview density permission`. Giữ các khuyến nghị phù hợp: focus rõ ràng, bảng có lọc/sắp xếp, nhãn đầy đủ, dữ liệu dài có cách xem toàn bộ, trạng thái có chữ và kiểm tra đồng thời hai theme.
 
