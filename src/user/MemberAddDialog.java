@@ -68,16 +68,19 @@ public class MemberAddDialog {
         HBox headerRow = new HBox(8);
         headerRow.setAlignment(Pos.CENTER_LEFT);
 
-        Label lblHeader = new Label("➕ Thêm bạn bè vào nhóm");
+        Label lblHeader = new Label("Thêm bạn bè vào nhóm");
+        lblHeader.setGraphic(JavaFXTheme.createSvgIcon(JavaFXTheme.SVG_USER_PLUS, 0.85, "#4E6BF2"));
+        lblHeader.setGraphicTextGap(8);
         lblHeader.setStyle("-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: -text-normal;");
 
         Region sp = new Region();
         HBox.setHgrow(sp, Priority.ALWAYS);
 
-        Button btnClose = new Button("✕");
+        Button btnClose = new Button();
+        btnClose.setGraphic(JavaFXTheme.createSvgIcon(JavaFXTheme.SVG_CLOSE, 0.75, "#8E929B"));
         btnClose.getStyleClass().add("dialog-close-btn");
         btnClose.setOnAction(e -> JavaFXTheme.closeModalWithAnimation(dialog, root));
-        JavaFXTheme.applyIconButton(btnClose);
+        JavaFXTheme.applyCloseButton(btnClose);
 
         headerRow.getChildren().addAll(lblHeader, sp, btnClose);
 
@@ -132,12 +135,15 @@ public class MemberAddDialog {
         btnCancel.setOnAction(e -> JavaFXTheme.closeModalWithAnimation(dialog, root));
         JavaFXTheme.applyTactileButton(btnCancel);
 
-        Button btnAdd = new Button("Thêm vào nhóm ➕");
+        Button btnAdd = new Button("Thêm vào nhóm");
+        btnAdd.setGraphic(JavaFXTheme.createSvgIcon(JavaFXTheme.SVG_USER_PLUS, 0.8, "#FFFFFF"));
+        btnAdd.setGraphicTextGap(6);
         btnAdd.getStyleClass().add("btn-primary");
         btnAdd.setStyle(
             "-fx-background-color: -accent-primary; -fx-border-radius: 8px; -fx-background-radius: 8px; " +
             "-fx-text-fill: #FFFFFF; -fx-font-size: 13px; -fx-font-weight: bold; -fx-padding: 8px 18px; -fx-cursor: hand;"
         );
+        JavaFXTheme.applyTactileButton(btnAdd);
         btnAdd.setOnAction(e -> {
             String val = txtInput.getText().trim();
             if (val.isEmpty()) {

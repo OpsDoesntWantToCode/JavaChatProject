@@ -80,12 +80,12 @@ public class UserDirectDrawer extends VBox {
         Region spacer = new Region();
         HBox.setHgrow(spacer, Priority.ALWAYS);
 
-        Button btnClose = new Button("✕");
-        btnClose.getStyleClass().add("dialog-close-btn");
+        Button btnClose = new Button();
+        btnClose.setGraphic(JavaFXTheme.createSvgIcon(JavaFXTheme.SVG_CLOSE, 0.75, "#8E929B"));
         btnClose.setOnAction(e -> {
             if (onClose != null) onClose.run();
         });
-        JavaFXTheme.applyIconButton(btnClose);
+        JavaFXTheme.applyCloseButton(btnClose);
 
         topRow.getChildren().addAll(lblTitle, spacer, btnClose);
 
@@ -124,10 +124,14 @@ public class UserDirectDrawer extends VBox {
         lblRoleTitle.setStyle("-fx-font-size: 11px; -fx-text-fill: -text-muted;");
         lblRoleVal.setStyle("-fx-font-size: 12px; -fx-text-fill: -text-normal;");
 
-        Label lblSecurityNotice = new Label("🔒 Hội thoại bảo mật mã hóa AES-GCM 256-bit");
-        lblSecurityNotice.setStyle("-fx-font-size: 11px; -fx-text-fill: #3B82F6; -fx-padding: 4px 0 0 0;");
+        HBox secBox = new HBox(6);
+        secBox.setAlignment(Pos.CENTER_LEFT);
+        secBox.setPadding(new Insets(4, 0, 0, 0));
+        Label lblSecText = new Label("Hội thoại bảo mật AES-GCM 256-bit");
+        lblSecText.setStyle("-fx-font-size: 11px; -fx-text-fill: #3B82F6;");
+        secBox.getChildren().addAll(JavaFXTheme.createSvgIcon(JavaFXTheme.SVG_LOCK, 0.75, "#3B82F6"), lblSecText);
 
-        infoSection.getChildren().addAll(lblInfoTitle, new Separator(), lblEmailTitle, lblEmailVal, lblRoleTitle, lblRoleVal, lblSecurityNotice);
+        infoSection.getChildren().addAll(lblInfoTitle, new Separator(), lblEmailTitle, lblEmailVal, lblRoleTitle, lblRoleVal, secBox);
 
         // 4. Khối hành động tương tác
         VBox actionSection = new VBox(6);
@@ -136,33 +140,50 @@ public class UserDirectDrawer extends VBox {
         Label lblActionTitle = new Label("TÙY CHỌN HỘI THOẠI");
         lblActionTitle.setStyle("-fx-font-size: 10.5px; -fx-font-weight: bold; -fx-text-fill: -text-muted; -fx-letter-spacing: 0.5px;");
 
-        Button btnReport = createActionButton("🚨 Báo cáo vi phạm / Spam (Mục 10)", "#F59E0B", () -> {
-            if (onReportSpam != null) onReportSpam.run();
-        });
-
-        Button btnClear = createActionButton("🗑️ Xóa toàn bộ lịch sử chat (Mục 11.c)", "#ED4245", () -> {
-            Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-            JavaFXTheme.applyDialogTheme(alert);
-            alert.setTitle("Xác nhận xóa lịch sử");
-            alert.setHeaderText("Xóa toàn bộ tin nhắn phía bạn?");
-            alert.setContentText("Hành động này sẽ cập nhật Watermark và ẩn toàn bộ tin nhắn cũ khỏi khung nhìn của bạn.");
-            Optional<ButtonType> res = alert.showAndWait();
-            if (res.isPresent() && res.get() == ButtonType.OK) {
-                if (onClearHistory != null) onClearHistory.run();
+        Button btnReport = createActionButton(
+            "Báo cáo vi phạm / Spam (Mục 10)",
+            JavaFXTheme.createSvgIcon(JavaFXTheme.SVG_REPORT, 0.8, "#F59E0B"),
+            "drawer-action-btn",
+            () -> {
+                if (onReportSpam != null) onReportSpam.run();
             }
-        });
+        );
 
-        Button btnBlock = createActionButton("🚫 Chặn người dùng (Mục 8.d)", "#ED4245", () -> {
-            Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-            JavaFXTheme.applyDialogTheme(alert);
-            alert.setTitle("Xác nhận chặn");
-            alert.setHeaderText("Chặn người dùng " + lblFullName.getText() + "?");
-            alert.setContentText("Sau khi chặn, người này sẽ không thể tìm thấy bạn hoặc gửi tin nhắn cho bạn.");
-            Optional<ButtonType> res = alert.showAndWait();
-            if (res.isPresent() && res.get() == ButtonType.OK) {
-                if (onBlockUser != null) onBlockUser.run();
+        Button btnClear = createActionButton(
+            "Xóa toàn bộ lịch sử chat (Mục 11.c)",
+            JavaFXTheme.createSvgIcon(JavaFXTheme.SVG_TRASH, 0.8, "#FA777C"),
+            "drawer-danger-btn",
+            () -> {
+                boolean ok = JavaFXTheme.showDestructiveConfirmDialog(
+                    primaryStage,
+                    "Xác nhận xóa lịch sử",
+                    "Xóa toàn bộ tin nhắn phía bạn? (Mục 11.c)",
+                    "Hành động này sẽ cập nhật Watermark và ẩn toàn bộ tin nhắn cũ khỏi khung nhìn của bạn. Thao tác không thể hoàn tác.",
+                    "Xóa lịch sử"
+                );
+                if (ok && onClearHistory != null) {
+                    onClearHistory.run();
+                }
             }
-        });
+        );
+
+        Button btnBlock = createActionButton(
+            "Chặn người dùng (Mục 8.d)",
+            JavaFXTheme.createSvgIcon(JavaFXTheme.SVG_BAN, 0.8, "#FA777C"),
+            "drawer-danger-btn",
+            () -> {
+                boolean ok = JavaFXTheme.showDestructiveConfirmDialog(
+                    primaryStage,
+                    "Xác nhận chặn",
+                    "Chặn người dùng " + lblFullName.getText() + "? (Mục 8.d)",
+                    "Sau khi chặn, người này sẽ không thể tìm thấy bạn hoặc gửi tin nhắn cho bạn. Bạn có thể mở khóa bất cứ lúc nào.",
+                    "Chặn người dùng"
+                );
+                if (ok && onBlockUser != null) {
+                    onBlockUser.run();
+                }
+            }
+        );
 
         actionSection.getChildren().addAll(lblActionTitle, btnReport, btnClear, btnBlock);
 
@@ -173,40 +194,19 @@ public class UserDirectDrawer extends VBox {
         getChildren().setAll(scrollPane);
     }
 
-    private Button createActionButton(String text, String color, Runnable action) {
+    private Button createActionButton(String text, javafx.scene.Node graphic, String styleClass, Runnable action) {
         Button btn = new Button(text);
+        if (graphic != null) {
+            btn.setGraphic(graphic);
+            btn.setGraphicTextGap(8);
+        }
         btn.setMaxWidth(Double.MAX_VALUE);
         btn.setAlignment(Pos.CENTER_LEFT);
-        btn.setStyle(
-            "-fx-background-color: transparent; " +
-            "-fx-text-fill: " + color + "; " +
-            "-fx-font-size: 12px; " +
-            "-fx-padding: 8px 10px; " +
-            "-fx-border-radius: 6px; " +
-            "-fx-background-radius: 6px; " +
-            "-fx-cursor: hand;"
-        );
-        btn.setOnMouseEntered(e -> btn.setStyle(
-            "-fx-background-color: rgba(255, 255, 255, 0.05); " +
-            "-fx-text-fill: " + color + "; " +
-            "-fx-font-size: 12px; " +
-            "-fx-padding: 8px 10px; " +
-            "-fx-border-radius: 6px; " +
-            "-fx-background-radius: 6px; " +
-            "-fx-cursor: hand;"
-        ));
-        btn.setOnMouseExited(e -> btn.setStyle(
-            "-fx-background-color: transparent; " +
-            "-fx-text-fill: " + color + "; " +
-            "-fx-font-size: 12px; " +
-            "-fx-padding: 8px 10px; " +
-            "-fx-border-radius: 6px; " +
-            "-fx-background-radius: 6px; " +
-            "-fx-cursor: hand;"
-        ));
+        btn.getStyleClass().add(styleClass);
         btn.setOnAction(e -> {
             if (action != null) action.run();
         });
+        JavaFXTheme.applyTactileButton(btn);
         return btn;
     }
 

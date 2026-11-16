@@ -42,18 +42,18 @@ public class UserMainWorkspace extends BorderPane {
 
     // Cột 1: Navigation Rail
     private final VBox navRail = new VBox(16);
-    private final Button btnNavChat = new Button("💬");
-    private final Button btnNavFriends = new Button("👥");
-    private final Button btnNavSettings = new Button("⚙");
-    private final Button btnNavLogout = new Button("🚪");
+    private final Button btnNavChat = new Button();
+    private final Button btnNavFriends = new Button();
+    private final Button btnNavSettings = new Button();
+    private final Button btnNavLogout = new Button();
     private boolean isChatMode = true;
 
     // Cột 2: Sub-Sidebar
     private final VBox subSidebar = new VBox(12);
     private final Label lblSidebarTitle = new Label("Đoạn chat");
     private final TextField txtSearch = new TextField();
-    private final Button btnClearSearch = new Button("✕");
-    private final Button btnNewGroup = new Button("➕");
+    private final Button btnClearSearch = new Button();
+    private final Button btnNewGroup = new Button();
     private final VBox conversationListBox = new VBox(4);
     private final VBox friendsCategoryBox = new VBox(4);
     private final ScrollPane conversationScrollPane = new ScrollPane();
@@ -166,10 +166,15 @@ public class UserMainWorkspace extends BorderPane {
         Tooltip.install(avatarBox, new Tooltip("Hồ sơ & Cài đặt (tuanminh_2026)"));
 
         // Nút chuyển chế độ
+        btnNavChat.setGraphic(JavaFXTheme.createSvgIcon(JavaFXTheme.SVG_MESSAGE, 0.9, "#8E929B"));
+        btnNavFriends.setGraphic(JavaFXTheme.createSvgIcon(JavaFXTheme.SVG_USERS, 0.9, "#8E929B"));
+        btnNavSettings.setGraphic(JavaFXTheme.createSvgIcon(JavaFXTheme.SVG_SETTINGS, 0.9, "#8E929B"));
+        btnNavLogout.setGraphic(JavaFXTheme.createSvgIcon(JavaFXTheme.SVG_LOGOUT, 0.9, "#FA777C"));
+
         btnNavChat.getStyleClass().addAll("nav-item-btn", "nav-item-btn-active");
         btnNavFriends.getStyleClass().add("nav-item-btn");
         btnNavSettings.getStyleClass().add("nav-item-btn");
-        btnNavLogout.getStyleClass().add("nav-item-btn");
+        btnNavLogout.getStyleClass().addAll("nav-item-btn", "nav-item-btn-danger");
 
         JavaFXTheme.applyIconButton(btnNavChat);
         JavaFXTheme.applyIconButton(btnNavFriends);
@@ -185,7 +190,14 @@ public class UserMainWorkspace extends BorderPane {
         btnNavFriends.setOnAction(e -> switchMode(false));
         btnNavSettings.setOnAction(e -> openSettingsDialog());
         btnNavLogout.setOnAction(e -> {
-            if (onLogout != null) {
+            boolean ok = JavaFXTheme.showDestructiveConfirmDialog(
+                primaryStage,
+                "Xác nhận đăng xuất",
+                "Đăng xuất khỏi tài khoản?",
+                "Bạn sẽ được đưa về màn hình Đăng nhập. Các phiên làm việc hiện tại sẽ được lưu an toàn.",
+                "Đăng xuất"
+            );
+            if (ok && onLogout != null) {
                 onLogout.run();
             }
         });
@@ -289,6 +301,7 @@ public class UserMainWorkspace extends BorderPane {
         Region sp = new Region();
         HBox.setHgrow(sp, Priority.ALWAYS);
 
+        btnNewGroup.setGraphic(JavaFXTheme.createSvgIcon(JavaFXTheme.SVG_PLUS, 0.8, "#8E929B"));
         btnNewGroup.getStyleClass().add("btn-icon-subtle");
         Tooltip.install(btnNewGroup, new Tooltip("Tạo nhóm trò chuyện mới (Mục 12.a)"));
         JavaFXTheme.applyIconButton(btnNewGroup);
@@ -323,8 +336,7 @@ public class UserMainWorkspace extends BorderPane {
         searchContainer.setMaxHeight(28);
         searchContainer.setStyle("-fx-background-color: -bg-input; -fx-border-color: -border-subtle; -fx-border-radius: 6px; -fx-background-radius: 6px; -fx-padding: 2px 8px;");
 
-        Label lblSearchIcon = new Label("🔍");
-        lblSearchIcon.setStyle("-fx-font-size: 11px; -fx-text-fill: -text-muted;");
+        javafx.scene.shape.SVGPath lblSearchIcon = JavaFXTheme.createSvgIcon(JavaFXTheme.SVG_SEARCH, 0.7, "#8E929B");
 
         txtSearch.setPromptText("Tìm kiếm cuộc trò chuyện...");
         txtSearch.setStyle(
@@ -348,7 +360,9 @@ public class UserMainWorkspace extends BorderPane {
             }
         });
 
-        btnClearSearch.getStyleClass().add("btn-icon-subtle");
+        btnClearSearch.setGraphic(JavaFXTheme.createSvgIcon(JavaFXTheme.SVG_CLOSE, 0.65, "#8E929B"));
+        btnClearSearch.getStyleClass().add("dialog-close-btn");
+        JavaFXTheme.applyCloseButton(btnClearSearch);
         btnClearSearch.setStyle("-fx-font-size: 11px; -fx-padding: 2 4;");
         btnClearSearch.setVisible(false);
         btnClearSearch.setOnAction(e -> {
@@ -669,15 +683,15 @@ public class UserMainWorkspace extends BorderPane {
         friendsCategoryBox.getChildren().clear();
 
         friendsCategoryBox.getChildren().addAll(
-            createFriendsCategoryItem("all", "👥 Tất cả bạn bè", 5),
-            createFriendsCategoryItem("online", "🟢 Đang trực tuyến", 3),
-            createFriendsCategoryItem("pending", "📩 Lời mời kết bạn", 2),
-            createFriendsCategoryItem("blocked", "⛔ Đã chặn", 1),
-            createFriendsCategoryItem("add", "➕ Thêm bạn / Tìm kiếm", 0)
+            createFriendsCategoryItem("all", "Tất cả bạn bè", 5, JavaFXTheme.SVG_USERS, "#8E929B"),
+            createFriendsCategoryItem("online", "Đang trực tuyến", 3, JavaFXTheme.SVG_CHECK, "#23A55A"),
+            createFriendsCategoryItem("pending", "Lời mời kết bạn", 2, JavaFXTheme.SVG_USER_PLUS, "#4E6BF2"),
+            createFriendsCategoryItem("blocked", "Đã chặn", 1, JavaFXTheme.SVG_BAN, "#FA777C"),
+            createFriendsCategoryItem("add", "Thêm bạn / Tìm kiếm", 0, JavaFXTheme.SVG_SEARCH, "#8E929B")
         );
     }
 
-    private HBox createFriendsCategoryItem(String catId, String title, int count) {
+    private HBox createFriendsCategoryItem(String catId, String title, int count, String svgPath, String iconColor) {
         HBox item = new HBox(10);
         item.setAlignment(Pos.CENTER_LEFT);
         item.getStyleClass().add("conversation-item");
@@ -685,11 +699,13 @@ public class UserMainWorkspace extends BorderPane {
             item.getStyleClass().add("conversation-item-selected");
         }
 
+        javafx.scene.shape.SVGPath icon = JavaFXTheme.createSvgIcon(svgPath, 0.75, iconColor);
+
         Label lbl = new Label(title);
         lbl.getStyleClass().add("conversation-item-title");
         HBox.setHgrow(lbl, Priority.ALWAYS);
 
-        item.getChildren().add(lbl);
+        item.getChildren().addAll(icon, lbl);
 
         if (count > 0) {
             Label cnt = new Label(String.valueOf(count));

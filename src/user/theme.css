@@ -618,6 +618,14 @@ Text, .text {
     -fx-border-radius: 0;
 }
 
+.nav-item-btn-danger:hover {
+    -fx-background-color: rgba(237, 66, 69, 0.16);
+    -fx-text-fill: #FA777C;
+}
+.nav-item-btn-danger:hover SVGPath {
+    -fx-fill: #FA777C;
+}
+
 .sub-sidebar {
     -fx-background-color: -bg-card;
     -fx-border-color: transparent -border-subtle transparent transparent;
@@ -851,6 +859,26 @@ Text, .text {
     -fx-background-color: #D6454A;
 }
 
+.btn-danger {
+    -fx-background-color: #ED4245;
+    -fx-text-fill: #FFFFFF;
+    -fx-font-weight: bold;
+    -fx-font-size: 13.5px;
+    -fx-background-radius: 8px;
+    -fx-padding: 8px 18px;
+    -fx-cursor: hand;
+    -fx-border-width: 0;
+}
+.btn-danger:hover {
+    -fx-background-color: #FA777C;
+}
+.btn-danger:pressed {
+    -fx-background-color: #D6393C;
+}
+.btn-danger SVGPath {
+    -fx-fill: #FFFFFF;
+}
+
 .btn-danger-subtle {
     -fx-background-color: transparent;
     -fx-text-fill: -status-danger;
@@ -902,8 +930,21 @@ Text, .text {
     -fx-background-radius: 6px;
 }
 .dialog-close-btn:hover {
-    -fx-background-color: #2E323D;
-    -fx-text-fill: #FFFFFF;
+    -fx-background-color: rgba(237, 66, 69, 0.18);
+    -fx-text-fill: #FA777C;
+}
+.dialog-close-btn:pressed {
+    -fx-background-color: rgba(237, 66, 69, 0.32);
+    -fx-text-fill: #ED4245;
+}
+.dialog-close-btn SVGPath {
+    -fx-fill: -text-muted;
+}
+.dialog-close-btn:hover SVGPath {
+    -fx-fill: #FA777C;
+}
+.dialog-close-btn:pressed SVGPath {
+    -fx-fill: #ED4245;
 }
 
 .settings-tab-bar {
@@ -1181,4 +1222,121 @@ Text, .text {
 
 .dialog-pane > .button-bar > .container > .button:default:hover {
     -fx-background-color: -accent-hover;
+}
+
+/* =========================================================================
+   FILTER CHIPS (Mục 11.g & Dialogs)
+   ========================================================================= */
+.filter-chip {
+    -fx-background-color: -bg-input;
+    -fx-border-color: -border-subtle;
+    -fx-border-width: 1px;
+    -fx-border-radius: 16px;
+    -fx-background-radius: 16px;
+    -fx-text-fill: -text-muted;
+    -fx-font-size: 12px;
+    -fx-font-weight: 500;
+    -fx-padding: 4px 14px;
+    -fx-cursor: hand;
+}
+
+.filter-chip:hover {
+    -fx-background-color: #252832;
+    -fx-border-color: #3E4354;
+    -fx-text-fill: -text-normal;
+}
+
+.filter-chip-active {
+    -fx-background-color: -accent-primary;
+    -fx-border-color: -accent-primary;
+    -fx-text-fill: #FFFFFF;
+    -fx-font-weight: bold;
+}
+
+.filter-chip-active:hover {
+    -fx-background-color: -accent-hover;
+}
+
+/* =========================================================================
+   DRAWER ACTION BUTTONS & DANGER ACTIONS
+   ========================================================================= */
+.drawer-action-btn {
+    -fx-background-color: transparent;
+    -fx-text-fill: -text-normal;
+    -fx-font-size: 12.5px;
+    -fx-padding: 8px 12px;
+    -fx-border-radius: 6px;
+    -fx-background-radius: 6px;
+    -fx-cursor: hand;
+    -fx-alignment: CENTER_LEFT;
+}
+
+.drawer-action-btn:hover {
+    -fx-background-color: rgba(255, 255, 255, 0.05);
+}
+
+.drawer-danger-btn {
+    -fx-background-color: transparent;
+    -fx-text-fill: #FA777C;
+    -fx-font-size: 12.5px;
+    -fx-padding: 8px 12px;
+    -fx-border-radius: 6px;
+    -fx-background-radius: 6px;
+    -fx-cursor: hand;
+    -fx-alignment: CENTER_LEFT;
+}
+
+.drawer-danger-btn:hover {
+    -fx-background-color: rgba(237, 66, 69, 0.12);
+    -fx-text-fill: #FF5A5F;
+}
+
+/* =========================================================================
+   CHECKBOX & RADIO BUTTON OBSIDIAN DARK
+   ========================================================================= */
+.check-box {
+    -fx-text-fill: -text-normal;
+    -fx-font-size: 13px;
+    -fx-cursor: hand;
+}
+
+.check-box > .box {
+    -fx-background-color: -bg-input;
+    -fx-border-color: -border-subtle;
+    -fx-border-width: 1px;
+    -fx-border-radius: 4px;
+    -fx-background-radius: 4px;
+    -fx-padding: 2px;
+}
+
+.check-box:selected > .box {
+    -fx-background-color: -accent-primary;
+    -fx-border-color: -accent-primary;
+}
+
+.check-box:selected > .box > .mark {
+    -fx-background-color: #FFFFFF;
+}
+
+.radio-button {
+    -fx-text-fill: -text-normal;
+    -fx-font-size: 13px;
+    -fx-cursor: hand;
+}
+
+.radio-button > .radio {
+    -fx-background-color: -bg-input;
+    -fx-border-color: -border-subtle;
+    -fx-border-width: 1px;
+    -fx-border-radius: 10px;
+    -fx-background-radius: 10px;
+}
+
+.radio-button:selected > .radio {
+    -fx-background-color: -bg-input;
+    -fx-border-color: -accent-primary;
+}
+
+.radio-button:selected > .radio > .dot {
+    -fx-background-color: -accent-primary;
 }

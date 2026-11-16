@@ -55,9 +55,8 @@ public class CustomTitleBar extends HBox {
 
         StackPane iconBadge = new StackPane();
         Circle c = new Circle(9, Color.web("#4E6BF2"));
-        Label lblI = new Label("💬");
-        lblI.setStyle("-fx-font-size: 10px; -fx-text-fill: #FFFFFF;");
-        iconBadge.getChildren().addAll(c, lblI);
+        javafx.scene.shape.SVGPath svgIcon = JavaFXTheme.createSvgIcon(JavaFXTheme.SVG_MESSAGE, 0.55, "#FFFFFF");
+        iconBadge.getChildren().addAll(c, svgIcon);
 
         lblTitle.setText(titleText);
         lblTitle.setStyle("-fx-font-size: 12px; -fx-font-weight: 500; -fx-text-fill: -text-muted;");

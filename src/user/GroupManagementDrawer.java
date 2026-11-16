@@ -4,6 +4,7 @@ import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
@@ -117,12 +118,12 @@ public class GroupManagementDrawer extends VBox {
         Region spacer = new Region();
         HBox.setHgrow(spacer, Priority.ALWAYS);
 
-        Button btnClose = new Button("✕");
-        btnClose.getStyleClass().add("dialog-close-btn");
+        Button btnClose = new Button();
+        btnClose.setGraphic(JavaFXTheme.createSvgIcon(JavaFXTheme.SVG_CLOSE, 0.75, "#8E929B"));
         btnClose.setOnAction(e -> {
             if (onClose != null) onClose.run();
         });
-        JavaFXTheme.applyIconButton(btnClose);
+        JavaFXTheme.applyCloseButton(btnClose);
 
         topRow.getChildren().addAll(lblTitle, spacer, btnClose);
 
@@ -265,27 +266,44 @@ public class GroupManagementDrawer extends VBox {
         VBox dangerSection = new VBox(2);
         dangerSection.setPadding(new Insets(4, 0, 0, 0));
 
-        rowClear = createDangerListRow("🗑", "Xóa lịch sử trò chuyện (Mục 11.d)", () -> {
-            boolean ok = JavaFXTheme.showConfirmDialog(
-                primaryStage,
-                "Xác nhận xóa lịch sử",
-                "Xóa lịch sử tin nhắn phía bạn (Mục 11.d)",
-                "Tin nhắn sẽ được ẩn ở phía bạn bằng cơ chế Watermark theo CSDL. Bạn có chắc chắn?"
-            );
-            if (ok && onClearHistory != null) {
-                onClearHistory.run();
+        rowClear = createDangerListRow(
+            JavaFXTheme.createSvgIcon(JavaFXTheme.SVG_TRASH, 0.75, "#FA777C"),
+            "Xóa lịch sử trò chuyện (Mục 11.d)",
+            () -> {
+                boolean ok = JavaFXTheme.showDestructiveConfirmDialog(
+                    primaryStage,
+                    "Xác nhận xóa lịch sử",
+                    "Xóa lịch sử tin nhắn phía bạn (Mục 11.d)",
+                    "Tin nhắn sẽ được ẩn ở phía bạn bằng cơ chế Watermark theo CSDL. Bạn có chắc chắn muốn xóa?",
+                    "Xóa lịch sử"
+                );
+                if (ok && onClearHistory != null) {
+                    onClearHistory.run();
+                }
             }
-        });
+        );
 
-        rowReportSpam = createDangerListRow("⚠️", "Báo cáo vi phạm / Spam (Mục 10)", null);
+        rowReportSpam = createDangerListRow(
+            JavaFXTheme.createSvgIcon(JavaFXTheme.SVG_REPORT, 0.75, "#F59E0B"),
+            "Báo cáo vi phạm / Spam (Mục 10)",
+            null
+        );
         rowReportSpam.setVisible(false);
         rowReportSpam.setManaged(false);
 
-        rowBlockUser = createDangerListRow("🚫", "Chặn người dùng này (Mục 8.b)", null);
+        rowBlockUser = createDangerListRow(
+            JavaFXTheme.createSvgIcon(JavaFXTheme.SVG_BAN, 0.75, "#FA777C"),
+            "Chặn người dùng này (Mục 8.b)",
+            null
+        );
         rowBlockUser.setVisible(false);
         rowBlockUser.setManaged(false);
 
-        rowLeave = createDangerListRow("🚪", "Rời khỏi nhóm trò chuyện (Mục 12.f)", this::handleLeaveGroup);
+        rowLeave = createDangerListRow(
+            JavaFXTheme.createSvgIcon(JavaFXTheme.SVG_CLOSE, 0.75, "#FA777C"),
+            "Rời khỏi nhóm trò chuyện (Mục 12.f)",
+            this::handleLeaveGroup
+        );
 
         dangerSection.getChildren().addAll(rowClear, rowReportSpam, rowBlockUser, rowLeave);
 
@@ -303,23 +321,39 @@ public class GroupManagementDrawer extends VBox {
         getChildren().setAll(scrollPane);
     }
 
-    private HBox createDangerListRow(String icon, String title, Runnable action) {
+    private HBox createDangerListRow(Node iconGraphic, String title, Runnable action) {
         HBox row = new HBox(10);
         row.setAlignment(Pos.CENTER_LEFT);
         row.setPadding(new Insets(8, 10, 8, 10));
         row.setStyle("-fx-background-color: transparent; -fx-background-radius: 8px; -fx-cursor: hand;");
 
-        Label lblIcon = new Label(icon);
-        lblIcon.setStyle("-fx-font-size: 13px; -fx-text-fill: #FA777C;");
-
         Label lblText = new Label(title);
         lblText.setStyle("-fx-font-size: 12.5px; -fx-font-weight: 500; -fx-text-fill: #FA777C;");
         HBox.setHgrow(lblText, Priority.ALWAYS);
 
-        row.getChildren().addAll(lblIcon, lblText);
+        if (iconGraphic != null) {
+            row.getChildren().add(iconGraphic);
+        }
+        row.getChildren().add(lblText);
 
-        row.setOnMouseEntered(e -> row.setStyle("-fx-background-color: rgba(250, 119, 124, 0.08); -fx-background-radius: 8px; -fx-cursor: hand;"));
-        row.setOnMouseExited(e -> row.setStyle("-fx-background-color: transparent; -fx-background-radius: 8px; -fx-cursor: hand;"));
+        row.setOnMouseEntered(e -> {
+            row.setStyle("-fx-background-color: rgba(250, 119, 124, 0.12); -fx-background-radius: 8px; -fx-cursor: hand;");
+            row.setScaleX(1.02);
+            row.setScaleY(1.02);
+        });
+        row.setOnMouseExited(e -> {
+            row.setStyle("-fx-background-color: transparent; -fx-background-radius: 8px; -fx-cursor: hand;");
+            row.setScaleX(1.0);
+            row.setScaleY(1.0);
+        });
+        row.setOnMousePressed(e -> {
+            row.setScaleX(0.975);
+            row.setScaleY(0.975);
+        });
+        row.setOnMouseReleased(e -> {
+            row.setScaleX(1.02);
+            row.setScaleY(1.02);
+        });
         row.setOnMouseClicked(e -> {
             if (action != null) action.run();
         });
@@ -423,13 +457,15 @@ public class GroupManagementDrawer extends VBox {
                     });
 
                     MenuItem miRemove = new MenuItem("Xóa khỏi nhóm (Kick - Mục 12.e)");
+                    miRemove.setGraphic(JavaFXTheme.createSvgIcon(JavaFXTheme.SVG_BAN, 0.75, "#FA777C"));
                     miRemove.setStyle("-fx-text-fill: -status-danger;");
                     miRemove.setOnAction(ev -> {
-                        boolean ok = JavaFXTheme.showConfirmDialog(
+                        boolean ok = JavaFXTheme.showDestructiveConfirmDialog(
                             primaryStage,
                             "Xác nhận loại bỏ thành viên",
                             "Xóa @" + m.getUsername() + " khỏi nhóm",
-                            "Bạn có chắc chắn muốn xóa thành viên " + m.getName() + " ra khỏi nhóm không?"
+                            "Bạn có chắc chắn muốn xóa thành viên " + m.getName() + " ra khỏi nhóm không?",
+                            "Loại bỏ khỏi nhóm"
                         );
                         if (ok) {
                             members.remove(m);
@@ -466,11 +502,12 @@ public class GroupManagementDrawer extends VBox {
     }
 
     private void handleLeaveGroup() {
-        boolean confirmed = JavaFXTheme.showConfirmDialog(
+        boolean confirmed = JavaFXTheme.showDestructiveConfirmDialog(
             primaryStage,
             "Rời khỏi nhóm",
-            "Xác nhận rời khỏi nhóm chat",
-            "Bạn sẽ không thể xem hoặc nhận tin nhắn mới trong nhóm này cho đến khi được thêm lại."
+            "Xác nhận rời khỏi nhóm chat (Mục 12.f)",
+            "Bạn sẽ không thể xem hoặc nhận tin nhắn mới trong nhóm này cho đến khi được thêm lại.",
+            "Rời nhóm"
         );
         if (confirmed) {
             JavaFXTheme.showInfoAlert(

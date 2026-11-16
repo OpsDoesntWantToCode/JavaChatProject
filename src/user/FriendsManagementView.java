@@ -29,10 +29,10 @@ public class FriendsManagementView extends BorderPane {
     private final Consumer<String> onCreateGroupWithUser;
 
     // Tabs
-    private final Button btnTabOnline = new Button("🟢 Đang Online (3)");
-    private final Button btnTabAll = new Button("👥 Tất cả (5)");
-    private final Button btnTabPending = new Button("📩 Lời mời (2)");
-    private final Button btnTabAdd = new Button("➕ Thêm bạn mới");
+    private final Button btnTabOnline = new Button("Đang Online (3)");
+    private final Button btnTabAll = new Button("Tất cả bạn bè (5)");
+    private final Button btnTabPending = new Button("Lời mời kết bạn (2)");
+    private final Button btnTabAdd = new Button("+ Thêm bạn mới");
 
     private final TextField txtFilter = new TextField();
     private final VBox contentList = new VBox(8);
@@ -96,6 +96,9 @@ public class FriendsManagementView extends BorderPane {
         tabsBar.setAlignment(Pos.CENTER_LEFT);
         tabsBar.getStyleClass().add("settings-tab-bar");
 
+        btnTabOnline.setGraphic(new Circle(3.5, Color.web("#10B981")));
+        btnTabOnline.setGraphicTextGap(6);
+
         btnTabOnline.getStyleClass().add("settings-tab-btn");
         btnTabAll.getStyleClass().add("settings-tab-btn");
         btnTabPending.getStyleClass().add("settings-tab-btn");
@@ -135,16 +138,16 @@ public class FriendsManagementView extends BorderPane {
 
         if ("online".equals(tabId)) {
             btnTabOnline.getStyleClass().add("settings-tab-btn-active");
-            txtFilter.setPromptText("🔍 Lọc bạn bè đang Online theo họ tên hoặc @username...");
+            txtFilter.setPromptText("Lọc bạn bè đang Online theo họ tên hoặc @username...");
         } else if ("all".equals(tabId)) {
             btnTabAll.getStyleClass().add("settings-tab-btn-active");
-            txtFilter.setPromptText("🔍 Tìm kiếm trong toàn bộ bạn bè...");
+            txtFilter.setPromptText("Tìm kiếm trong toàn bộ bạn bè...");
         } else if ("pending".equals(tabId)) {
             btnTabPending.getStyleClass().add("settings-tab-btn-active");
-            txtFilter.setPromptText("🔍 Lọc danh sách lời mời kết bạn...");
+            txtFilter.setPromptText("Lọc danh sách lời mời kết bạn...");
         } else if ("add".equals(tabId)) {
             btnTabAdd.getStyleClass().add("settings-tab-btn-active");
-            txtFilter.setPromptText("🔍 Nhập họ tên hoặc @username người lạ để tìm kiếm (Mục 6.b & 9)...");
+            txtFilter.setPromptText("Nhập họ tên hoặc @username người lạ để tìm kiếm (Mục 6.b & 9)...");
         }
 
         renderCurrentTab();
@@ -175,7 +178,7 @@ public class FriendsManagementView extends BorderPane {
             .filter(f -> matchesQuery(f.name, f.tag, query))
             .collect(Collectors.toList());
 
-        btnTabOnline.setText("🟢 Đang Online (" + filtered.size() + ")");
+        btnTabOnline.setText("Đang Online (" + filtered.size() + ")");
 
         if (filtered.isEmpty()) {
             contentList.getChildren().add(createEmptyState("Không tìm thấy bạn bè nào đang trực tuyến."));
@@ -195,7 +198,7 @@ public class FriendsManagementView extends BorderPane {
             .filter(f -> matchesQuery(f.name, f.tag, query))
             .collect(Collectors.toList());
 
-        btnTabAll.setText("👥 Tất cả (" + friendsList.size() + ")");
+        btnTabAll.setText("Tất cả bạn bè (" + friendsList.size() + ")");
 
         if (filtered.isEmpty()) {
             contentList.getChildren().add(createEmptyState("Danh sách bạn bè trống hoặc không có kết quả phù hợp."));
@@ -272,7 +275,9 @@ public class FriendsManagementView extends BorderPane {
         HBox actions = new HBox(8);
         actions.setAlignment(Pos.CENTER_RIGHT);
 
-        Button btnChat = new Button("💬 Nhắn tin");
+        Button btnChat = new Button("Nhắn tin");
+        btnChat.setGraphic(JavaFXTheme.createSvgIcon(JavaFXTheme.SVG_MESSAGE, 0.85, "#B5BAC1"));
+        btnChat.setGraphicTextGap(6);
         btnChat.getStyleClass().add("btn-secondary");
         btnChat.setOnAction(e -> {
             if (onOpenChatWithUser != null) {
@@ -281,7 +286,9 @@ public class FriendsManagementView extends BorderPane {
         });
         JavaFXTheme.applyTactileButton(btnChat);
 
-        Button btnGroup = new Button("➕ Tạo nhóm");
+        Button btnGroup = new Button("Tạo nhóm");
+        btnGroup.setGraphic(JavaFXTheme.createSvgIcon(JavaFXTheme.SVG_USERS, 0.85, "#B5BAC1"));
+        btnGroup.setGraphicTextGap(6);
         btnGroup.getStyleClass().add("btn-secondary");
         btnGroup.setOnAction(e -> {
             if (onCreateGroupWithUser != null) {
@@ -290,17 +297,20 @@ public class FriendsManagementView extends BorderPane {
         });
         JavaFXTheme.applyTactileButton(btnGroup);
 
-        Button btnMore = new Button("•••");
+        Button btnMore = new Button();
+        btnMore.setGraphic(JavaFXTheme.createSvgIcon(JavaFXTheme.SVG_MORE_HORIZONTAL, 0.85, "#8E929B"));
         btnMore.getStyleClass().add("btn-icon-subtle");
         JavaFXTheme.applyIconButton(btnMore);
         btnMore.setOnAction(e -> {
             ContextMenu cm = new ContextMenu();
             JavaFXTheme.applyContextMenuTheme(cm);
 
-            MenuItem miUnfriend = new MenuItem("❌ Hủy kết bạn (Mục 6.c)");
+            MenuItem miUnfriend = new MenuItem("Hủy kết bạn (Mục 6.c)");
+            miUnfriend.setGraphic(JavaFXTheme.createSvgIcon(JavaFXTheme.SVG_CLOSE, 0.75, "#FA777C"));
             miUnfriend.setOnAction(ev -> handleUnfriend(friend));
 
-            MenuItem miBlock = new MenuItem("⛔ Chặn người dùng (Mục 6.d)");
+            MenuItem miBlock = new MenuItem("Chặn người dùng (Mục 6.d)");
+            miBlock.setGraphic(JavaFXTheme.createSvgIcon(JavaFXTheme.SVG_BAN, 0.75, "#FA777C"));
             miBlock.setStyle("-fx-text-fill: #FA777C;");
             miBlock.setOnAction(ev -> handleBlock(friend));
 
@@ -314,11 +324,12 @@ public class FriendsManagementView extends BorderPane {
     }
 
     private void handleUnfriend(FriendModel friend) {
-        boolean ok = JavaFXTheme.showConfirmDialog(
+        boolean ok = JavaFXTheme.showDestructiveConfirmDialog(
             ownerStage,
             "Hủy kết bạn",
             "Hủy kết bạn với " + friend.name + " (" + friend.tag + ")?",
-            "Hai bạn sẽ trở thành người lạ và không còn nằm trong danh sách bạn bè của nhau."
+            "Hai bạn sẽ trở thành người lạ và không còn nằm trong danh sách bạn bè của nhau.",
+            "Hủy kết bạn"
         );
         if (ok) {
             friendsList.remove(friend);
@@ -327,11 +338,12 @@ public class FriendsManagementView extends BorderPane {
     }
 
     private void handleBlock(FriendModel friend) {
-        boolean ok = JavaFXTheme.showConfirmDialog(
+        boolean ok = JavaFXTheme.showDestructiveConfirmDialog(
             ownerStage,
             "Chặn người dùng",
             "Chặn " + friend.name + " (" + friend.tag + ")?",
-            "Sau khi chặn:\n- Người này không thể tìm thấy hoặc xem thông tin của bạn.\n- Không thể gửi tin nhắn hoặc lời mời kết bạn.\n- Bạn có thể mở khóa chặn bất cứ lúc nào trong mục Đã chặn."
+            "Sau khi chặn:\n- Người này không thể tìm thấy hoặc xem thông tin của bạn.\n- Không thể gửi tin nhắn hoặc lời mời kết bạn.\n- Bạn có thể mở khóa chặn bất cứ lúc nào trong mục Đã chặn.",
+            "Chặn người dùng"
         );
         if (ok) {
             friendsList.remove(friend);
@@ -347,7 +359,7 @@ public class FriendsManagementView extends BorderPane {
             .filter(p -> matchesQuery(p.name, p.tag, query))
             .collect(Collectors.toList());
 
-        btnTabPending.setText("📩 Lời mời (" + pendingList.size() + ")");
+        btnTabPending.setText("Lời mời (" + pendingList.size() + ")");
 
         if (filtered.isEmpty()) {
             contentList.getChildren().add(createEmptyState("Bạn không có lời mời kết bạn nào đang chờ xử lý."));
@@ -384,7 +396,9 @@ public class FriendsManagementView extends BorderPane {
         HBox actions = new HBox(8);
         actions.setAlignment(Pos.CENTER_RIGHT);
 
-        Button btnAccept = new Button("Đồng ý ✓");
+        Button btnAccept = new Button("Đồng ý");
+        btnAccept.setGraphic(JavaFXTheme.createSvgIcon(JavaFXTheme.SVG_CHECK, 0.85, "#FFFFFF"));
+        btnAccept.setGraphicTextGap(6);
         btnAccept.getStyleClass().add("btn-primary");
         btnAccept.setOnAction(e -> {
             pendingList.remove(req);
@@ -399,11 +413,22 @@ public class FriendsManagementView extends BorderPane {
         });
         JavaFXTheme.applyTactileButton(btnAccept);
 
-        Button btnReject = new Button("Từ chối ✕");
+        Button btnReject = new Button("Từ chối");
+        btnReject.setGraphic(JavaFXTheme.createSvgIcon(JavaFXTheme.SVG_CLOSE, 0.85, "#FA777C"));
+        btnReject.setGraphicTextGap(6);
         btnReject.getStyleClass().add("btn-secondary");
         btnReject.setOnAction(e -> {
-            pendingList.remove(req);
-            renderCurrentTab();
+            boolean ok = JavaFXTheme.showDestructiveConfirmDialog(
+                ownerStage,
+                "Từ chối lời mời",
+                "Từ chối lời mời kết bạn từ " + req.name + " (" + req.tag + ")?",
+                "Bạn có chắc chắn muốn từ chối lời mời kết bạn này không?",
+                "Từ chối"
+            );
+            if (ok) {
+                pendingList.remove(req);
+                renderCurrentTab();
+            }
         });
         JavaFXTheme.applyTactileButton(btnReject);
 
@@ -463,17 +488,23 @@ public class FriendsManagementView extends BorderPane {
         HBox actionRow = new HBox(8);
         actionRow.setAlignment(Pos.CENTER_RIGHT);
 
-        Button btnAdd = new Button(stranger.isRequested ? "✓ Đã gửi lời mời" : "+ Kết bạn (Mục 6.b)");
+        Button btnAdd = new Button(stranger.isRequested ? "Đã gửi lời mời" : "Kết bạn (Mục 6.b)");
+        btnAdd.setGraphic(stranger.isRequested ? JavaFXTheme.createSvgIcon(JavaFXTheme.SVG_CHECK, 0.85, "#8E929B") : JavaFXTheme.createSvgIcon(JavaFXTheme.SVG_USER_PLUS, 0.85, "#FFFFFF"));
+        btnAdd.setGraphicTextGap(6);
         btnAdd.getStyleClass().add(stranger.isRequested ? "btn-secondary" : "btn-primary");
         btnAdd.setDisable(stranger.isRequested);
         btnAdd.setOnAction(e -> {
             stranger.isRequested = true;
-            btnAdd.setText("✓ Đã gửi lời mời");
+            btnAdd.setText("Đã gửi lời mời");
+            btnAdd.setGraphic(JavaFXTheme.createSvgIcon(JavaFXTheme.SVG_CHECK, 0.85, "#8E929B"));
+            btnAdd.getStyleClass().setAll("btn-secondary");
             btnAdd.setDisable(true);
         });
         JavaFXTheme.applyTactileButton(btnAdd);
 
-        Button btnChatNow = new Button("💬 Nhắn tin ngay (Mục 9)");
+        Button btnChatNow = new Button("Nhắn tin ngay (Mục 9)");
+        btnChatNow.setGraphic(JavaFXTheme.createSvgIcon(JavaFXTheme.SVG_MESSAGE, 0.85, "#B5BAC1"));
+        btnChatNow.setGraphicTextGap(6);
         btnChatNow.getStyleClass().add("btn-secondary");
         btnChatNow.setOnAction(e -> {
             if (onOpenChatWithUser != null) {
@@ -482,7 +513,9 @@ public class FriendsManagementView extends BorderPane {
         });
         JavaFXTheme.applyTactileButton(btnChatNow);
 
-        Button btnCreateGroup = new Button("👥 Tạo Group (Mục 9)");
+        Button btnCreateGroup = new Button("Tạo Group (Mục 9)");
+        btnCreateGroup.setGraphic(JavaFXTheme.createSvgIcon(JavaFXTheme.SVG_USERS, 0.85, "#B5BAC1"));
+        btnCreateGroup.setGraphicTextGap(6);
         btnCreateGroup.getStyleClass().add("btn-secondary");
         btnCreateGroup.setOnAction(e -> {
             if (onCreateGroupWithUser != null) {
@@ -497,12 +530,11 @@ public class FriendsManagementView extends BorderPane {
     }
 
     private Node createEmptyState(String text) {
-        VBox empty = new VBox(8);
+        VBox empty = new VBox(10);
         empty.setAlignment(Pos.CENTER);
         empty.setPadding(new Insets(40, 20, 40, 20));
 
-        Label icon = new Label("📭");
-        icon.setStyle("-fx-font-size: 32px;");
+        javafx.scene.shape.SVGPath icon = JavaFXTheme.createSvgIcon(JavaFXTheme.SVG_USERS, 1.8, "#5C606A");
 
         Label lbl = new Label(text);
         lbl.setStyle("-fx-font-size: 13.5px; -fx-text-fill: -text-muted;");

@@ -60,16 +60,19 @@ public class SpamReportDialog {
         HBox headerRow = new HBox(8);
         headerRow.setAlignment(Pos.CENTER_LEFT);
 
-        Label lblHeader = new Label("⚠ Báo cáo vi phạm người dùng");
+        Label lblHeader = new Label("Báo cáo vi phạm người dùng");
+        lblHeader.setGraphic(JavaFXTheme.createSvgIcon(JavaFXTheme.SVG_REPORT, 0.8, "#FA777C"));
+        lblHeader.setGraphicTextGap(8);
         lblHeader.setStyle("-fx-font-size: 15.5px; -fx-font-weight: bold; -fx-text-fill: -text-normal;");
 
         Region sp = new Region();
         HBox.setHgrow(sp, Priority.ALWAYS);
 
-        Button btnClose = new Button("✕");
+        Button btnClose = new Button();
+        btnClose.setGraphic(JavaFXTheme.createSvgIcon(JavaFXTheme.SVG_CLOSE, 0.75, "#8E929B"));
         btnClose.getStyleClass().add("dialog-close-btn");
         btnClose.setOnAction(e -> JavaFXTheme.closeModalWithAnimation(dialog, root));
-        JavaFXTheme.applyIconButton(btnClose);
+        JavaFXTheme.applyCloseButton(btnClose);
 
         headerRow.getChildren().addAll(lblHeader, sp, btnClose);
 
@@ -90,9 +93,8 @@ public class SpamReportDialog {
         targetBox.setStyle("-fx-background-color: -bg-input; -fx-border-color: -border-subtle; -fx-border-radius: 8px; -fx-background-radius: 8px; -fx-padding: 10px 14px;");
 
         Circle avt = new Circle(16, Color.web("#FA777C"));
-        Label lblAvtIcon = new Label("👤");
-        lblAvtIcon.setStyle("-fx-font-size: 14px; -fx-text-fill: #FFFFFF;");
-        StackPane avtBox = new StackPane(avt, lblAvtIcon);
+        javafx.scene.shape.SVGPath avtIcon = JavaFXTheme.createSvgIcon(JavaFXTheme.SVG_SHIELD, 0.75, "#FFFFFF");
+        StackPane avtBox = new StackPane(avt, avtIcon);
 
         VBox targetMeta = new VBox(2);
         Label lblTName = new Label("Đối tượng: " + targetName);
@@ -145,7 +147,9 @@ public class SpamReportDialog {
         btnCancel.setOnAction(e -> JavaFXTheme.closeModalWithAnimation(dialog, root));
         JavaFXTheme.applyTactileButton(btnCancel);
 
-        Button btnSubmit = new Button("Gửi báo cáo vi phạm ⚠");
+        Button btnSubmit = new Button("Gửi báo cáo vi phạm");
+        btnSubmit.setGraphic(JavaFXTheme.createSvgIcon(JavaFXTheme.SVG_REPORT, 0.75, "#FFFFFF"));
+        btnSubmit.setGraphicTextGap(6);
         btnSubmit.getStyleClass().add("btn-danger-solid");
         JavaFXTheme.applyTactileButton(btnSubmit);
         btnSubmit.setOnAction(e -> {

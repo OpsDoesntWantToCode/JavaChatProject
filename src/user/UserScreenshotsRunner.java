@@ -127,6 +127,27 @@ public class UserScreenshotsRunner extends Application {
                     return cv;
                 });
 
+                // 11. Xóa tin nhắn linh hoạt & Multi-Select Floating Bar (Task U10)
+                captureSync(primaryStage, "u10-message-multiselect.png", 880, 680, () -> {
+                    ChatConversationView cv = new ChatConversationView(primaryStage, () -> {}, () -> {}, () -> {});
+                    cv.loadConversation("user_chihai");
+                    cv.setMultiSelectMode(true);
+                    if (cv.getMessagesList().size() >= 2) {
+                        cv.getMessagesList().get(0).setSelected(true);
+                        cv.getMessagesList().get(1).setSelected(true);
+                    }
+                    return cv;
+                });
+
+                // 12. Trợ lý AI gợi ý tin nhắn & Smart Reply Chips (Task U11)
+                captureSync(primaryStage, "u11-smart-replies.png", 880, 680, () -> {
+                    ChatConversationView cv = new ChatConversationView(primaryStage, () -> {}, () -> {}, () -> {});
+                    cv.loadConversation("user_chihai");
+                    cv.setInputMessage("/ai Tóm tắt các nội dung thống nhất về báo cáo 20% giúp mình");
+                    cv.toggleAiSmartReplies();
+                    return cv;
+                });
+
                 // 11. Hộp thoại Báo cáo Spam (SpamReportDialog)
                 captureSync(primaryStage, "u13-spam-report.png", 540, 540, () -> {
                     return buildSpamReportCard();
@@ -185,7 +206,9 @@ public class UserScreenshotsRunner extends Application {
             "-fx-border-width: 1px;"
         );
 
-        javafx.scene.control.Label lblHeader = new javafx.scene.control.Label("⚠ Báo cáo vi phạm người dùng");
+        javafx.scene.control.Label lblHeader = new javafx.scene.control.Label("Báo cáo vi phạm người dùng (Mục 10)");
+        lblHeader.setGraphic(JavaFXTheme.createSvgIcon(JavaFXTheme.SVG_REPORT, 0.85, "#F59E0B"));
+        lblHeader.setGraphicTextGap(8);
         lblHeader.setStyle("-fx-font-size: 15.5px; -fx-font-weight: bold; -fx-text-fill: -text-normal;");
 
         HBox targetBox = new HBox(12);
@@ -219,11 +242,15 @@ public class UserScreenshotsRunner extends Application {
         javafx.scene.control.TextArea txtDetails = new javafx.scene.control.TextArea("Liên tục gửi link quảng cáo không rõ nguồn gốc vào hội thoại lúc 14:30.");
         txtDetails.setPrefRowCount(3);
 
+        HBox actionBox = new HBox(10);
+        actionBox.setAlignment(Pos.CENTER_RIGHT);
+        javafx.scene.control.Button btnCancel = new javafx.scene.control.Button("Hủy bỏ");
+        btnCancel.getStyleClass().add("btn-secondary");
         javafx.scene.control.Button btnSubmit = new javafx.scene.control.Button("Gửi báo cáo vi phạm");
         btnSubmit.getStyleClass().add("btn-danger");
-        btnSubmit.setMaxWidth(Double.MAX_VALUE);
+        actionBox.getChildren().addAll(btnCancel, btnSubmit);
 
-        root.getChildren().addAll(lblHeader, targetBox, radioBox, txtDetails, btnSubmit);
+        root.getChildren().addAll(lblHeader, targetBox, radioBox, txtDetails, actionBox);
         return root;
     }
 
@@ -238,11 +265,17 @@ public class UserScreenshotsRunner extends Application {
             "-fx-border-width: 1px;"
         );
 
-        javafx.scene.control.Label lblHeader = new javafx.scene.control.Label("Tạo nhóm trò chuyện mới");
+        javafx.scene.control.Label lblHeader = new javafx.scene.control.Label("Tạo nhóm trò chuyện mới (Mục 12)");
+        lblHeader.setGraphic(JavaFXTheme.createSvgIcon(JavaFXTheme.SVG_USERS, 0.85, "#4E6BF2"));
+        lblHeader.setGraphicTextGap(8);
         lblHeader.setStyle("-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: -text-normal;");
 
+        VBox fieldGroup = new VBox(6);
+        javafx.scene.control.Label lblFieldName = new javafx.scene.control.Label("Tên nhóm chat");
+        lblFieldName.setStyle("-fx-font-size: 12px; -fx-text-fill: -text-muted; -fx-font-weight: bold;");
         javafx.scene.control.TextField txtGroupName = new javafx.scene.control.TextField("Nhóm Đồ Án Chuyên Đề 2026");
-        
+        fieldGroup.getChildren().addAll(lblFieldName, txtGroupName);
+
         javafx.scene.control.CheckBox chkEncrypt = new javafx.scene.control.CheckBox("Bật mã hóa đối xứng AES-GCM (Bảo mật cao)");
         chkEncrypt.setSelected(true);
 
@@ -256,11 +289,15 @@ public class UserScreenshotsRunner extends Application {
             createMemberRow("Lê Hoàng Nam", "@hoangnam_coder", false)
         );
 
+        HBox actionBox = new HBox(10);
+        actionBox.setAlignment(Pos.CENTER_RIGHT);
+        javafx.scene.control.Button btnCancel = new javafx.scene.control.Button("Hủy");
+        btnCancel.getStyleClass().add("btn-secondary");
         javafx.scene.control.Button btnCreate = new javafx.scene.control.Button("Tạo nhóm ngay (2 thành viên)");
         btnCreate.getStyleClass().add("btn-primary");
-        btnCreate.setMaxWidth(Double.MAX_VALUE);
+        actionBox.getChildren().addAll(btnCancel, btnCreate);
 
-        root.getChildren().addAll(lblHeader, txtGroupName, chkEncrypt, lblMembers, memberList, btnCreate);
+        root.getChildren().addAll(lblHeader, fieldGroup, chkEncrypt, lblMembers, memberList, actionBox);
         return root;
     }
 
@@ -281,7 +318,7 @@ public class UserScreenshotsRunner extends Application {
     }
 
     private static Node buildMemberAddCard() {
-        VBox root = new VBox(14);
+        VBox root = new VBox(16);
         root.setPadding(new Insets(20));
         root.setStyle(
             "-fx-background-color: #1A1C23; " +
@@ -292,15 +329,25 @@ public class UserScreenshotsRunner extends Application {
         );
 
         javafx.scene.control.Label lblHeader = new javafx.scene.control.Label("Thêm thành viên vào nhóm chat");
+        lblHeader.setGraphic(JavaFXTheme.createSvgIcon(JavaFXTheme.SVG_USER_PLUS, 0.85, "#4E6BF2"));
+        lblHeader.setGraphicTextGap(8);
         lblHeader.setStyle("-fx-font-size: 15px; -fx-font-weight: bold; -fx-text-fill: -text-normal;");
 
+        VBox fieldBox = new VBox(6);
+        javafx.scene.control.Label lblInput = new javafx.scene.control.Label("Nhập @username thành viên");
+        lblInput.setStyle("-fx-font-size: 12px; -fx-text-fill: -text-muted; -fx-font-weight: bold;");
         javafx.scene.control.TextField txtUsername = new javafx.scene.control.TextField("@hoangnam_coder");
+        fieldBox.getChildren().addAll(lblInput, txtUsername);
 
+        HBox actionBox = new HBox(10);
+        actionBox.setAlignment(Pos.CENTER_RIGHT);
+        javafx.scene.control.Button btnCancel = new javafx.scene.control.Button("Hủy");
+        btnCancel.getStyleClass().add("btn-secondary");
         javafx.scene.control.Button btnAdd = new javafx.scene.control.Button("Thêm vào nhóm");
         btnAdd.getStyleClass().add("btn-primary");
-        btnAdd.setMaxWidth(Double.MAX_VALUE);
+        actionBox.getChildren().addAll(btnCancel, btnAdd);
 
-        root.getChildren().addAll(lblHeader, txtUsername, btnAdd);
+        root.getChildren().addAll(lblHeader, fieldBox, actionBox);
         return root;
     }
 
@@ -315,16 +362,20 @@ public class UserScreenshotsRunner extends Application {
             "-fx-border-width: 1px;"
         );
 
-        javafx.scene.control.Label lblHeader = new javafx.scene.control.Label("🔍 Tìm kiếm tin nhắn toàn cục (Mục 11.g)");
+        javafx.scene.control.Label lblHeader = new javafx.scene.control.Label("Tìm kiếm tin nhắn toàn cục (Mục 11.g)");
+        lblHeader.setGraphic(JavaFXTheme.createSvgIcon(JavaFXTheme.SVG_SEARCH, 0.85, "#4E6BF2"));
+        lblHeader.setGraphicTextGap(8);
         lblHeader.setStyle("-fx-font-size: 15.5px; -fx-font-weight: bold; -fx-text-fill: -text-normal;");
 
         javafx.scene.control.TextField txtSearch = new javafx.scene.control.TextField("báo cáo");
 
         HBox chips = new HBox(8);
-        javafx.scene.control.Button c1 = new javafx.scene.control.Button("Tất cả");
+        javafx.scene.control.Button c1 = new javafx.scene.control.Button("Tất cả (4)");
+        c1.getStyleClass().add("filter-chip");
         javafx.scene.control.Button c2 = new javafx.scene.control.Button("Tin nhắn (3)");
-        c2.getStyleClass().add("btn-primary");
+        c2.getStyleClass().addAll("filter-chip", "filter-chip-active");
         javafx.scene.control.Button c3 = new javafx.scene.control.Button("Hội thoại (1)");
+        c3.getStyleClass().add("filter-chip");
         chips.getChildren().addAll(c1, c2, c3);
 
         VBox results = new VBox(8);
@@ -363,40 +414,75 @@ public class UserScreenshotsRunner extends Application {
             "-fx-border-width: 1px;"
         );
 
-        javafx.scene.control.Label lblHeader = new javafx.scene.control.Label("⚙ Cài đặt tài khoản người dùng");
+        javafx.scene.control.Label lblHeader = new javafx.scene.control.Label("Cài đặt tài khoản & Hồ sơ cá nhân (Mục 2 & 4)");
         lblHeader.setStyle("-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: -text-normal;");
 
-        HBox tabs = new HBox(12);
+        HBox tabs = new HBox(8);
+        tabs.getStyleClass().add("settings-tab-bar");
         javafx.scene.control.Button btnTab1 = new javafx.scene.control.Button("Hồ sơ cá nhân");
+        btnTab1.setGraphic(JavaFXTheme.createSvgIcon(JavaFXTheme.SVG_USER_PLUS, 0.8, "#8E929B"));
+        btnTab1.setGraphicTextGap(6);
+        btnTab1.getStyleClass().add("settings-tab-btn");
+
         javafx.scene.control.Button btnTab2 = new javafx.scene.control.Button("Đổi mật khẩu & Bảo mật");
+        btnTab2.setGraphic(JavaFXTheme.createSvgIcon(JavaFXTheme.SVG_LOCK, 0.8, "#8E929B"));
+        btnTab2.setGraphicTextGap(6);
+        btnTab2.getStyleClass().add("settings-tab-btn");
+
         if (isProfileTab) {
-            btnTab1.getStyleClass().add("btn-primary");
+            btnTab1.getStyleClass().add("settings-tab-btn-active");
         } else {
-            btnTab2.getStyleClass().add("btn-primary");
+            btnTab2.getStyleClass().add("settings-tab-btn-active");
         }
         tabs.getChildren().addAll(btnTab1, btnTab2);
 
-        VBox form = new VBox(12);
+        VBox form = new VBox(10);
+        HBox actionRow = new HBox(10);
+        actionRow.setAlignment(Pos.CENTER_RIGHT);
+        javafx.scene.control.Button btnClose = new javafx.scene.control.Button("Đóng");
+        btnClose.getStyleClass().add("btn-secondary");
+
         if (isProfileTab) {
-            form.getChildren().addAll(
-                new javafx.scene.control.Label("Họ và tên"),
-                new javafx.scene.control.TextField("Trần Nguyễn Tuấn Minh"),
-                new javafx.scene.control.Label("Email tài khoản"),
-                new javafx.scene.control.TextField("tuanminh@example.com"),
-                new javafx.scene.control.Label("Địa chỉ"),
-                new javafx.scene.control.TextField("227 Nguyễn Văn Cừ, Quận 5, TP.HCM"),
-                new javafx.scene.control.Button("Lưu thay đổi hồ sơ")
-            );
+            javafx.scene.control.Label l1 = new javafx.scene.control.Label("Họ và tên");
+            l1.setStyle("-fx-font-size: 12px; -fx-text-fill: -text-muted; -fx-font-weight: bold;");
+            javafx.scene.control.TextField tf1 = new javafx.scene.control.TextField("Trần Nguyễn Tuấn Minh");
+
+            javafx.scene.control.Label l2 = new javafx.scene.control.Label("Email tài khoản (Cố định)");
+            l2.setStyle("-fx-font-size: 12px; -fx-text-fill: -text-muted; -fx-font-weight: bold;");
+            javafx.scene.control.TextField tf2 = new javafx.scene.control.TextField("tuanminh@example.com");
+            tf2.setDisable(true);
+            tf2.setStyle("-fx-opacity: 0.75;");
+
+            javafx.scene.control.Label l3 = new javafx.scene.control.Label("Địa chỉ cư trú");
+            l3.setStyle("-fx-font-size: 12px; -fx-text-fill: -text-muted; -fx-font-weight: bold;");
+            javafx.scene.control.TextField tf3 = new javafx.scene.control.TextField("227 Nguyễn Văn Cừ, Quận 5, TP.HCM");
+
+            javafx.scene.control.Button btnSave = new javafx.scene.control.Button("Lưu thay đổi hồ sơ");
+            btnSave.getStyleClass().add("btn-primary");
+            actionRow.getChildren().addAll(btnClose, btnSave);
+
+            form.getChildren().addAll(l1, tf1, l2, tf2, l3, tf3, actionRow);
         } else {
-            form.getChildren().addAll(
-                new javafx.scene.control.Label("Mật khẩu hiện tại"),
-                new javafx.scene.control.PasswordField(),
-                new javafx.scene.control.Label("Mật khẩu mới (Tối thiểu 6 ký tự)"),
-                new javafx.scene.control.PasswordField(),
-                new javafx.scene.control.Label("Xác nhận mật khẩu mới"),
-                new javafx.scene.control.PasswordField(),
-                new javafx.scene.control.Button("Cập nhật mật khẩu bảo mật")
-            );
+            javafx.scene.control.Label l1 = new javafx.scene.control.Label("Mật khẩu hiện tại");
+            l1.setStyle("-fx-font-size: 12px; -fx-text-fill: -text-muted; -fx-font-weight: bold;");
+            javafx.scene.control.PasswordField pf1 = new javafx.scene.control.PasswordField();
+            pf1.setText("SecretPass123");
+
+            javafx.scene.control.Label l2 = new javafx.scene.control.Label("Mật khẩu mới (Tối thiểu 6 ký tự)");
+            l2.setStyle("-fx-font-size: 12px; -fx-text-fill: -text-muted; -fx-font-weight: bold;");
+            javafx.scene.control.PasswordField pf2 = new javafx.scene.control.PasswordField();
+            pf2.setText("NewSecurePass@2026");
+
+            javafx.scene.control.Label l3 = new javafx.scene.control.Label("Xác nhận mật khẩu mới");
+            l3.setStyle("-fx-font-size: 12px; -fx-text-fill: -text-muted; -fx-font-weight: bold;");
+            javafx.scene.control.PasswordField pf3 = new javafx.scene.control.PasswordField();
+            pf3.setText("NewSecurePass@2026");
+
+            javafx.scene.control.Button btnSave = new javafx.scene.control.Button("Cập nhật mật khẩu");
+            btnSave.getStyleClass().add("btn-primary");
+            actionRow.getChildren().addAll(btnClose, btnSave);
+
+            form.getChildren().addAll(l1, pf1, l2, pf2, l3, pf3, actionRow);
         }
 
         root.getChildren().addAll(lblHeader, tabs, form);

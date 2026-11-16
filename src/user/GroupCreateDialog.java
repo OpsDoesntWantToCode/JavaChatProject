@@ -100,15 +100,18 @@ public class GroupCreateDialog {
         headerRow.setAlignment(Pos.CENTER_LEFT);
 
         Label lblHeader = new Label("Tạo nhóm trò chuyện mới");
+        lblHeader.setGraphic(JavaFXTheme.createSvgIcon(JavaFXTheme.SVG_USERS, 0.85, "#4E6BF2"));
+        lblHeader.setGraphicTextGap(8);
         lblHeader.setStyle("-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: -text-normal;");
 
         Region sp = new Region();
         HBox.setHgrow(sp, Priority.ALWAYS);
 
-        Button btnClose = new Button("✕");
+        Button btnClose = new Button();
+        btnClose.setGraphic(JavaFXTheme.createSvgIcon(JavaFXTheme.SVG_CLOSE, 0.75, "#8E929B"));
         btnClose.getStyleClass().add("dialog-close-btn");
         btnClose.setOnAction(e -> JavaFXTheme.closeModalWithAnimation(dialog, root));
-        JavaFXTheme.applyIconButton(btnClose);
+        JavaFXTheme.applyCloseButton(btnClose);
 
         headerRow.getChildren().addAll(lblHeader, sp, btnClose);
 
@@ -140,7 +143,9 @@ public class GroupCreateDialog {
         e2eeBox.setAlignment(Pos.CENTER_LEFT);
         e2eeBox.setStyle("-fx-background-color: #141824; -fx-border-color: #263354; -fx-border-radius: 8px; -fx-background-radius: 8px; -fx-padding: 12px 14px;");
 
-        CheckBox chkE2ee = new CheckBox("🔒 Bật mã hóa nhóm (E2EE Messenger Style)");
+        CheckBox chkE2ee = new CheckBox("Bật mã hóa nhóm (E2EE Messenger Style)");
+        chkE2ee.setGraphic(JavaFXTheme.createSvgIcon(JavaFXTheme.SVG_LOCK, 0.75, "#A0C0FF"));
+        chkE2ee.setGraphicTextGap(6);
         chkE2ee.setSelected(true);
         chkE2ee.setStyle("-fx-text-fill: #A0C0FF; -fx-font-size: 13px; -fx-font-weight: bold;");
 
@@ -229,7 +234,9 @@ public class GroupCreateDialog {
         btnCancel.setOnAction(e -> JavaFXTheme.closeModalWithAnimation(dialog, root));
         JavaFXTheme.applyTactileButton(btnCancel);
 
-        Button btnCreate = new Button("Tạo nhóm 🚀");
+        Button btnCreate = new Button("Tạo nhóm");
+        btnCreate.setGraphic(JavaFXTheme.createSvgIcon(JavaFXTheme.SVG_USERS, 0.8, "#FFFFFF"));
+        btnCreate.setGraphicTextGap(6);
         btnCreate.getStyleClass().add("btn-primary");
         btnCreate.setStyle("-fx-pref-height: 40px; -fx-padding: 0 20px;");
         JavaFXTheme.applyTactileButton(btnCreate);
