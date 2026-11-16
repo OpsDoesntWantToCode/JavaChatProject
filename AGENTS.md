@@ -137,3 +137,24 @@ Mọi tệp tin, thư mục và thành phần mã nguồn trong dự án BẮT B
 4. **Kiểm tra Xung đột & Tinh giản (No Duplication / No Conflict):**
    - Trước khi thêm nội dung mới, BẮT BUỘC rà soát toàn bộ tệp để đảm bảo quy tắc mới KHÔNG xung đột hoặc lặp lại với các mục có sẵn.
    - Khi một quy tắc cũ bị thay thế hoặc hết giá trị, PHẢI xóa bỏ hoặc cập nhật đè trực tiếp thay vì ghi thêm lời giải thích chắp vá.
+
+---
+
+## 8. Phạm vi Quy chuẩn Giao diện
+
+- BẮT BUỘC dùng JavaFX 21 cho cả hai phân hệ.
+- PHẢI áp dụng chuẩn Admin tại `docs/admin-spec/admin-design-system.md` và `src/admin/admin.css` cho `src/admin/` theo mục 2.
+- PHẢI áp dụng các quy chuẩn bên dưới cho `src/user/`; TUYỆT ĐỐI KHÔNG tự áp đặt bảng màu, kích thước hoặc bố cục User lên Admin khi chưa có thống nhất mới.
+
+1. **Chuẩn Công nghệ & Nguồn Chân lý Duy nhất (Single Source of Truth for UI):**
+   - BẮT BUỘC sử dụng các thành phần bố cục chuẩn của **JavaFX 21** (`BorderPane`, `HBox`, `VBox`, `StackPane`, `GridPane`) và CSS (`src/user/theme.css`).
+   - Mọi quy chuẩn về Design Tokens, Khoảng cách (8-point grid), Ma trận bo góc chọn lọc, Quy tắc chống AI Slop, Quy tắc đường viền không trùng lặp (Single Border Source) và Vòng lặp nguyên tử BẮT BUỘC tuân thủ tài liệu gốc: `docs/ui-spec/base-ui-spec.md`.
+
+2. **Tham chiếu & Áp dụng Mẫu Thiết kế Chuẩn (UI/UX Benchmarking & Design Patterns):**
+   - Lấy chuẩn thiết kế từ các ứng dụng chat desktop hiện đại hàng đầu (**Discord, Telegram, Zalo**).
+   - Tuân thủ **Định luật Jakob (Jakob's Law)**: Ưu tiên sử dụng các **Mẫu thiết kế (Design Patterns)** quen thuộc (ví dụ: Chia cột `Split-Pane` cho danh sách hội thoại và khung chat, Thẻ `Card` căn giữa cho Đăng nhập/Đăng ký, các nút hành động Call-to-Action rõ ràng).
+
+3. **Tính Nhất quán Nghiêm ngặt về Thị giác & Khoảng cách (Strict Visual & Spacing Consistency):**
+   - BẮT BUỘC duy trì **Khoảng đệm (Padding)** (`Insets`) và **Khoảng cách lề (Margin)** hợp lý theo `base-ui-spec.md`, tuyệt đối không để các thành phần giao diện dính sát vào mép cửa sổ.
+   - Áp dụng thống nhất một **Bảng màu chuẩn (Color Palette)**: Màu nền (`Background`), Màu bề mặt thẻ (`Surface / Card`), Màu chủ đạo (`Primary`), Màu chữ chính/phụ (`Text Primary / Secondary`), và Màu trạng thái ngữ nghĩa (`Semantic Colors` cho lỗi, thành công, online/offline).
+   - BẮT BUỘC đảm bảo mọi thành phần tương tác (nút bấm, ô nhập, menu) phải thể hiện rõ các **Trạng thái Giao diện (UI States)**: Mặc định (`Default`), Di chuột (`Hover`), Tiêu điểm (`Focus`), và Vô hiệu hóa (`Disabled`).
