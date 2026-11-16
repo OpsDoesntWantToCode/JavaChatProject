@@ -180,6 +180,7 @@ public class ChatConversationView extends BorderPane {
     private Stage ownerStage;
     private Runnable onReportSpam;
     private Runnable onToggleDrawer;
+    private Runnable onToggleSidebar;
     private java.util.function.Consumer<String> onTriggerGlobalSearch;
 
     private String currentChatId = "group_project";
@@ -231,13 +232,18 @@ public class ChatConversationView extends BorderPane {
     // CONSTRUCTORS
     // =========================================================================
     public ChatConversationView() {
-        this(null, null, null);
+        this(null, null, null, null);
     }
 
     public ChatConversationView(Stage ownerStage, Runnable onReportSpam, Runnable onToggleDrawer) {
+        this(ownerStage, onReportSpam, onToggleDrawer, null);
+    }
+
+    public ChatConversationView(Stage ownerStage, Runnable onReportSpam, Runnable onToggleDrawer, Runnable onToggleSidebar) {
         this.ownerStage = ownerStage;
         this.onReportSpam = onReportSpam;
         this.onToggleDrawer = onToggleDrawer;
+        this.onToggleSidebar = onToggleSidebar;
 
         getStyleClass().add("main-chat-pane");
 
@@ -332,7 +338,22 @@ public class ChatConversationView extends BorderPane {
         HBox headerActions = new HBox(6, btnToggleMulti, btnSearch, btnReportSpam, btnToggleDrawer);
         headerActions.setAlignment(Pos.CENTER_RIGHT);
 
-        chatHeader.getChildren().addAll(headerAvatarStack, titleBox, headerActions);
+        // Nút thu gọn / mở rộng danh sách đoạn chat (Sidebar Toggle)
+        Button btnToggleSidebar = new Button();
+        btnToggleSidebar.setGraphic(JavaFXTheme.createSvgIcon(JavaFXTheme.SVG_SIDEBAR_TOGGLE, 0.75));
+        btnToggleSidebar.getStyleClass().add("btn-icon-subtle");
+        btnToggleSidebar.setPrefSize(34, 34);
+        btnToggleSidebar.setMinSize(34, 34);
+        btnToggleSidebar.setMaxSize(34, 34);
+        Tooltip.install(btnToggleSidebar, new Tooltip("Ẩn / Hiện danh sách đoạn chat (Ctrl+B)"));
+        btnToggleSidebar.setOnAction(e -> {
+            if (onToggleSidebar != null) {
+                onToggleSidebar.run();
+            }
+        });
+        JavaFXTheme.applyIconButton(btnToggleSidebar);
+
+        chatHeader.getChildren().addAll(btnToggleSidebar, headerAvatarStack, titleBox, headerActions);
     }
 
     // =========================================================================
@@ -498,23 +519,27 @@ public class ChatConversationView extends BorderPane {
         e2eePill.getChildren().addAll(lblLockIcon, lblBanner);
         e2eeBannerContainer.getChildren().setAll(e2eePill);
 
-        // Date Separator Pill kiểu Telegram / Zalo (Căn chính giữa tuyệt đối, không lệch)
-        HBox datePill = new HBox(8);
-        datePill.setAlignment(Pos.CENTER);
-        datePill.setMaxWidth(Double.MAX_VALUE);
-        datePill.setPadding(new Insets(2, 0, 4, 0));
+        // Date Separator Pill kiểu Telegram / Zalo (Căn chính giữa tuyệt đối bằng StackPane)
+        StackPane dateContainer = new StackPane();
+        dateContainer.setAlignment(Pos.CENTER);
+        dateContainer.setMaxWidth(Double.MAX_VALUE);
+        dateContainer.setPadding(new Insets(4, 0, 4, 0));
+
         Label lblDate = new Label("Hôm nay, 12/11/2026");
+        lblDate.setAlignment(Pos.CENTER);
+        lblDate.setTextAlignment(javafx.scene.text.TextAlignment.CENTER);
         lblDate.setStyle(
             "-fx-background-color: #1A1C23; " +
             "-fx-border-color: #2A2D35; " +
             "-fx-border-radius: 10px; " +
             "-fx-background-radius: 10px; " +
             "-fx-border-width: 1px; " +
-            "-fx-padding: 2px 12px; " +
+            "-fx-padding: 3px 14px; " +
             "-fx-font-size: 11px; " +
             "-fx-text-fill: #8E929B;"
         );
-        datePill.getChildren().add(lblDate);
+        StackPane.setAlignment(lblDate, Pos.CENTER);
+        dateContainer.getChildren().add(lblDate);
 
         // Cấu hình VirtualFlow ListView: Tràn viền tự nhiên, không đóng hộp
         messageListView.getStyleClass().add("transparent-scroll");
@@ -531,8 +556,11 @@ public class ChatConversationView extends BorderPane {
         centerListContainer.setStyle("-fx-background-color: transparent;");
         centerListContainer.setAlignment(Pos.TOP_CENTER);
         centerListContainer.setFillWidth(true);
-        centerListContainer.getChildren().addAll(e2eeBannerContainer, datePill, messageListView);
+        e2eeBannerContainer.prefWidthProperty().bind(centerListContainer.widthProperty());
+        dateContainer.prefWidthProperty().bind(centerListContainer.widthProperty());
+        centerListContainer.getChildren().addAll(e2eeBannerContainer, dateContainer, messageListView);
         VBox.setVgrow(messageListView, Priority.ALWAYS);
+        dateContainer.prefWidthProperty().bind(centerListContainer.widthProperty());
 
         // Thanh công cụ nổi chọn xóa nhiều tin (Task U10 — Floating Action Bar)
         buildFloatingActionBar();
@@ -1042,6 +1070,7 @@ public class ChatConversationView extends BorderPane {
     public void setOwnerStage(Stage ownerStage) { this.ownerStage = ownerStage; }
     public void setOnReportSpam(Runnable onReportSpam) { this.onReportSpam = onReportSpam; }
     public void setOnToggleDrawer(Runnable onToggleDrawer) { this.onToggleDrawer = onToggleDrawer; }
+    public void setOnToggleSidebar(Runnable onToggleSidebar) { this.onToggleSidebar = onToggleSidebar; }
     public void setOnTriggerGlobalSearch(java.util.function.Consumer<String> onTriggerGlobalSearch) {
         this.onTriggerGlobalSearch = onTriggerGlobalSearch;
     }

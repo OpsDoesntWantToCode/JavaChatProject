@@ -44,6 +44,9 @@ public final class JavaFXTheme {
     public static final String SVG_REPORT = "M1 21h22L12 2 1 21zm12-3h-2v-2h2v2zm0-4h-2v-4h2v4z";
     public static final String SVG_INFO = "M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z";
     public static final String SVG_EDIT = "M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z";
+    public static final String SVG_SIDEBAR_TOGGLE = "M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2zm5 14V6H4v12h5zm11 0V6h-9v12h9z";
+    public static final String SVG_CHEVRON_LEFT = "M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z";
+    public static final String SVG_CHEVRON_RIGHT = "M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z";
 
     /**
      * Tạo đối tượng SVGPath chuẩn sắc thái -text-muted (#8E929B) tương thích hoàn hảo với JavaFX CSS
@@ -431,6 +434,53 @@ public final class JavaFXTheme {
 
         TranslateTransition tt = new TranslateTransition(Duration.millis(160), drawer);
         tt.setToX(width);
+        tt.setInterpolator(FLUENT_ACCELERATE);
+
+        FadeTransition ft = new FadeTransition(Duration.millis(160), drawer);
+        ft.setToValue(0.0);
+        ft.setInterpolator(FLUENT_ACCELERATE);
+
+        ParallelTransition pt = new ParallelTransition(tt, ft);
+        pt.setOnFinished(e -> {
+            drawer.setVisible(false);
+            drawer.setManaged(false);
+            drawer.setTranslateX(0);
+            if (onComplete != null) {
+                onComplete.run();
+            }
+        });
+        pt.play();
+    }
+
+    /**
+     * Hiệu ứng trượt mở Drawer cạnh trái (Fluent 2 Decelerate 220ms, TranslateX -width -> 0)
+     */
+    public static void animateLeftDrawerOpen(Region drawer, double width) {
+        if (drawer == null) return;
+        drawer.setVisible(true);
+        drawer.setManaged(true);
+        drawer.setOpacity(0.0);
+        drawer.setTranslateX(-width);
+
+        TranslateTransition tt = new TranslateTransition(Duration.millis(220), drawer);
+        tt.setToX(0);
+        tt.setInterpolator(FLUENT_DECELERATE);
+
+        FadeTransition ft = new FadeTransition(Duration.millis(220), drawer);
+        ft.setToValue(1.0);
+        ft.setInterpolator(FLUENT_DECELERATE);
+
+        new ParallelTransition(tt, ft).play();
+    }
+
+    /**
+     * Hiệu ứng trượt đóng Drawer cạnh trái (Fluent 2 Accelerate 160ms, TranslateX 0 -> -width)
+     */
+    public static void animateLeftDrawerClose(Region drawer, double width, Runnable onComplete) {
+        if (drawer == null) return;
+
+        TranslateTransition tt = new TranslateTransition(Duration.millis(160), drawer);
+        tt.setToX(-width);
         tt.setInterpolator(FLUENT_ACCELERATE);
 
         FadeTransition ft = new FadeTransition(Duration.millis(160), drawer);
