@@ -1,6 +1,6 @@
 -- Java Chat System -- PostgreSQL, fresh database only (not a migration).
 -- Run: psql -X -v ON_ERROR_STOP=1 -d <new_database> -f script/database.sql
--- Source: docs/database/Database_Decisions.md, sections 2-8.
+-- Source: docs/database/schema.md.
 -- No DROP, credentials, seeded passwords, keys, extensions or extra tables.
 -- Owner runs DDL. Provision a separate non-owner Server runtime role separately;
 -- never give clients a DB credential. This script grants no runtime privileges.
@@ -32,7 +32,6 @@ CREATE TABLE users (
     created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
     CONSTRAINT pk_users PRIMARY KEY (id),
     CONSTRAINT uq_users_username UNIQUE (username),
-    CONSTRAINT uq_users_email UNIQUE (email),
     CONSTRAINT chk_users_id_positive CHECK (id > 0),
     CONSTRAINT chk_users_username CHECK (username ~ '^[a-z0-9_.-]{3,50}$'),
     CONSTRAINT chk_users_full_name CHECK (btrim(full_name) <> ''),
@@ -198,8 +197,9 @@ CREATE TABLE spam_reports (
     CONSTRAINT fk_spam_reports_reported FOREIGN KEY (reported_id) REFERENCES users(id) ON DELETE RESTRICT
 );
 
--- 16 explicit indexes; 13 PK + 4 UNIQUE constraints create 17 more indexes.
+-- 17 explicit indexes; 13 PK + 3 UNIQUE constraints create 16 more indexes.
 -- Different leading keys support different queries; no duplicate PK indexes.
+CREATE UNIQUE INDEX uq_users_email_not_deleted ON users (email) WHERE status <> 'DELETED';
 CREATE INDEX idx_login_history_time ON login_history (login_time DESC);
 CREATE INDEX idx_login_history_user_time ON login_history (user_id,login_time DESC);
 CREATE INDEX idx_activity_time_user ON activity_logs (created_at,user_id);
@@ -260,6 +260,7 @@ FOR EACH ROW EXECUTE FUNCTION guard_group_message_mode();
 COMMENT ON COLUMN activity_logs.session_id IS 'Unique OPEN_APP idempotency UUID; not an authentication token. Reconnect reuses it.';
 COMMENT ON COLUMN users.role IS 'System role USER/ADMIN; independent of group_members.is_admin. Server must authorize every request.';
 COMMENT ON COLUMN users.status IS 'Soft delete via DELETED. Terminal status and session revocation are enforced by Server, not this CHECK.';
+COMMENT ON COLUMN users.email IS 'Canonical email; unique among ACTIVE/LOCKED users via uq_users_email_not_deleted. DELETED rows may share an email.';
 COMMENT ON COLUMN conversation_clears.last_cleared_message_id IS 'One-sided visibility watermark; 0 allowed, deliberately NOT a FK. Pair lock before identity allocation is required.';
 COMMENT ON COLUMN conversation_clears.cleared_at IS 'Audit/display only; not the visibility boundary. Server writes clock_timestamp().';
 COMMENT ON COLUMN chat_groups.wrapped_encryption_key IS 'PROVISIONAL Server AES-GCM: wrapped DEK envelope only; KEK stays outside DB/repo/client.';
@@ -270,5 +271,7 @@ COMMENT ON TABLE group_members IS 'Current membership. No message-to-membership 
 -- permission gate shared/exclusive, ADMIN bootstrap/last ACTIVE admin;
 -- group membership/admin succession; authenticated sender/visibility/spam
 -- evidence; BCrypt, canonicalization, AEAD validation and session revocation.
--- Soft delete never issues DELETE; keep history and username/email uniqueness.
+-- Soft delete never issues DELETE; preserve history and global username uniqueness.
+-- Email uniqueness applies only to non-DELETED users. Resolve authentication and
+-- password-reset requests using eligible status; update the selected account by id.
 COMMIT;

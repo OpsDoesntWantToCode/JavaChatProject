@@ -16,9 +16,7 @@
   - Nhánh làm việc: `feat/user-ui`
   - Phạm vi: Giao diện User (`src/user/`), cấu hình Maven (`pom.xml`), phần User và tổng hợp Báo cáo (`BaoCao.pdf`).
 - **Phần sở hữu chung (BẮT BUỘC review chéo trước khi chỉnh sửa):** `server/`, `shared/` (DTO, giao thức Socket), `pom.xml`, `docs/plan.md`.
-- **Các mốc tiến độ:**
-  - Mốc 20% (Mục tiêu: 05/11/2026 — Hạn chót chính thức: 22/11/2026): Toàn bộ UI tĩnh JavaFX có dữ liệu mẫu, script CSDL hoàn chỉnh, minh chứng Git và Báo cáo PDF.
-  - Mốc 80% (Hạn chót toàn đồ án: 12/12/2026): Toàn bộ hệ thống chạy thực tế (Socket realtime/offline, pgJDBC, AES-GCM, Mail SMTP, LLM API, đóng gói 2 file JAR: `Admin.jar` & `User.jar`).
+- **Tiến độ và thời hạn:** BẮT BUỘC tra cứu `docs/plan.md`; không lưu lặp lịch trình trong tệp này.
 
 ---
 
@@ -30,6 +28,8 @@
   -> BẮT BUỘC đọc `docs/plan.md`.
 - **Khi chọn thư viện, phiên bản JDK hoặc kiến trúc Client-Server:**
   -> BẮT BUỘC tuân thủ `docs/tech-stack.md`.
+- **Khi thiết kế, lập trình hoặc rà soát giao diện Admin:**
+  -> BẮT BUỘC đọc [chuẩn thiết kế Admin](docs/admin-spec/admin-design-system.md), tái sử dụng `src/admin/admin.css` và giữ JavaFX 21; áp dụng `design-taste-frontend` và `ui-ux-pro-max` theo [hướng dẫn skill UI/UX](docs/admin-spec/ui-ux-skills.md), PHẢI đối chiếu gợi ý với JavaFX 21 và phạm vi ứng dụng desktop.
 - **Khi thiết kế bảng, tra cứu CSDL, xem sơ đồ ERD hoặc viết truy vấn SQL/transaction:**
   -> BẮT BUỘC đọc `docs/database/schema.md` (Tài liệu CSDL duy nhất: chứa 13 bảng, 65 cột, sơ đồ Mermaid ERD và cẩm nang vận hành backend).
 
@@ -87,10 +87,11 @@ Mọi tệp tin, thư mục và thành phần mã nguồn trong dự án BẮT B
 - **Bảo mật & Mạng:**
   - TUYỆT ĐỐI KHÔNG lưu mật khẩu dạng văn bản thô. LUÔN LUÔN băm bằng BCrypt (`BCrypt.hashpw`).
   - TUYỆT ĐỐI KHÔNG hardcode mật khẩu kết nối CSDL, khóa mã hóa chủ (KEK), thông tin email SMTP hoặc API key LLM trong ứng dụng Client hoặc đẩy lên Git.
-  - BẮT BUỘC dùng Java Cryptography API cho mã hóa AES-GCM phía Server (mỗi nhóm 1 khóa DEK, IV ngẫu nhiên 12 byte Base64).
+  - BẮT BUỘC dùng Java Cryptography API khi triển khai phương án AES-GCM phía Server (mỗi nhóm 1 khóa DEK, IV ngẫu nhiên 12 byte Base64). PHẢI giữ trạng thái chờ giảng viên xác nhận mức đáp ứng yêu cầu mã hóa; không tuyên bố đây là E2EE.
 - **Mẫu Kiến trúc Chuẩn (Golden Patterns):**
-  - Khung điều khiển (Dashboard): Dùng `CardLayout` cho thanh điều hướng sidebar.
-  - Khung Chat: Tách riêng panel danh sách hội thoại, panel bong bóng chat (`JScrollPane`), và vùng nhập tin nhắn.
+  - Khung điều khiển: BẮT BUỘC dùng bố cục JavaFX, chẳng hạn `BorderPane` với thanh điều hướng và vùng nội dung thay đổi; có thể dùng `StackPane` để chứa các trang.
+  - Khung chat: PHẢI tách vùng danh sách hội thoại, vùng bong bóng chat trong `ScrollPane` và vùng nhập tin nhắn bằng các thành phần JavaFX.
+  - Bảng và biểu đồ: BẮT BUỘC dùng `TableView` và JavaFX Charts (`BarChart`); không dùng thành phần Swing/AWT hoặc JFreeChart.
   - Giao thức Socket: Tuân thủ định dạng gói JSON Gson chuẩn (`action`, `session_id`, `payload`, `status`, `error`).
 
 ---
@@ -142,8 +143,9 @@ Mọi tệp tin, thư mục và thành phần mã nguồn trong dự án BẮT B
 ## 8. Hướng dẫn Phát triển Giao diện UI/UX (UI/UX Development Guidelines)
 
 1. **Chuẩn Công nghệ & Nguồn Chân lý Duy nhất (Single Source of Truth for UI):**
-   - Tối đa hóa việc sử dụng các Layout Pane chuẩn của **JavaFX 21** (`BorderPane`, `HBox`, `VBox`, `StackPane`, `GridPane`) và CSS (`theme.css`).
-   - Mọi quy chuẩn về Design Tokens, Khoảng cách (8-point grid), Ma trận bo góc chọn lọc, Quy tắc chống AI Slop, Quy tắc đường viền không trùng lặp (Single Border Source) và Vòng lặp nguyên tử BẮT BUỘC tuân thủ tài liệu gốc: `docs/ui-spec/base-ui-spec.md`.
+   - Tối đa hóa việc sử dụng các Layout Pane chuẩn của **JavaFX 21** (`BorderPane`, `HBox`, `VBox`, `StackPane`, `GridPane`).
+   - **Phân hệ User (`src/user/`):** Mọi quy chuẩn về Design Tokens, Khoảng cách (8-point grid), Ma trận bo góc chọn lọc, Quy tắc chống AI Slop, Quy tắc đường viền không trùng lặp (Single Border Source) và Vòng lặp nguyên tử BẮT BUỘC tuân thủ tài liệu gốc: `docs/ui-spec/base-ui-spec.md` và stylesheet `src/user/theme.css`.
+   - **Phân hệ Admin (`src/admin/`):** BẮT BUỘC tuân thủ tài liệu [chuẩn thiết kế Admin](docs/admin-spec/admin-design-system.md) và stylesheet `src/admin/admin.css`. Cùng giữ JavaFX 21 và độc lập namespace CSS.
 
 2. **Tham chiếu & Áp dụng Mẫu Thiết kế Chuẩn (UI/UX Benchmarking & Design Patterns):**
    - Lấy chuẩn thiết kế từ các ứng dụng chat desktop hiện đại hàng đầu (**Discord, Telegram, Zalo**).

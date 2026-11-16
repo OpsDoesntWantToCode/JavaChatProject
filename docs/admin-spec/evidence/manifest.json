@@ -1,0 +1,135 @@
+{
+  "captured_on": "2026-11-16",
+  "source": "JavaFX AdminApplication via Computer Use sky.get_window_state; original JPEG bytes preserved",
+  "base_commit": "03c5162",
+  "working_tree_includes": "T15-T19 uncommitted changes at capture; T20 documentation and images",
+  "erd_sha256": "47f80a191413f319dc435f182a3d453609aa91ea54723e9c3a56062dc27ccb80",
+  "images": [
+    {
+      "file": "a10-registration-chart.jpg",
+      "width": 1002,
+      "height": 732,
+      "bytes": 77434,
+      "sha256": "198b1bca3ae035738b65785b583bb9ed0cbaf53119e8fba9cccb7067167163f7"
+    },
+    {
+      "file": "a11-activity-chart-dark.jpg",
+      "width": 1002,
+      "height": 732,
+      "bytes": 78659,
+      "sha256": "8f94a4423955229d343bfb8b27782e312d112e8c67dc715508b467d756f7bd3d"
+    },
+    {
+      "file": "a11-activity-chart.jpg",
+      "width": 1002,
+      "height": 732,
+      "bytes": 78737,
+      "sha256": "942c991986a0932d6d561b1d358434a5cbdd5e400b518effcc5754f16fa96794"
+    },
+    {
+      "file": "a2-user-management.jpg",
+      "width": 1002,
+      "height": 732,
+      "bytes": 102180,
+      "sha256": "1764675a1952d7c3aa21e46a7b3a6cea803c229b3f4b43406994fc1e3dea34ec"
+    },
+    {
+      "file": "a3-password-demo.jpg",
+      "width": 397,
+      "height": 319,
+      "bytes": 18681,
+      "sha256": "8631d8d5cd1c80c64564059f8f8dffa4ff19ad360dd6920d20b17a0f441b6ee2"
+    },
+    {
+      "file": "a3-profile-add.jpg",
+      "width": 522,
+      "height": 476,
+      "bytes": 34917,
+      "sha256": "f710a11f6efd12955eae7b73207c2e9981f72e0b32c4f3ba2716e88bac7ae34b"
+    },
+    {
+      "file": "a3-profile-edit.jpg",
+      "width": 522,
+      "height": 534,
+      "bytes": 38764,
+      "sha256": "159d37e0921147412c18c485e1be44fc83b9e7159927f9e6c2c053a3479cdd2e"
+    },
+    {
+      "file": "a3-profile-readonly.jpg",
+      "width": 522,
+      "height": 534,
+      "bytes": 34698,
+      "sha256": "3bebba42c29a8cc38b977d7e7a8d549ba20c91fc13e0bc28abaa2de477dd5f90"
+    },
+    {
+      "file": "a3-user-friends.jpg",
+      "width": 722,
+      "height": 534,
+      "bytes": 40045,
+      "sha256": "f415d5313b2d62581a91a8679535f0f9e3ea3af4336975790bdc34a35ecb1899"
+    },
+    {
+      "file": "a3-user-login-history.jpg",
+      "width": 722,
+      "height": 534,
+      "bytes": 43571,
+      "sha256": "ef271d5f01fc74cd26b82f40708dc6e7353357c29143299bded49d3e5c173b6b"
+    },
+    {
+      "file": "a4-login-history.jpg",
+      "width": 1002,
+      "height": 732,
+      "bytes": 95448,
+      "sha256": "ceb1710771bff9161f3881ffc61a6b5f87b76fdaef4c2988c3be553f99a37f44"
+    },
+    {
+      "file": "a5-group-detail.jpg",
+      "width": 762,
+      "height": 629,
+      "bytes": 53080,
+      "sha256": "55ec9f6c74d02f7e45a0678d62adbdd272acdd241434be73eecbd6681a8678d1"
+    },
+    {
+      "file": "a5-groups.jpg",
+      "width": 1002,
+      "height": 732,
+      "bytes": 81056,
+      "sha256": "83fba24cce69fd2c801ba87f10e598ac9545e7fcefac439e9fb8458d7cc1d4ec"
+    },
+    {
+      "file": "a6-lock-confirmation.jpg",
+      "width": 362,
+      "height": 211,
+      "bytes": 15535,
+      "sha256": "c583c1051c9217a8c6d5f3397fe4799e73f86dbdbc591ffb35094cbc9a63b512"
+    },
+    {
+      "file": "a6-spam-reports.jpg",
+      "width": 1002,
+      "height": 732,
+      "bytes": 96209,
+      "sha256": "00768076cdd023dec2b53dd66fc054d7c08a0304d9c74cd327e0ec31fa05600b"
+    },
+    {
+      "file": "a7-new-users.jpg",
+      "width": 1002,
+      "height": 732,
+      "bytes": 111139,
+      "sha256": "9e4d68faa785834490230d9313a88da831ff7563066007642deb8fd357f9eef0"
+    },
+    {
+      "file": "a8-friend-statistics.jpg",
+      "width": 1002,
+      "height": 732,
+      "bytes": 99230,
+      "sha256": "581c88961682d3502fe3dc9ef9ef781e632c77f6eacc7ea84bf37eabf96aaf3b"
+    },
+    {
+      "file": "a9-active-users.jpg",
+      "width": 1002,
+      "height": 732,
+      "bytes": 97998,
+      "sha256": "d0a3e9956b1509cbc78c74e152a51d89cc2d50be7391932b89880516b6602492"
+    }
+  ]
+}

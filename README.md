@@ -4,6 +4,8 @@ Dự án Java Chat Application phục vụ đồ án môn Lập trình ứng d�
 
 Giao diện ứng dụng dùng **JavaFX 21 + CSS** trên JDK 21 (quyết định Hải–Minh ngày 29/10/2026); đóng gói bằng Maven.
 
+**Trạng thái ngày 02/11/2026:** đã có `pom.xml` (JavaFX 21.0.5, nguồn Java/tài nguyên tại `src/`); Admin và User mới có thư mục giữ chỗ, chưa có class Java hoặc UI chạy. POM chọn `user.UserLoginApp`, class chưa tồn tại; cách chạy Admin và đóng gói hai JAR chưa được kiểm thử. Không tạo thêm cấu trúc `src/main/` song song với POM hiện tại.
+
 ## 1. Thành viên Nhóm
 
 | STT | Họ và Tên | MSSV | Vai trò & Phân công | Nhánh làm việc |
@@ -21,6 +23,7 @@ Giao diện ứng dụng dùng **JavaFX 21 + CSS** trên JDK 21 (quyết định
 - **Công nghệ & Kiến trúc:** [docs/tech-stack.md](docs/tech-stack.md)
 - **Cơ sở dữ liệu & Sơ đồ ERD:** [docs/database/schema.md](docs/database/schema.md) (đặc tả 13 bảng, 65 cột, sơ đồ Mermaid ERD và cẩm nang vận hành backend).
 - **Script tạo CSDL PostgreSQL:** [script/database.sql](script/database.sql).
+- **Chuẩn bị Admin:** tài liệu đặc tả và dữ liệu mẫu đang được chuẩn bị trên nhánh `feat/admin-db`, chưa tích hợp vào `main`.
 
 ## 3. Cấu trúc Thư mục
 
