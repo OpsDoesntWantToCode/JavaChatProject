@@ -154,8 +154,11 @@
   - Ngày 16/11/2026: chụp cửa sổ Gitk thực tế bằng Computer Use, lưu `git/commits_Hai.png` (1920×1032). Ảnh chọn commit `03c5162`, hiển thị tác giả, thời gian, hash và nhãn nhánh local/remote. Đã xem ảnh, bỏ phần xem trước cửa sổ che nội dung và đóng Gitk sau khi lưu.
   - Đối chiếu bằng `git rev-list --count HEAD --author='lchai2429@clc.fitus.edu.vn'`: **15 commit** gồm commit merge. Gitk có thêm commit của Minh làm ngữ cảnh và dòng thay đổi chưa commit; không coi mọi dòng là commit của Hải hoặc suy ra tỷ lệ đóng góp.
   - Ảnh JPEG gốc được xuất PNG, không cắt ghép hoặc sửa nội dung; kiểm tra kích thước và 6.893 điểm ảnh khớp nguồn. Hash và hướng dẫn đọc tại [minh chứng Git](git-evidence.md).
-  - Giới hạn: ảnh đến T14 tại commit trên; T15–T21 chưa commit/push. Chưa có ảnh riêng của Minh, chưa tích hợp hoặc đóng gói; khi chốt bản nộp cần chụp lại lịch sử sau các commit còn lại được Hải cho phép.
+  - Ảnh ban đầu đến T14 tại commit trên. Sau khi Hải đồng ý commit/push, ngày 16/11/2026 đã push T15–T21 tại `8725388` và chụp lại `git/commits_Hai.png` tới phiên bản này: **16 commit** theo email tác giả. Kiểm tra PNG 1920×1032, 6.893 điểm ảnh khớp bản gốc và hash đã cập nhật trong tài liệu minh chứng; đóng Gitk và xác nhận cửa sổ không còn.
+  - Giới hạn: commit lưu ảnh cập nhật và tài liệu bàn giao được tạo sau lần chụp nên không xuất hiện trong ảnh. Chưa có ảnh riêng của Minh, chưa tích hợp chính thức hoặc đóng gói.
 - [ ] T22: Bàn giao Minh phần báo cáo/minh chứng; phối hợp review PR, build tích hợp và kiểm tra cấu trúc bộ nộp theo đề. Không tự merge hoặc đóng gói khi chưa phối hợp.
+  - Đã chuẩn bị [bảng bàn giao và việc cần phối hợp](handoff-checklist.md). Fetch nhánh Minh tới `5ce5b07`; kiểm tra ghép tạm với Hải tại `8725388` xác định xung đột `docs/plan.md`. Không sửa tài liệu chung hoặc merge nhánh.
+  - Trích riêng `pom.xml` và `src/` từ cây ghép tạm vào `build/`, biên dịch offline bằng Maven 3.9.11: **BUILD SUCCESS, 40 tệp Java, 2 tài nguyên CSS**. Chưa chạy nghiệm thu User hoặc hai UI từ bản ghép; chưa coi T22 hoàn tất. Cần phối hợp giải quyết xung đột, review, báo cáo PDF và minh chứng riêng của Minh.
 
 ## Trạng thái SDD
 

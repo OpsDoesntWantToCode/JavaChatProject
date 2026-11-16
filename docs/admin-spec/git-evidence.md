@@ -3,26 +3,26 @@
 ## Ảnh và nguồn đối chiếu
 
 - [Ảnh Gitk thực tế](../../git/commits_Hai.png), chụp ngày 16/11/2026 bằng Computer Use; kích thước 1920×1032.
-- Nhánh: `feat/admin-db`. Commit được chọn: `03c516202cae92607bae23c3637b070e9e628216` — `feat(admin-ui): add registration friendship and activity statistics`.
+- Nhánh: `feat/admin-db`. Commit được chọn: `8725388620292f36305f415580eb61bb44fc0c1d` — `feat(admin-ui): complete monthly charts and milestone evidence`.
 - Nhãn nhánh cục bộ và `remotes/origin/feat/admin-db` cùng trỏ tới commit trên tại thời điểm chụp.
 - Ảnh gốc do công cụ trả về là JPEG; xuất sang PNG để khớp tên tệp trong kế hoạch, không cắt ghép hoặc sửa nội dung. Đã kiểm tra kích thước và đối chiếu 6.893 điểm ảnh giữa hai bản.
-- SHA-256 PNG: `113058000fe266745fcd20e4b274b01b62af0db9c7f44282920fa5ddc87008af`.
+- SHA-256 PNG: `131d0d8c98c77cdbf7954af985b9d017ee4c4c907625edd176c23f01cf769908`.
 
 ## Cách đọc lịch sử
 
 Lệnh đối chiếu số commit theo email tác giả trong lịch sử đến commit trên:
 
 ```sh
-git rev-list --count 03c516202cae92607bae23c3637b070e9e628216 --author='lchai2429@clc.fitus.edu.vn'
-git log 03c516202cae92607bae23c3637b070e9e628216 --author='lchai2429@clc.fitus.edu.vn' --format='%h %ad %an %s' --date=short
+git rev-list --count 8725388620292f36305f415580eb61bb44fc0c1d --author='lchai2429@clc.fitus.edu.vn'
+git log 8725388620292f36305f415580eb61bb44fc0c1d --author='lchai2429@clc.fitus.edu.vn' --format='%h %ad %an %s' --date=short
 ```
 
-Kết quả: **15 commit**, gồm cả commit merge. Cùng email xuất hiện với các tên `Luu Chi Hai`, `ChuHaiLi` và `Chu Hai Li`. Đây là thống kê theo metadata Git, không dùng để tự suy ra tỷ lệ đóng góp trong báo cáo.
+Kết quả đến commit được chụp: **16 commit**, gồm cả commit merge. Cùng email xuất hiện với các tên `Luu Chi Hai`, `ChuHaiLi` và `Chu Hai Li`. Đây là thống kê theo metadata Git, không dùng để tự suy ra tỷ lệ đóng góp trong báo cáo.
 
-Gitk hiển thị thêm commit của Minh để giữ ngữ cảnh lịch sử và một dòng thay đổi cục bộ chưa commit. Vì vậy, không tính mọi dòng trong ảnh là commit của Hải.
+Gitk hiển thị thêm commit của Minh để giữ ngữ cảnh lịch sử. Vì vậy, không tính mọi dòng trong ảnh là commit của Hải.
 
 ## Phạm vi bàn giao
 
-- Commit mới nhất trong ảnh bao gồm công việc đã commit đến T14. T15–T20 và tài liệu/ảnh T21 chưa được commit hoặc push tại thời điểm chụp.
-- Khi cần minh chứng bản nộp cuối, chụp lại sau khi Hải cho phép commit/push phần còn lại; giữ chú thích đúng với phiên bản thực tế.
+- Ảnh cập nhật sau khi commit/push `8725388`, bao gồm mã nguồn và bằng chứng T15–T21. Bản ảnh trước đó tại `03c5162` đã được thay thế; có thể xem lại qua lịch sử Git.
+- Commit lưu ảnh cập nhật và biên bản bàn giao được tạo sau thời điểm chụp, nên không xuất hiện trong chính ảnh. Ảnh xác nhận phiên bản mã nguồn `8725388`; không tạo vòng lặp chụp/commit chỉ để ảnh chứa commit lưu nó.
 - Minh chứng riêng của Minh, báo cáo PDF tổng hợp và việc tích hợp thuộc bước phối hợp T22; ảnh này không thay thế các phần đó.
