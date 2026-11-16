@@ -8,11 +8,13 @@ import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
+import javafx.stage.StageStyle;
 import javafx.util.Duration;
 
 /**
@@ -23,6 +25,8 @@ public class UserLoginApp extends Application {
 
     private Stage primaryStage;
     private Scene scene;
+    private BorderPane authShell;
+    private CustomTitleBar authTitleBar;
     private StackPane masterRoot;
     private HBox splitBox;
     private VBox heroSection;
@@ -36,6 +40,7 @@ public class UserLoginApp extends Application {
     @Override
     public void start(Stage stage) {
         this.primaryStage = stage;
+        stage.initStyle(StageStyle.UNDECORATED);
         stage.setTitle("Java Chat System — User Portal (JavaFX 21)");
 
         // Khởi tạo các Views với Navigation Callbacks
@@ -68,8 +73,15 @@ public class UserLoginApp extends Application {
         splitBox.getChildren().addAll(heroSection, formContainer);
         masterRoot.getChildren().add(splitBox);
 
+        // Shell chứa Custom Title Bar cho phân hệ Auth
+        authTitleBar = new CustomTitleBar(stage, "Java Chat System — Cổng đăng nhập", null);
+        authShell = new BorderPane();
+        authShell.getStyleClass().add("ambient-canvas");
+        authShell.setTop(authTitleBar);
+        authShell.setCenter(masterRoot);
+
         // Khởi tạo Scene ban đầu chuẩn Discord Desktop (540 x 600)
-        scene = new Scene(masterRoot, 540, 600);
+        scene = new Scene(authShell, 540, 600);
 
         // Lắng nghe kích thước để tự động kích hoạt Split-Screen khi rộng >= 1080px (chế độ Fullscreen thực thụ)
         scene.widthProperty().addListener((obs, oldW, newW) -> updateResponsiveLayout(newW.doubleValue()));
@@ -86,6 +98,10 @@ public class UserLoginApp extends Application {
         stage.setMinWidth(520);
         stage.setMinHeight(560);
         stage.centerOnScreen();
+
+        // Gắn tính năng kéo giãn mép cửa sổ Undecorated chuẩn ngành
+        WindowResizeHelper.attach(stage, scene);
+
         stage.show();
     }
 
@@ -105,8 +121,8 @@ public class UserLoginApp extends Application {
     }
 
     private void showLoginView() {
-        if (scene.getRoot() != masterRoot) {
-            scene.setRoot(masterRoot);
+        if (scene.getRoot() != authShell) {
+            scene.setRoot(authShell);
             primaryStage.setTitle("Java Chat System — User Portal (JavaFX 21)");
             primaryStage.setMinWidth(520);
             primaryStage.setMinHeight(560);

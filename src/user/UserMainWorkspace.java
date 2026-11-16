@@ -43,7 +43,6 @@ public class UserMainWorkspace extends BorderPane {
     private final VBox navRail = new VBox(16);
     private final Button btnNavChat = new Button("💬");
     private final Button btnNavFriends = new Button("👥");
-    private final Button btnNavCloud = new Button("📁");
     private final Button btnNavSettings = new Button("⚙");
     private final Button btnNavLogout = new Button("🚪");
     private boolean isChatMode = true;
@@ -53,7 +52,6 @@ public class UserMainWorkspace extends BorderPane {
     private final Label lblSidebarTitle = new Label("Đoạn chat");
     private final TextField txtSearch = new TextField();
     private final Button btnClearSearch = new Button("✕");
-    private final Button btnOpenGlobalDialog = new Button("🌐");
     private final Button btnNewGroup = new Button("➕");
     private final VBox conversationListBox = new VBox(4);
     private final VBox friendsCategoryBox = new VBox(4);
@@ -81,11 +79,18 @@ public class UserMainWorkspace extends BorderPane {
     // Dữ liệu cuộc hội thoại đang chọn
     private String currentChatId = "group_project";
 
+    // Thanh tiêu đề tùy biến (Zalo PC & Fluent UI Style)
+    private CustomTitleBar customTitleBar;
+
     public UserMainWorkspace(Stage primaryStage, Runnable onLogout) {
         this.primaryStage = primaryStage;
         this.onLogout = onLogout;
 
         getStyleClass().add("ambient-canvas");
+
+        // 0. Dựng Custom Title Bar chuẩn Zalo PC
+        customTitleBar = new CustomTitleBar(primaryStage, "Java Chat System — Không gian làm việc (@tuanminh_2026)", onLogout);
+        setTop(customTitleBar);
 
         // 1. Dựng Cột 1: Navigation Rail (60px)
         buildNavigationRail();
@@ -157,29 +162,21 @@ public class UserMainWorkspace extends BorderPane {
         // Nút chuyển chế độ
         btnNavChat.getStyleClass().addAll("nav-item-btn", "nav-item-btn-active");
         btnNavFriends.getStyleClass().add("nav-item-btn");
-        btnNavCloud.getStyleClass().add("nav-item-btn");
         btnNavSettings.getStyleClass().add("nav-item-btn");
         btnNavLogout.getStyleClass().add("nav-item-btn");
 
         JavaFXTheme.applyIconButton(btnNavChat);
         JavaFXTheme.applyIconButton(btnNavFriends);
-        JavaFXTheme.applyIconButton(btnNavCloud);
         JavaFXTheme.applyIconButton(btnNavSettings);
         JavaFXTheme.applyIconButton(btnNavLogout);
 
         Tooltip.install(btnNavChat, new Tooltip("Đoạn chat & Nhóm"));
         Tooltip.install(btnNavFriends, new Tooltip("Danh bạ & Bạn bè"));
-        Tooltip.install(btnNavCloud, new Tooltip("Truyền File & Tài liệu (Zalo Cloud Style)"));
         Tooltip.install(btnNavSettings, new Tooltip("Cài đặt hệ thống"));
         Tooltip.install(btnNavLogout, new Tooltip("Đăng xuất tài khoản"));
 
         btnNavChat.setOnAction(e -> switchMode(true));
         btnNavFriends.setOnAction(e -> switchMode(false));
-        btnNavCloud.setOnAction(e -> {
-            switchMode(true);
-            loadConversation("group_project");
-            JavaFXTheme.showInfoAlert(primaryStage, "Truyền File", "Cloud cá nhân & Truyền file", "Tính năng lưu trữ và đồng bộ tệp tin đám mây giữa các thiết bị.");
-        });
         btnNavSettings.setOnAction(e -> openSettingsDialog());
         btnNavLogout.setOnAction(e -> {
             if (onLogout != null) {
@@ -196,7 +193,6 @@ public class UserMainWorkspace extends BorderPane {
             new Separator(),
             btnNavChat,
             btnNavFriends,
-            btnNavCloud,
             spacer,
             btnNavSettings,
             btnNavLogout
@@ -216,8 +212,6 @@ public class UserMainWorkspace extends BorderPane {
             lblSidebarTitle.setText("Đoạn chat");
             btnNewGroup.setVisible(true);
             btnNewGroup.setManaged(true);
-            btnOpenGlobalDialog.setVisible(true);
-            btnOpenGlobalDialog.setManaged(true);
             pillFilterBar.setVisible(true);
             pillFilterBar.setManaged(true);
             txtSearch.setPromptText("Tìm kiếm cuộc trò chuyện hoặc tin nhắn...");
@@ -240,8 +234,6 @@ public class UserMainWorkspace extends BorderPane {
             lblSidebarTitle.setText("Danh bạ");
             btnNewGroup.setVisible(false);
             btnNewGroup.setManaged(false);
-            btnOpenGlobalDialog.setVisible(false);
-            btnOpenGlobalDialog.setManaged(false);
             pillFilterBar.setVisible(false);
             pillFilterBar.setManaged(false);
             txtSearch.setPromptText("Tìm bạn bè theo tên...");
@@ -292,14 +284,9 @@ public class UserMainWorkspace extends BorderPane {
         HBox.setHgrow(sp, Priority.ALWAYS);
 
         btnNewGroup.getStyleClass().add("btn-icon-subtle");
-        Tooltip.install(btnNewGroup, new Tooltip("Tạo nhóm hoặc thêm bạn mới (Quick Action FAB)"));
+        Tooltip.install(btnNewGroup, new Tooltip("Tạo nhóm trò chuyện mới (Mục 12.a)"));
         JavaFXTheme.applyIconButton(btnNewGroup);
-
-        ContextMenu popover = new ContextMenu();
-        JavaFXTheme.applyContextMenuTheme(popover);
-
-        MenuItem mNewGroup = new MenuItem("👥 Tạo nhóm trò chuyện mới (Mục 12.a)");
-        mNewGroup.setOnAction(e -> {
+        btnNewGroup.setOnAction(e -> {
             new GroupCreateDialog(primaryStage, result -> {
                 conversationListBox.getChildren().add(0, createConversationItem(
                     "group_" + System.currentTimeMillis(), result.getGroupName(),
@@ -308,30 +295,6 @@ public class UserMainWorkspace extends BorderPane {
                 ));
                 loadConversation("group_project");
             }).show();
-        });
-
-        MenuItem mAddFriend = new MenuItem("👤 Thêm bạn bè vào danh bạ (Mục 6.b)");
-        mAddFriend.setOnAction(e -> {
-            MemberAddDialog.show(primaryStage).ifPresent(u -> {
-                JavaFXTheme.showInfoAlert(
-                    primaryStage,
-                    "Lời mời kết bạn",
-                    "Đã gửi yêu cầu kết bạn (Mục 6.b)",
-                    "Đã gửi lời mời kết bạn tới người dùng @" + u.toLowerCase().replace(" ", "_")
-                );
-            });
-        });
-
-        MenuItem mSecretChat = new MenuItem("🔒 Trò chuyện mã hóa E2EE (Mục 12.g)");
-        mSecretChat.setOnAction(e -> loadConversation("group_project"));
-
-        MenuItem mGlobalSearch = new MenuItem("🔍 Tìm kiếm tin nhắn toàn cục (Mục 11.g)");
-        mGlobalSearch.setOnAction(e -> openGlobalSearchDialog(txtSearch.getText()));
-
-        popover.getItems().addAll(mNewGroup, mAddFriend, new javafx.scene.control.SeparatorMenuItem(), mSecretChat, mGlobalSearch);
-
-        btnNewGroup.setOnAction(e -> {
-            popover.show(btnNewGroup, javafx.geometry.Side.BOTTOM, 0, 4);
         });
 
         topBox.getChildren().addAll(lblSidebarTitle, sp, btnNewGroup);
@@ -353,7 +316,7 @@ public class UserMainWorkspace extends BorderPane {
             "-fx-focus-color: transparent; " +
             "-fx-faint-focus-color: transparent; " +
             "-fx-text-fill: -text-normal; " +
-            "-fx-font-size: 12.5px; " +
+            "-fx-font-size: 13px; " +
             "-fx-padding: 0;"
         );
         HBox.setHgrow(txtSearch, Priority.ALWAYS);
@@ -471,11 +434,10 @@ public class UserMainWorkspace extends BorderPane {
         conversationListBox.getChildren().clear();
 
         List<ChatMockRepository.ConversationMeta> chatMatches = ChatMockRepository.searchConversations(query);
-        List<ChatMockRepository.GlobalMessageMatch> messageMatches = ChatMockRepository.searchAllMessages(query);
 
         if (!chatMatches.isEmpty()) {
             Label lblSection = new Label("CUỘC TRÒ CHUYỆN (" + chatMatches.size() + ")");
-            lblSection.setStyle("-fx-font-size: 10px; -fx-font-weight: bold; -fx-text-fill: -text-muted; -fx-padding: 4 6 2 6;");
+            lblSection.setStyle("-fx-font-size: 10.5px; -fx-font-weight: bold; -fx-text-fill: -text-muted; -fx-padding: 4 6 2 6;");
             conversationListBox.getChildren().add(lblSection);
 
             for (ChatMockRepository.ConversationMeta conv : chatMatches) {
@@ -485,25 +447,32 @@ public class UserMainWorkspace extends BorderPane {
                     conv.getAvatarColor(), conv.getInitials()
                 ));
             }
-        }
-
-        Label lblMsgSection = new Label("TIN NHẮN TOÀN CỤC — MỤC 11.G (" + messageMatches.size() + ")");
-        lblMsgSection.setStyle("-fx-font-size: 10px; -fx-font-weight: bold; -fx-text-fill: #F0B232; -fx-padding: 8 6 2 6;");
-        conversationListBox.getChildren().add(lblMsgSection);
-
-        if (messageMatches.isEmpty()) {
-            VBox emptyBox = new VBox(4);
-            emptyBox.setPadding(new Insets(12, 8, 12, 8));
+        } else {
+            VBox emptyBox = new VBox(6);
             emptyBox.setAlignment(Pos.CENTER);
-            Label lblNone = new Label("Không có tin nhắn nào khớp từ khóa");
+            emptyBox.setPadding(new Insets(20, 10, 12, 10));
+            Label lblNone = new Label("Không tìm thấy cuộc trò chuyện phù hợp");
             lblNone.setStyle("-fx-font-size: 12px; -fx-text-fill: -text-muted;");
             emptyBox.getChildren().add(lblNone);
             conversationListBox.getChildren().add(emptyBox);
-        } else {
-            for (ChatMockRepository.GlobalMessageMatch match : messageMatches) {
-                conversationListBox.getChildren().add(createSidebarMessageResultItem(match, query));
-            }
         }
+
+        // Tùy chọn chuyển sang tìm kiếm tin nhắn toàn cục (Mục 11.g) dạng nút bấm gọn gàng
+        Button btnSearchGlobal = new Button("🌐 Tìm tin nhắn chứa \"" + (query.length() > 18 ? query.substring(0, 15) + "..." : query) + "\"...");
+        btnSearchGlobal.setStyle(
+            "-fx-background-color: rgba(78, 107, 242, 0.12); " +
+            "-fx-border-color: rgba(78, 107, 242, 0.35); " +
+            "-fx-border-radius: 8px; " +
+            "-fx-background-radius: 8px; " +
+            "-fx-text-fill: -text-link; " +
+            "-fx-font-size: 12px; " +
+            "-fx-padding: 8px 12px; " +
+            "-fx-cursor: hand; " +
+            "-fx-max-width: infinity;"
+        );
+        btnSearchGlobal.setOnAction(e -> openGlobalSearchDialog(query));
+        JavaFXTheme.applyTactileButton(btnSearchGlobal);
+        conversationListBox.getChildren().add(btnSearchGlobal);
     }
 
     private VBox createSidebarMessageResultItem(ChatMockRepository.GlobalMessageMatch match, String query) {

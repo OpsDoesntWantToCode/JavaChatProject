@@ -4,11 +4,13 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.input.KeyCode;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import javafx.stage.StageStyle;
 import javafx.stage.Window;
 
 import java.time.LocalDate;
@@ -59,13 +61,11 @@ public class UserSettingsDialog extends Stage {
     private final Slider sliderFontSize = new Slider(12.0, 16.0, JavaFXTheme.getCurrentFontSize());
     private final Label lblFontSizeValue = new Label(String.format(java.util.Locale.US, "%.1fpx", JavaFXTheme.getCurrentFontSize()));
     private final Label lblChatPreview = new Label("Xem trước: Giao diện Obsidian Dark sang trọng, tin nhắn mẫu hiển thị rõ ràng và sắc nét.");
-    private final CheckBox chkTactile = new CheckBox("Hiệu ứng xúc giác & chuyển động vật lý 60fps (Fluent 2 Micro-interactions)");
-    private final CheckBox chkSoftBubbles = new CheckBox("Bong bóng chat bo góc mềm mại chuẩn Telegram Desktop");
-    private final CheckBox chkE2eeBadge = new CheckBox("Hiển thị huy hiệu bảo vệ mã hóa đầu cuối AES-GCM (E2EE Pill Badge)");
     private final Label lblAppearanceStatus = new Label();
 
     public UserSettingsDialog(Window owner) {
         initModality(Modality.APPLICATION_MODAL);
+        initStyle(StageStyle.TRANSPARENT);
         if (owner != null) {
             initOwner(owner);
         }
@@ -73,6 +73,14 @@ public class UserSettingsDialog extends Stage {
         setResizable(false);
 
         rootNode.getStyleClass().add("settings-dialog-card");
+        rootNode.setStyle(
+            "-fx-background-color: #1A1C23; " +
+            "-fx-border-color: #2A2D35; " +
+            "-fx-border-radius: 14px; " +
+            "-fx-background-radius: 14px; " +
+            "-fx-border-width: 1px; " +
+            "-fx-effect: dropshadow(three-pass-box, rgba(0, 0, 0, 0.65), 32, 0, 0, 10);"
+        );
         rootNode.setPadding(new Insets(24));
         rootNode.setPrefWidth(560);
 
@@ -96,6 +104,12 @@ public class UserSettingsDialog extends Stage {
         rootNode.getChildren().addAll(headerBox, tabSelector, contentStack);
 
         Scene scene = new Scene(rootNode);
+        scene.setFill(Color.TRANSPARENT);
+        scene.setOnKeyPressed(e -> {
+            if (e.getCode() == KeyCode.ESCAPE) {
+                JavaFXTheme.closeModalWithAnimation(this, rootNode);
+            }
+        });
         java.net.URL cssUrl = getClass().getResource("theme.css");
         if (cssUrl != null) {
             scene.getStylesheets().add(cssUrl.toExternalForm());
@@ -127,6 +141,18 @@ public class UserSettingsDialog extends Stage {
         JavaFXTheme.applyIconButton(btnClose);
 
         header.getChildren().addAll(titleBox, btnClose);
+
+        // Kéo thả di chuyển hộp thoại trên màn hình
+        final double[] dragDelta = new double[2];
+        header.setOnMousePressed(e -> {
+            dragDelta[0] = getX() - e.getScreenX();
+            dragDelta[1] = getY() - e.getScreenY();
+        });
+        header.setOnMouseDragged(e -> {
+            setX(e.getScreenX() + dragDelta[0]);
+            setY(e.getScreenY() + dragDelta[1]);
+        });
+
         return header;
     }
 
@@ -493,22 +519,6 @@ public class UserSettingsDialog extends Stage {
 
         secFontSize.getChildren().addAll(fontHeader, sliderRow, previewBox);
 
-        // Section 3: Tùy chọn trải nghiệm (UX Features)
-        VBox secOptions = new VBox(8);
-        Label lblOptTitle = new Label("TÙY CHỌN TRẢI NGHIỆM");
-        lblOptTitle.setStyle("-fx-font-size: 11px; -fx-font-weight: bold; -fx-text-fill: -text-muted;");
-
-        chkTactile.setSelected(true);
-        chkTactile.setStyle("-fx-text-fill: -text-normal; -fx-font-size: 12.5px; -fx-cursor: hand;");
-
-        chkSoftBubbles.setSelected(true);
-        chkSoftBubbles.setStyle("-fx-text-fill: -text-normal; -fx-font-size: 12.5px; -fx-cursor: hand;");
-
-        chkE2eeBadge.setSelected(true);
-        chkE2eeBadge.setStyle("-fx-text-fill: -text-normal; -fx-font-size: 12.5px; -fx-cursor: hand;");
-
-        secOptions.getChildren().addAll(lblOptTitle, chkTactile, chkSoftBubbles, chkE2eeBadge);
-
         // Nút lưu & Status
         HBox actionRow = new HBox(12);
         actionRow.setAlignment(Pos.CENTER_RIGHT);
@@ -533,7 +543,7 @@ public class UserSettingsDialog extends Stage {
 
         actionRow.getChildren().addAll(lblAppearanceStatus, btnCancel, btnSaveAppearance);
 
-        tabAppearanceContent.getChildren().addAll(secTheme, secFontSize, secOptions, actionRow);
+        tabAppearanceContent.getChildren().addAll(secTheme, secFontSize, actionRow);
     }
 
     private void applyActiveThemeLive() {

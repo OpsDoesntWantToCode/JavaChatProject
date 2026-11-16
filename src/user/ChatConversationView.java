@@ -222,7 +222,6 @@ public class ChatConversationView extends BorderPane {
     private final VBox bottomBar = new VBox(6);
     private final HBox smartRepliesBar = new HBox(8);
     private final HBox inputCapsule = new HBox(6);
-    private final Button btnAttach = new Button("📎");
     private final Button btnAiToggle = new Button("✨");
     private final TextField txtMessageInput = new TextField();
     private final Button btnSend = new Button("➤");
@@ -356,7 +355,7 @@ public class ChatConversationView extends BorderPane {
             "-fx-border-radius: 6px; " +
             "-fx-background-radius: 6px; " +
             "-fx-text-fill: -text-normal; " +
-            "-fx-font-size: 12.5px; " +
+            "-fx-font-size: 13px; " +
             "-fx-padding: 4px 8px;"
         );
         HBox.setHgrow(txtSearchBox, Priority.ALWAYS);
@@ -713,35 +712,10 @@ public class ChatConversationView extends BorderPane {
         smartRepliesBar.setVisible(false);
         smartRepliesBar.setManaged(false);
 
-        // Thanh công cụ Action Toolbar chuẩn Zalo PC (Ảnh 3, 4)
-        HBox toolbarRow = new HBox(8);
-        toolbarRow.setAlignment(Pos.CENTER_LEFT);
-        toolbarRow.setPadding(new Insets(2, 6, 2, 6));
-
-        Button btnEmoji = createToolbarIconButton("😀", "Biểu cảm / Emoji", () -> {
-            txtMessageInput.appendText(" 😊");
-            txtMessageInput.requestFocus();
-        });
-        Button btnPhoto = createToolbarIconButton("🖼", "Gửi hình ảnh", () -> {
-            txtMessageInput.appendText(" [Ảnh: chụp_màn_hình_2026.png] ");
-            txtMessageInput.requestFocus();
-        });
-        Button btnFile = createToolbarIconButton("📎", "Đính kèm tệp tin tài liệu (Mục 11.a)", () -> {
-            txtMessageInput.appendText(" [Tài liệu: script_database.sql] ");
-            txtMessageInput.requestFocus();
-        });
-        Button btnReminder = createToolbarIconButton("⏰", "Nhắc hẹn / Giao việc", () -> {
-            txtMessageInput.appendText(" ⏰ Nhắc hẹn: Họp nhóm vào 19h tối nay! ");
-            txtMessageInput.requestFocus();
-        });
-        Button btnAiQuick = createToolbarIconButton("✨", "Trợ lý AI (Gợi ý câu trả lời - Mục 11.h)", this::toggleAiSmartReplies);
-
-        toolbarRow.getChildren().addAll(btnEmoji, btnPhoto, btnFile, btnReminder, btnAiQuick);
-
-        // Khung Capsule nhập tin nhắn (Chuẩn Telegram / Zalo, không lặp lại icon từ thanh công cụ)
+        // Khung Capsule nhập tin nhắn (Chuẩn Telegram / Discord, tích hợp Trợ lý AI Mục 11.h)
         inputCapsule.setAlignment(Pos.CENTER_LEFT);
         inputCapsule.setSpacing(8);
-        inputCapsule.setPadding(new Insets(4, 8, 4, 14));
+        inputCapsule.setPadding(new Insets(4, 8, 4, 12));
         inputCapsule.setStyle(
             "-fx-background-color: -bg-input; " +
             "-fx-border-color: -border-subtle; " +
@@ -749,6 +723,13 @@ public class ChatConversationView extends BorderPane {
             "-fx-background-radius: 20px; " +
             "-fx-border-width: 1px;"
         );
+
+        // Nút Trợ lý AI (✨): Kích hoạt Smart Reply Chips (Mục 11.h)
+        btnAiToggle.setText("✨");
+        btnAiToggle.setStyle("-fx-background-color: transparent; -fx-text-fill: #A78BFA; -fx-font-size: 15px; -fx-cursor: hand; -fx-padding: 0 2 0 2;");
+        Tooltip.install(btnAiToggle, new Tooltip("Trợ lý AI — Gợi ý tin nhắn (Mục 11.h)"));
+        btnAiToggle.setOnAction(e -> toggleAiSmartReplies());
+        JavaFXTheme.applyIconButton(btnAiToggle);
 
         // Ô soạn thảo mở rộng trong suốt
         txtMessageInput.setPromptText("Nhập tin nhắn vào hội thoại... (Gõ /ai để kích hoạt Trợ lý AI)");
@@ -815,42 +796,8 @@ public class ChatConversationView extends BorderPane {
             }
         });
 
-        inputCapsule.getChildren().addAll(txtMessageInput, btnSend);
-        bottomBar.getChildren().addAll(smartRepliesBar, toolbarRow, inputCapsule);
-    }
-
-    private Button createToolbarIconButton(String icon, String tooltip, Runnable action) {
-        Button btn = new Button(icon);
-        btn.setStyle(
-            "-fx-background-color: transparent; " +
-            "-fx-font-size: 13.5px; " +
-            "-fx-text-fill: -text-muted; " +
-            "-fx-padding: 3 6; " +
-            "-fx-cursor: hand; " +
-            "-fx-background-radius: 6px;"
-        );
-        btn.setOnMouseEntered(e -> btn.setStyle(
-            "-fx-background-color: #23262E; " +
-            "-fx-font-size: 13.5px; " +
-            "-fx-text-fill: -text-normal; " +
-            "-fx-padding: 3 6; " +
-            "-fx-cursor: hand; " +
-            "-fx-background-radius: 6px;"
-        ));
-        btn.setOnMouseExited(e -> btn.setStyle(
-            "-fx-background-color: transparent; " +
-            "-fx-font-size: 13.5px; " +
-            "-fx-text-fill: -text-muted; " +
-            "-fx-padding: 3 6; " +
-            "-fx-cursor: hand; " +
-            "-fx-background-radius: 6px;"
-        ));
-        Tooltip.install(btn, new Tooltip(tooltip));
-        btn.setOnAction(e -> {
-            if (action != null) action.run();
-        });
-        JavaFXTheme.applyIconButton(btn);
-        return btn;
+        inputCapsule.getChildren().addAll(btnAiToggle, txtMessageInput, btnSend);
+        bottomBar.getChildren().addAll(smartRepliesBar, inputCapsule);
     }
 
     private void updateSendButtonState(String text) {
@@ -1255,7 +1202,7 @@ public class ChatConversationView extends BorderPane {
 
                 bubble.setAlignment(Pos.BOTTOM_RIGHT);
                 bubble.setStyle(
-                    "-fx-background-color: #4E6BF2; " +
+                    "-fx-background-color: -accent-primary; " +
                     "-fx-background-radius: 14px 14px 3px 14px; " +
                     "-fx-padding: 6px 10px 5px 12px;"
                 );
@@ -1358,8 +1305,8 @@ public class ChatConversationView extends BorderPane {
 
                 bubble.setAlignment(Pos.TOP_LEFT);
                 bubble.setStyle(
-                    "-fx-background-color: #1E2128; " +
-                    "-fx-border-color: #2A2D35; " +
+                    "-fx-background-color: -bg-card; " +
+                    "-fx-border-color: -border-subtle; " +
                     "-fx-border-radius: 14px; " +
                     "-fx-background-radius: 14px 14px 14px 3px; " +
                     "-fx-padding: 6px 12px 5px 12px;"

@@ -231,27 +231,6 @@ public class GroupManagementDrawer extends VBox {
 
         profileCard.getChildren().addAll(avtBox, nameRowStack, lblCreatedDate);
 
-        // Hàng nút tác vụ nhanh (Quick Actions Row) kiểu Zalo / Telegram
-        HBox quickActionsRow = new HBox(8);
-        quickActionsRow.setAlignment(Pos.CENTER);
-        quickActionsRow.setPadding(new Insets(6, 0, 4, 0));
-
-        quickActionsRow.getChildren().addAll(
-            createQuickActionItem("🔔", "Tắt thông báo", () -> {
-                JavaFXTheme.showInfoAlert(primaryStage, "Thông báo", "Tắt thông báo", "Đã bật chế độ im lặng cho nhóm này.");
-            }),
-            createQuickActionItem("📌", "Ghim chat", () -> {
-                JavaFXTheme.showInfoAlert(primaryStage, "Ghim", "Ghim hội thoại", "Đã ghim cuộc trò chuyện này lên đầu.");
-            }),
-            createQuickActionItem("➕", "Thêm bạn", () -> {
-                if (onAddMember != null) onAddMember.run();
-            }),
-            createQuickActionItem("🔍", "Tìm tin", () -> {
-                // Tác vụ tìm kiếm
-            })
-        );
-        profileCard.getChildren().add(quickActionsRow);
-
         // 3. Phân đoạn Thành viên & Nút Thêm Thành viên (Mục 12.c, 12.d, 12.e)
         VBox membersSection = new VBox(8);
         HBox membersHeaderRow = new HBox(8);
@@ -296,8 +275,6 @@ public class GroupManagementDrawer extends VBox {
 
         dangerSection.getChildren().addAll(rowClear, rowLeave);
 
-        VBox mediaSection = createMediaSection();
-
         content.getChildren().addAll(
             topRow,
             new Separator(),
@@ -305,116 +282,11 @@ public class GroupManagementDrawer extends VBox {
             new Separator(),
             membersSection,
             new Separator(),
-            mediaSection,
-            new Separator(),
             dangerSection
         );
 
         scrollPane.setContent(content);
         getChildren().setAll(scrollPane);
-    }
-
-    private VBox createQuickActionItem(String iconText, String labelText, Runnable onClick) {
-        VBox box = new VBox(4);
-        box.setAlignment(Pos.CENTER);
-        box.setPrefWidth(58);
-
-        Button btn = new Button(iconText);
-        btn.setStyle(
-            "-fx-background-color: #22252E; " +
-            "-fx-border-color: #2F333E; " +
-            "-fx-border-radius: 18px; " +
-            "-fx-background-radius: 18px; " +
-            "-fx-text-fill: -text-normal; " +
-            "-fx-font-size: 13px; " +
-            "-fx-pref-width: 36px; -fx-pref-height: 36px; " +
-            "-fx-min-width: 36px; -fx-min-height: 36px; " +
-            "-fx-padding: 0; -fx-cursor: hand;"
-        );
-        btn.setOnAction(e -> {
-            if (onClick != null) onClick.run();
-        });
-        btn.setOnMouseEntered(e -> btn.setStyle(
-            "-fx-background-color: #2E3342; " +
-            "-fx-border-color: #4E6BF2; " +
-            "-fx-border-radius: 18px; " +
-            "-fx-background-radius: 18px; " +
-            "-fx-text-fill: #FFFFFF; " +
-            "-fx-font-size: 13px; " +
-            "-fx-pref-width: 36px; -fx-pref-height: 36px; " +
-            "-fx-min-width: 36px; -fx-min-height: 36px; " +
-            "-fx-padding: 0; -fx-cursor: hand;"
-        ));
-        btn.setOnMouseExited(e -> btn.setStyle(
-            "-fx-background-color: #22252E; " +
-            "-fx-border-color: #2F333E; " +
-            "-fx-border-radius: 18px; " +
-            "-fx-background-radius: 18px; " +
-            "-fx-text-fill: -text-normal; " +
-            "-fx-font-size: 13px; " +
-            "-fx-pref-width: 36px; -fx-pref-height: 36px; " +
-            "-fx-min-width: 36px; -fx-min-height: 36px; " +
-            "-fx-padding: 0; -fx-cursor: hand;"
-        ));
-        JavaFXTheme.applyIconButton(btn);
-
-        Label lbl = new Label(labelText);
-        lbl.setStyle("-fx-font-size: 10px; -fx-text-fill: -text-muted;");
-        box.getChildren().addAll(btn, lbl);
-        return box;
-    }
-
-    private VBox createMediaSection() {
-        VBox sec = new VBox(8);
-        Label lblHeader = new Label("MEDIA & TÀI LIỆU CHIA SẺ");
-        lblHeader.setStyle("-fx-font-size: 11px; -fx-font-weight: bold; -fx-text-fill: -text-muted;");
-
-        VBox filesBox = createMediaCategoryRow("📁", "Tài liệu & Tệp tin", "0 tệp tin", () -> {
-            JavaFXTheme.showInfoAlert(primaryStage, "Tài liệu", "Quản lý tệp tin", "Chưa có tài liệu nào được chia sẻ trong hội thoại này.");
-        });
-
-        VBox imagesBox = createMediaCategoryRow("🖼", "Ảnh & Video", "0 hình ảnh", () -> {
-            JavaFXTheme.showInfoAlert(primaryStage, "Hình ảnh", "Kho ảnh & Video", "Chưa có hình ảnh nào được chia sẻ trong hội thoại này.");
-        });
-
-        VBox linksBox = createMediaCategoryRow("🔗", "Liên kết chia sẻ", "0 liên kết", () -> {
-            JavaFXTheme.showInfoAlert(primaryStage, "Liên kết", "Liên kết chia sẻ", "Chưa có liên kết web nào trong hội thoại này.");
-        });
-
-        sec.getChildren().addAll(lblHeader, filesBox, imagesBox, linksBox);
-        return sec;
-    }
-
-    private VBox createMediaCategoryRow(String icon, String title, String countText, Runnable onClick) {
-        VBox container = new VBox(2);
-        HBox row = new HBox(8);
-        row.setAlignment(Pos.CENTER_LEFT);
-        row.setPadding(new Insets(7, 10, 7, 10));
-        row.setStyle("-fx-background-color: #1A1C23; -fx-border-color: #262932; -fx-border-radius: 8px; -fx-background-radius: 8px; -fx-cursor: hand;");
-
-        Label lblIcon = new Label(icon);
-        lblIcon.setStyle("-fx-font-size: 14px;");
-
-        VBox textBox = new VBox(1);
-        Label lblTitle = new Label(title);
-        lblTitle.setStyle("-fx-font-size: 12.5px; -fx-font-weight: bold; -fx-text-fill: -text-normal;");
-        Label lblCount = new Label(countText);
-        lblCount.setStyle("-fx-font-size: 11px; -fx-text-fill: -text-muted;");
-        textBox.getChildren().addAll(lblTitle, lblCount);
-        HBox.setHgrow(textBox, Priority.ALWAYS);
-
-        Label lblArrow = new Label("›");
-        lblArrow.setStyle("-fx-font-size: 14px; -fx-text-fill: -text-muted;");
-
-        row.getChildren().addAll(lblIcon, textBox, lblArrow);
-        row.setOnMouseClicked(e -> {
-            if (onClick != null) onClick.run();
-        });
-        row.setOnMouseEntered(e -> row.setStyle("-fx-background-color: #22252E; -fx-border-color: #363A45; -fx-border-radius: 8px; -fx-background-radius: 8px; -fx-cursor: hand;"));
-        row.setOnMouseExited(e -> row.setStyle("-fx-background-color: #1A1C23; -fx-border-color: #262932; -fx-border-radius: 8px; -fx-background-radius: 8px; -fx-cursor: hand;"));
-
-        container.getChildren().add(row);
-        return container;
     }
 
     private HBox createDangerListRow(String icon, String title, Runnable action) {

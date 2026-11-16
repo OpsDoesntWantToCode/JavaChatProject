@@ -9,11 +9,13 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.input.KeyCode;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import javafx.stage.StageStyle;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -77,12 +79,21 @@ public class GroupCreateDialog {
     public void show() {
         Stage dialog = new Stage();
         dialog.initModality(Modality.APPLICATION_MODAL);
+        dialog.initStyle(StageStyle.TRANSPARENT);
         dialog.initOwner(parentStage);
         dialog.setTitle("Tạo nhóm trò chuyện mới");
 
         VBox root = new VBox(16);
         root.setPadding(new Insets(24));
         root.getStyleClass().add("settings-dialog-card");
+        root.setStyle(
+            "-fx-background-color: #1A1C23; " +
+            "-fx-border-color: #2A2D35; " +
+            "-fx-border-radius: 14px; " +
+            "-fx-background-radius: 14px; " +
+            "-fx-border-width: 1px; " +
+            "-fx-effect: dropshadow(three-pass-box, rgba(0, 0, 0, 0.65), 32, 0, 0, 10);"
+        );
 
         // 1. Tiêu đề hộp thoại
         HBox headerRow = new HBox(8);
@@ -100,6 +111,17 @@ public class GroupCreateDialog {
         JavaFXTheme.applyIconButton(btnClose);
 
         headerRow.getChildren().addAll(lblHeader, sp, btnClose);
+
+        // Kéo thả di chuyển hộp thoại trên màn hình
+        final double[] dragDelta = new double[2];
+        headerRow.setOnMousePressed(e -> {
+            dragDelta[0] = dialog.getX() - e.getScreenX();
+            dragDelta[1] = dialog.getY() - e.getScreenY();
+        });
+        headerRow.setOnMouseDragged(e -> {
+            dialog.setX(e.getScreenX() + dragDelta[0]);
+            dialog.setY(e.getScreenY() + dragDelta[1]);
+        });
 
         // 2. Ô nhập Tên nhóm (cao 44px, bo góc 9px)
         VBox nameGroup = new VBox(6);
@@ -244,6 +266,12 @@ public class GroupCreateDialog {
         root.getChildren().addAll(headerRow, nameGroup, e2eeBox, friendsGroup, buttonBar);
 
         Scene scene = new Scene(root, 460, 520);
+        scene.setFill(Color.TRANSPARENT);
+        scene.setOnKeyPressed(e -> {
+            if (e.getCode() == KeyCode.ESCAPE) {
+                JavaFXTheme.closeModalWithAnimation(dialog, root);
+            }
+        });
         java.net.URL cssUrl = getClass().getResource("theme.css");
         if (cssUrl != null) {
             scene.getStylesheets().add(cssUrl.toExternalForm());

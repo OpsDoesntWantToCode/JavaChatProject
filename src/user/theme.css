@@ -32,6 +32,34 @@
     -border-subtle: #2A2D35;
 }
 
+.theme-midnight {
+    -bg-canvas: #090E17;
+    -bg-card: #121A29;
+    -bg-input: #0B111D;
+    -bg-nav-rail: #080D16;
+    -accent-primary: #38BDF8;
+    -accent-hover: #0EA5E9;
+    -accent-active: #0284C7;
+    -border-subtle: #1E2D44;
+    -text-normal: #F1F5F9;
+    -text-muted: #94A3B8;
+    -text-link: #38BDF8;
+}
+
+.theme-emerald {
+    -bg-canvas: #07120D;
+    -bg-card: #0F231B;
+    -bg-input: #091712;
+    -bg-nav-rail: #06110D;
+    -accent-primary: #10B981;
+    -accent-hover: #059669;
+    -accent-active: #047857;
+    -border-subtle: #1B3D30;
+    -text-normal: #ECFDF5;
+    -text-muted: #86EFAC;
+    -text-link: #10B981;
+}
+
 /* Áp dụng khử răng cưa Subpixel LCD ClearType trực tiếp lên các node văn bản */
 Text, .text {
     -fx-font-smoothing-type: lcd;

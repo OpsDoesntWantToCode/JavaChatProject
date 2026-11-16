@@ -23,6 +23,7 @@ import javafx.scene.shape.Circle;
 import javafx.scene.shape.SVGPath;
 import javafx.stage.Popup;
 import javafx.stage.Stage;
+import javafx.stage.StageStyle;
 import javafx.stage.Window;
 import javafx.util.Duration;
 
@@ -469,6 +470,9 @@ public final class JavaFXTheme {
      */
     public static void applyDialogTheme(Dialog<?> dialog) {
         if (dialog == null) return;
+        try {
+            dialog.initStyle(StageStyle.TRANSPARENT);
+        } catch (Exception ignored) {}
         java.net.URL cssUrl = JavaFXTheme.class.getResource("theme.css");
         if (cssUrl != null) {
             DialogPane pane = dialog.getDialogPane();
@@ -479,6 +483,21 @@ public final class JavaFXTheme {
         dialog.setGraphic(null);
         dialog.setOnShowing(e -> {
             DialogPane pane = dialog.getDialogPane();
+            if (pane.getScene() != null) {
+                pane.getScene().setFill(Color.TRANSPARENT);
+                Stage stg = (Stage) pane.getScene().getWindow();
+                if (stg != null) {
+                    final double[] dragDelta = new double[2];
+                    pane.setOnMousePressed(me -> {
+                        dragDelta[0] = stg.getX() - me.getScreenX();
+                        dragDelta[1] = stg.getY() - me.getScreenY();
+                    });
+                    pane.setOnMouseDragged(me -> {
+                        stg.setX(me.getScreenX() + dragDelta[0]);
+                        stg.setY(me.getScreenY() + dragDelta[1]);
+                    });
+                }
+            }
             applyModalEntrance(pane);
         });
     }
@@ -728,6 +747,13 @@ public final class JavaFXTheme {
         }
 
         String fontRule = fontSize > 0 ? " -fx-font-size: " + String.format(java.util.Locale.US, "%.1f", fontSize) + "px;" : "";
+        scene.getRoot().getStyleClass().removeAll("theme-midnight", "theme-emerald");
+        if (themeIndex == 1) {
+            scene.getRoot().getStyleClass().add("theme-midnight");
+        } else if (themeIndex == 2) {
+            scene.getRoot().getStyleClass().add("theme-emerald");
+        }
         scene.getRoot().setStyle(themeVariables + fontRule);
+        scene.getRoot().applyCss();
     }
 }

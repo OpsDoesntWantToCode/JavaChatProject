@@ -94,6 +94,48 @@ public class ChatMockRepository {
     private static void initMockData() {
         CONVERSATIONS.clear();
 
+        // 0. Truyền File (Zalo Cloud Style — Lưu trữ cá nhân)
+        ConversationMeta c0 = new ConversationMeta(
+            "saved_messages",
+            "Truyền File",
+            "Cloud cá nhân • Lưu trữ & Đồng bộ đa thiết bị",
+            "📁 [Tệp] BaoCao.pdf (2.4 MB)",
+            "11:30",
+            false,
+            0,
+            true,
+            "#0088FF",
+            "📁",
+            false
+        );
+        c0.addMessage(new ChatConversationView.MessageItem(
+            "msg_cloud_1",
+            "Hệ thống",
+            "08:00",
+            "Chào mừng bạn đến với Cloud của tôi! Nơi bạn có thể lưu trữ tin nhắn, ghi chú và tệp tin để truy cập nhanh trên máy tính.",
+            false,
+            false
+        ));
+        c0.addMessage(new ChatConversationView.MessageItem(
+            "msg_cloud_2",
+            "Trần Nguyễn Tuấn Minh",
+            "09:15",
+            "📁 [Tài liệu]: BaoCao.pdf (2.4 MB) — Bản nháp báo cáo mốc 20% phân hệ User UI.",
+            true,
+            false,
+            ChatConversationView.MessageDeliveryStatus.SEEN
+        ));
+        c0.addMessage(new ChatConversationView.MessageItem(
+            "msg_cloud_3",
+            "Trần Nguyễn Tuấn Minh",
+            "11:30",
+            "Ghi chú: Cần kiểm tra lại liên kết CSDL PostgreSQL 13 bảng trước ngày 22/11/2026.",
+            true,
+            false,
+            ChatConversationView.MessageDeliveryStatus.DELIVERED
+        ));
+        CONVERSATIONS.put(c0.getId(), c0);
+
         // 1. Nhóm Đồ Án Java 2026 (Group, E2EE)
         ConversationMeta c1 = new ConversationMeta(
             "group_project",

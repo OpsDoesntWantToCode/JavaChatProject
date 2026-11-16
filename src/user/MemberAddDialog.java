@@ -6,9 +6,12 @@ import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
+import javafx.scene.input.KeyCode;
 import javafx.scene.layout.*;
+import javafx.scene.paint.Color;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import javafx.stage.StageStyle;
 
 import java.util.Optional;
 import java.util.function.Consumer;
@@ -41,6 +44,7 @@ public class MemberAddDialog {
     public void showAndWait() {
         Stage dialog = new Stage();
         dialog.initModality(Modality.APPLICATION_MODAL);
+        dialog.initStyle(StageStyle.TRANSPARENT);
         if (parentStage != null) {
             dialog.initOwner(parentStage);
         }
@@ -76,6 +80,17 @@ public class MemberAddDialog {
         JavaFXTheme.applyIconButton(btnClose);
 
         headerRow.getChildren().addAll(lblHeader, sp, btnClose);
+
+        // Kéo thả di chuyển hộp thoại trên màn hình
+        final double[] dragDelta = new double[2];
+        headerRow.setOnMousePressed(e -> {
+            dragDelta[0] = dialog.getX() - e.getScreenX();
+            dragDelta[1] = dialog.getY() - e.getScreenY();
+        });
+        headerRow.setOnMouseDragged(e -> {
+            dialog.setX(e.getScreenX() + dragDelta[0]);
+            dialog.setY(e.getScreenY() + dragDelta[1]);
+        });
 
         // 2. Ô nhập Username hoặc họ tên
         VBox inputGroup = new VBox(8);
@@ -145,6 +160,12 @@ public class MemberAddDialog {
         root.getChildren().addAll(headerRow, inputGroup, buttonRow);
 
         Scene scene = new Scene(root);
+        scene.setFill(Color.TRANSPARENT);
+        scene.setOnKeyPressed(e -> {
+            if (e.getCode() == KeyCode.ESCAPE) {
+                JavaFXTheme.closeModalWithAnimation(dialog, root);
+            }
+        });
         java.net.URL cssUrl = getClass().getResource("theme.css");
         if (cssUrl != null) {
             scene.getStylesheets().add(cssUrl.toExternalForm());

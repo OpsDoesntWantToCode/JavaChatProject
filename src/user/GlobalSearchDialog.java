@@ -14,6 +14,7 @@ import javafx.scene.text.Text;
 import javafx.scene.text.TextFlow;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import javafx.stage.StageStyle;
 
 import java.util.List;
 import java.util.function.BiConsumer;
@@ -51,6 +52,7 @@ public class GlobalSearchDialog {
         this.dialogStage = new Stage();
         this.dialogStage.initOwner(ownerStage);
         this.dialogStage.initModality(Modality.WINDOW_MODAL);
+        this.dialogStage.initStyle(StageStyle.TRANSPARENT);
         this.dialogStage.setTitle("Tìm kiếm lịch sử chat với tất cả mọi người (Mục 11.g)");
 
         buildUI(initialQuery);
@@ -65,7 +67,8 @@ public class GlobalSearchDialog {
             "-fx-border-color: #2A2D35; " +
             "-fx-border-radius: 12px; " +
             "-fx-background-radius: 12px; " +
-            "-fx-border-width: 1px;"
+            "-fx-border-width: 1px; " +
+            "-fx-effect: dropshadow(three-pass-box, rgba(0, 0, 0, 0.65), 32, 0, 0, 10);"
         );
         root.setPrefWidth(680);
         root.setPrefHeight(520);
@@ -86,6 +89,17 @@ public class GlobalSearchDialog {
         JavaFXTheme.applyIconButton(btnClose);
 
         headerBox.getChildren().addAll(lblTitle, spacerH, btnClose);
+
+        // Kéo thả di chuyển hộp thoại trên màn hình
+        final double[] dragDelta = new double[2];
+        headerBox.setOnMousePressed(e -> {
+            dragDelta[0] = dialogStage.getX() - e.getScreenX();
+            dragDelta[1] = dialogStage.getY() - e.getScreenY();
+        });
+        headerBox.setOnMouseDragged(e -> {
+            dialogStage.setX(e.getScreenX() + dragDelta[0]);
+            dialogStage.setY(e.getScreenY() + dragDelta[1]);
+        });
 
         // 2. Search Input Row
         HBox inputRow = new HBox(8);
@@ -155,6 +169,7 @@ public class GlobalSearchDialog {
         root.getChildren().addAll(headerBox, inputRow, filterRow, scrollPane, footerBox);
 
         Scene scene = new Scene(root);
+        scene.setFill(Color.TRANSPARENT);
         scene.getStylesheets().add(getClass().getResource("theme.css").toExternalForm());
         scene.setOnKeyPressed(e -> {
             if (e.getCode() == KeyCode.ESCAPE) {
@@ -450,10 +465,12 @@ public class GlobalSearchDialog {
     }
 
     public void show() {
+        dialogStage.setOnShown(e -> JavaFXTheme.applyModalEntrance(dialogStage.getScene().getRoot()));
         dialogStage.show();
     }
 
     public void showAndWait() {
+        dialogStage.setOnShown(e -> JavaFXTheme.applyModalEntrance(dialogStage.getScene().getRoot()));
         dialogStage.showAndWait();
     }
 }
