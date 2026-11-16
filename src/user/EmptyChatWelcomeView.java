@@ -89,7 +89,7 @@ public class EmptyChatWelcomeView extends StackPane {
         // Slide 2: Làm việc & Trò chuyện Nhóm hiệu quả
         slides.add(new CarouselSlide(
             "Kết nối & Trò chuyện Nhóm Hiệu quả",
-            "Tạo nhóm chat đồ án, phân quyền Quản trị viên, trao đổi thông tin tức thời và chia sẻ tệp tin tài liệu an toàn tuyệt đối.",
+            "Tạo nhóm chat đồ án, phân quyền Quản trị viên, trao đổi thông tin tức thời và bảo mật thông tin an toàn tuyệt đối.",
             "Giải quyết công việc nhóm nhanh hơn, tiện lợi hơn",
             createGroupIllustration()
         ));
