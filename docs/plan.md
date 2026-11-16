@@ -47,6 +47,60 @@
 | **Chụp ảnh Git commit 2 thành viên** | Cả hai | Cả hai | `git/commits_Hai.png`, `git/commits_Minh.png` | **Hoàn thành** |
 | **Đóng gói file nộp bài ZIP** | Minh (Thành viên B) | Hải review | File zip nộp môn học | **Chờ nộp** |
 
+### 2.1. Tỷ lệ đóng góp theo từng đầu việc
+
+Các tỷ lệ dưới đây phân bổ **100% khối lượng công việc của mốc 20%**, cụ thể hóa tổng đóng góp **Hải 50% — Minh 50%**. Ví dụ, Hải 5% ở A2 nghĩa là A2 chiếm 5% toàn bộ phần việc của nhóm trong mốc này; không phải Hải chỉ làm 5% của A2. Đây là trọng số phân công phục vụ báo cáo, không phải số giờ đo được, tỷ lệ hoàn thành hoặc tỷ lệ điểm môn học. Không cộng thêm các hạng mục trong ma trận tổng quan phía trên vì chúng đã được phân rã trong bảng này.
+
+| Đầu việc theo mục 3 | Hải | Minh | Tổng trọng số |
+|---|---:|---:|---:|
+| Khởi tạo repository, cấu trúc thư mục và Maven | 0% | 2% | 2% |
+| Thống nhất công nghệ và quy tắc AI | 1% | 1% | 2% |
+| Thiết kế CSDL 13 bảng | 7% | 0% | 7% |
+| Viết và kiểm chứng script tạo CSDL | 6% | 0% | 6% |
+| Tích hợp ERD và cẩm nang vào schema | 2% | 0% | 2% |
+| Dọn dẹp và chuẩn hóa kho lưu trữ | 1% | 0% | 1% |
+| A1 — Khung giao diện Admin | 2% | 0% | 2% |
+| A2 — Quản lý danh sách người dùng | 5% | 0% | 5% |
+| A3 — Hồ sơ, mật khẩu, lịch sử và bạn bè cá nhân | 3% | 0% | 3% |
+| A4 — Lịch sử đăng nhập toàn hệ thống | 2% | 0% | 2% |
+| A5 — Quản lý và xem chi tiết nhóm | 3% | 0% | 3% |
+| A6 — Báo cáo spam và khóa tài khoản mẫu | 3% | 0% | 3% |
+| A7 — Danh sách người đăng ký mới | 2% | 0% | 2% |
+| A8 — Thống kê bạn bè và FOF | 3% | 0% | 3% |
+| A9 — Thống kê người dùng hoạt động | 2% | 0% | 2% |
+| A10 — Biểu đồ đăng ký theo tháng | 1% | 0% | 1% |
+| A11 — Biểu đồ người hoạt động theo tháng | 1% | 0% | 1% |
+| U1 — Đăng nhập và đăng ký | 0% | 4% | 4% |
+| U2 — Quên mật khẩu, hồ sơ và đổi mật khẩu | 0% | 3% | 3% |
+| U3 — Khung không gian làm việc User | 0% | 4% | 4% |
+| U4 — Danh sách và quản lý bạn bè | 0% | 3% | 3% |
+| U5 — Lời mời kết bạn | 0% | 2% | 2% |
+| U6 — Danh sách bạn bè online | 0% | 1% | 1% |
+| U7 — Tìm kiếm người dùng | 0% | 2% | 2% |
+| U8 — Hội thoại cá nhân và ngăn thông tin | 0% | 5% | 5% |
+| U9 — Tìm kiếm tin nhắn trong hội thoại/toàn cục | 0% | 3% | 3% |
+| U10 — Chọn và xóa tin nhắn mẫu | 0% | 2% | 2% |
+| U11 — Gợi ý tin nhắn mô phỏng | 0% | 2% | 2% |
+| U12 — Tạo nhóm và quản lý thành viên/quyền nhóm | 0% | 5% | 5% |
+| U13 — Gửi báo cáo spam mô phỏng | 0% | 1% | 1% |
+| C1 — Nội dung và khung báo cáo: Hải viết CSDL/Admin, Minh viết User và tổng hợp | 2% | 7% | 9% |
+| C2 — Xử lý xung đột, tích hợp và kiểm tra build chung | 2% | 1% | 3% |
+| C3 — Minh chứng Git và bộ ảnh báo cáo của hai thành viên | 1% | 1% | 2% |
+| C4 — Xuất PDF, kiểm tra cấu trúc và đóng gói ZIP | 1% | 1% | 2% |
+| **Tổng** | **50%** | **50%** | **100%** |
+
+Trọng số A1–A11/U1–U13 bao gồm CSS, dữ liệu mẫu, tương tác mô phỏng và kiểm tra riêng của từng màn hình; C2 chỉ tính phần tích hợp chung. C1 tính việc viết và ghép nội dung, C3 tính chuẩn bị minh chứng, C4 tính xuất/kiểm tra sản phẩm nộp, tránh tính lặp cùng một công việc. Các đầu việc báo cáo hoặc đóng gói chưa hoàn tất vẫn giữ trọng số được giao; trạng thái thực hiện tiếp tục theo checklist mục 3, không mặc nhiên coi đã hoàn thành 100%.
+
+### 2.2. Tổng hợp tỷ lệ theo nhóm công việc
+
+| Nhóm công việc | Hải | Minh | Tổng |
+|---|---:|---:|---:|
+| Khởi tạo, công nghệ và CSDL | 17% | 3% | 20% |
+| Admin A1–A11 | 27% | 0% | 27% |
+| User U1–U13 | 0% | 37% | 37% |
+| Báo cáo, tích hợp và bộ nộp C1–C4 | 6% | 10% | 16% |
+| **Tổng** | **50%** | **50%** | **100%** |
+
 ---
 
 ## 3. Danh mục Công việc Chi tiết (Checklist Từng Task)
