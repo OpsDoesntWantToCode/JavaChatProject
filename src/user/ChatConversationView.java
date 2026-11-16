@@ -14,8 +14,10 @@ import javafx.animation.Timeline;
 import javafx.application.Platform;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.DoubleProperty;
+import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleDoubleProperty;
+import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
@@ -90,8 +92,34 @@ public class ChatConversationView extends BorderPane {
     }
 
     // =========================================================================
-    // DỮ LIỆU TIN NHẮN (DATA MODEL)
+    // DỮ LIỆU TIN NHẮN (DATA MODEL — CHUẨN FACEBOOK MESSENGER)
     // =========================================================================
+    public enum MessageDeliveryStatus {
+        SENDING,   // Đang gửi: vòng tròn nét đứt mờ
+        SENT,      // Đã gửi: vòng tròn viền mảnh có tick
+        DELIVERED, // Đã nhận: vòng tròn đặc có tick trắng
+        SEEN       // Đã xem: hiển thị avatar mini của người đã đọc
+    }
+
+    public static class ReaderInfo {
+        private final String name;
+        private final String initials;
+        private final String avatarColor;
+        private final String seenTime;
+
+        public ReaderInfo(String name, String initials, String avatarColor, String seenTime) {
+            this.name = name;
+            this.initials = initials;
+            this.avatarColor = avatarColor;
+            this.seenTime = seenTime;
+        }
+
+        public String getName() { return name; }
+        public String getInitials() { return initials; }
+        public String getAvatarColor() { return avatarColor; }
+        public String getSeenTime() { return seenTime; }
+    }
+
     public static class MessageItem {
         private final String id;
         private final String senderName;
@@ -100,6 +128,10 @@ public class ChatConversationView extends BorderPane {
         private final boolean outgoing;
         private final boolean ai;
 
+        // Trạng thái giao nhận & người đã xem kiểu Facebook Messenger
+        private final ObjectProperty<MessageDeliveryStatus> deliveryStatus = new SimpleObjectProperty<>(MessageDeliveryStatus.DELIVERED);
+        private final ObservableList<ReaderInfo> readers = FXCollections.observableArrayList();
+
         // Trạng thái đa chọn xóa nhiều tin (Task U10)
         private final BooleanProperty selected = new SimpleBooleanProperty(false);
 
@@ -107,12 +139,17 @@ public class ChatConversationView extends BorderPane {
         private final DoubleProperty highlightIntensity = new SimpleDoubleProperty(0.0);
 
         public MessageItem(String id, String senderName, String timestamp, String content, boolean outgoing, boolean ai) {
+            this(id, senderName, timestamp, content, outgoing, ai, MessageDeliveryStatus.DELIVERED);
+        }
+
+        public MessageItem(String id, String senderName, String timestamp, String content, boolean outgoing, boolean ai, MessageDeliveryStatus status) {
             this.id = id;
             this.senderName = senderName;
             this.timestamp = timestamp;
             this.content = content;
             this.outgoing = outgoing;
             this.ai = ai;
+            this.deliveryStatus.set(status);
         }
 
         public String getId() { return id; }
@@ -121,6 +158,12 @@ public class ChatConversationView extends BorderPane {
         public String getContent() { return content; }
         public boolean isOutgoing() { return outgoing; }
         public boolean isAi() { return ai; }
+
+        public MessageDeliveryStatus getDeliveryStatus() { return deliveryStatus.get(); }
+        public void setDeliveryStatus(MessageDeliveryStatus status) { this.deliveryStatus.set(status); }
+        public ObjectProperty<MessageDeliveryStatus> deliveryStatusProperty() { return deliveryStatus; }
+
+        public ObservableList<ReaderInfo> getReaders() { return readers; }
 
         public boolean isSelected() { return selected.get(); }
         public void setSelected(boolean value) { selected.set(value); }
@@ -222,9 +265,16 @@ public class ChatConversationView extends BorderPane {
         chatHeader.getStyleClass().add("chat-header");
 
         // Avatar + Status Dot
+        headerAvatarStack.setPrefSize(40, 40);
+        headerAvatarStack.setMinSize(40, 40);
+        headerAvatarStack.setMaxSize(40, 40);
+        headerAvatarStack.setAlignment(Pos.CENTER);
         headerAvatarCircle.setFill(Color.web("#262932"));
         lblHeaderAvatarText.setStyle("-fx-font-size: 14px; -fx-text-fill: -text-normal;");
+        lblHeaderAvatarText.setAlignment(Pos.CENTER);
         headerStatusDot.setFill(Color.web("#23A55A"));
+        StackPane.setAlignment(headerAvatarCircle, Pos.CENTER);
+        StackPane.setAlignment(lblHeaderAvatarText, Pos.CENTER);
         StackPane.setAlignment(headerStatusDot, Pos.BOTTOM_RIGHT);
         headerAvatarStack.getChildren().addAll(headerAvatarCircle, lblHeaderAvatarText, headerStatusDot);
 
@@ -299,8 +349,16 @@ public class ChatConversationView extends BorderPane {
         Label lblIcon = new Label("🔍");
         lblIcon.setStyle("-fx-font-size: 13px; -fx-text-fill: -text-muted;");
 
-        txtSearchBox.setPromptText("Tìm kiếm tin nhắn trong hội thoại này... (Nhấn Enter để chuyển kết quả)");
-        txtSearchBox.getStyleClass().add("text-field");
+        txtSearchBox.setPromptText("Tìm tin nhắn trong cuộc trò chuyện này...");
+        txtSearchBox.setStyle(
+            "-fx-background-color: -bg-input; " +
+            "-fx-border-color: -border-subtle; " +
+            "-fx-border-radius: 6px; " +
+            "-fx-background-radius: 6px; " +
+            "-fx-text-fill: -text-normal; " +
+            "-fx-font-size: 12.5px; " +
+            "-fx-padding: 4px 8px;"
+        );
         HBox.setHgrow(txtSearchBox, Priority.ALWAYS);
 
         txtSearchBox.textProperty().addListener((obs, oldV, newV) -> performSearch(newV));
@@ -311,7 +369,7 @@ public class ChatConversationView extends BorderPane {
             }
         });
 
-        lblSearchCount.setStyle("-fx-font-size: 12px; -fx-text-fill: -text-muted; -fx-padding: 0 4px;");
+        lblSearchCount.setStyle("-fx-font-size: 11.5px; -fx-text-fill: -text-muted; -fx-padding: 0 4px;");
 
         btnPrevMatch.getStyleClass().add("btn-icon-subtle");
         Tooltip.install(btnPrevMatch, new Tooltip("Kết quả trước đó (Shift+Enter)"));
@@ -321,21 +379,11 @@ public class ChatConversationView extends BorderPane {
         Tooltip.install(btnNextMatch, new Tooltip("Kết quả tiếp theo (Enter)"));
         btnNextMatch.setOnAction(e -> navigateNextMatch());
 
-        Button btnGlobalSearch = new Button("🌐 Tìm tất cả (11.g)");
-        btnGlobalSearch.getStyleClass().add("btn-icon-subtle");
-        btnGlobalSearch.setStyle("-fx-border-color: #2A2D35; -fx-border-radius: 6px; -fx-background-radius: 6px; -fx-font-size: 11.5px; -fx-padding: 3 8;");
-        Tooltip.install(btnGlobalSearch, new Tooltip("Tìm kiếm chuỗi này trong tất cả cuộc trò chuyện (Mục 11.g)"));
-        btnGlobalSearch.setOnAction(e -> {
-            if (onTriggerGlobalSearch != null) {
-                onTriggerGlobalSearch.accept(txtSearchBox.getText());
-            }
-        });
-
         btnCloseSearch.getStyleClass().add("btn-icon-subtle");
         Tooltip.install(btnCloseSearch, new Tooltip("Đóng tìm kiếm (Esc)"));
         btnCloseSearch.setOnAction(e -> closeSearchBar());
 
-        searchBar.getChildren().addAll(lblIcon, txtSearchBox, lblSearchCount, btnPrevMatch, btnNextMatch, btnGlobalSearch, btnCloseSearch);
+        searchBar.getChildren().addAll(lblIcon, txtSearchBox, lblSearchCount, btnPrevMatch, btnNextMatch, btnCloseSearch);
     }
 
     public void toggleSearchBar() {
@@ -429,6 +477,7 @@ public class ChatConversationView extends BorderPane {
     private void buildCenterChatArea() {
         // Banner E2EE Messenger/Telegram style: Dạng Pill nhỏ gọn căn giữa, không viền gắt toàn màn hình
         e2eeBannerContainer.setAlignment(Pos.CENTER);
+        e2eeBannerContainer.setMaxWidth(Double.MAX_VALUE);
         e2eeBannerContainer.setPadding(new Insets(8, 0, 4, 0));
         e2eeBannerContainer.setStyle("-fx-background-color: transparent;");
 
@@ -450,9 +499,10 @@ public class ChatConversationView extends BorderPane {
         e2eePill.getChildren().addAll(lblLockIcon, lblBanner);
         e2eeBannerContainer.getChildren().setAll(e2eePill);
 
-        // Date Separator Pill kiểu Telegram / Zalo (Ảnh 3, 6, 7)
+        // Date Separator Pill kiểu Telegram / Zalo (Căn chính giữa tuyệt đối, không lệch)
         HBox datePill = new HBox(8);
         datePill.setAlignment(Pos.CENTER);
+        datePill.setMaxWidth(Double.MAX_VALUE);
         datePill.setPadding(new Insets(2, 0, 4, 0));
         Label lblDate = new Label("Hôm nay, 12/11/2026");
         lblDate.setStyle(
@@ -480,6 +530,8 @@ public class ChatConversationView extends BorderPane {
 
         VBox centerListContainer = new VBox(4);
         centerListContainer.setStyle("-fx-background-color: transparent;");
+        centerListContainer.setAlignment(Pos.TOP_CENTER);
+        centerListContainer.setFillWidth(true);
         centerListContainer.getChildren().addAll(e2eeBannerContainer, datePill, messageListView);
         VBox.setVgrow(messageListView, Priority.ALWAYS);
 
@@ -500,37 +552,36 @@ public class ChatConversationView extends BorderPane {
     // =========================================================================
     private void buildFloatingActionBar() {
         floatingActionBar.setAlignment(Pos.CENTER);
-        floatingActionBar.setSpacing(12);
-        floatingActionBar.setPadding(new Insets(5, 16, 5, 16));
+        floatingActionBar.setSpacing(10);
+        floatingActionBar.setPadding(new Insets(4, 14, 4, 14));
         floatingActionBar.setStyle(
             "-fx-background-color: #1E2128; " +
             "-fx-border-color: #363A45; " +
-            "-fx-border-radius: 21px; " +
-            "-fx-background-radius: 21px; " +
+            "-fx-border-radius: 18px; " +
+            "-fx-background-radius: 18px; " +
             "-fx-border-width: 1px; " +
-            "-fx-effect: dropshadow(three-pass-box, rgba(0, 0, 0, 0.55), 16, 0, 0, 6);"
+            "-fx-effect: dropshadow(three-pass-box, rgba(0, 0, 0, 0.45), 12, 0, 0, 4);"
         );
 
-        // Khóa cứng chiều cao chuẩn Capsule Pill 42px (ngăn chặn StackPane kéo giãn toàn màn hình)
-        floatingActionBar.setMinHeight(42);
-        floatingActionBar.setPrefHeight(42);
-        floatingActionBar.setMaxHeight(42);
-
-        // Co giãn theo nội dung, không ép cứng chiều ngang
-        floatingActionBar.setMinWidth(Region.USE_PREF_SIZE);
-        floatingActionBar.setMaxWidth(Region.USE_PREF_SIZE);
+        // Khóa chiều cao chuẩn 36px gọn gàng, tự động tính bề ngang tránh tràn/cắt chữ
+        floatingActionBar.setMinHeight(36);
+        floatingActionBar.setPrefHeight(36);
+        floatingActionBar.setMaxHeight(36);
+        floatingActionBar.setMinWidth(Region.USE_COMPUTED_SIZE);
+        floatingActionBar.setPrefWidth(Region.USE_COMPUTED_SIZE);
+        floatingActionBar.setMaxWidth(Region.USE_COMPUTED_SIZE);
 
         floatingActionBar.setVisible(false);
         floatingActionBar.setManaged(false);
 
-        lblSelectedCount.setStyle("-fx-font-size: 13px; -fx-font-weight: bold; -fx-text-fill: -text-normal;");
-        lblSelectedCount.setMinWidth(Region.USE_PREF_SIZE);
+        lblSelectedCount.setStyle("-fx-font-size: 12px; -fx-font-weight: bold; -fx-text-fill: -text-normal;");
+        lblSelectedCount.setMinWidth(Region.USE_COMPUTED_SIZE);
 
         Separator divider = new Separator(javafx.geometry.Orientation.VERTICAL);
-        divider.setStyle("-fx-background-color: #363A45; -fx-pref-height: 18px;");
+        divider.setStyle("-fx-background-color: #363A45; -fx-pref-height: 16px;");
 
         btnDeleteSelected.setText("🗑 Xóa (0)");
-        btnDeleteSelected.setMinWidth(Region.USE_PREF_SIZE);
+        btnDeleteSelected.setMinWidth(Region.USE_COMPUTED_SIZE);
         btnDeleteSelected.setOnAction(e -> handleDeleteSelectedMessages());
         JavaFXTheme.applyTactileButton(btnDeleteSelected);
 
@@ -538,15 +589,15 @@ public class ChatConversationView extends BorderPane {
         btnCancelMulti.setStyle(
             "-fx-background-color: #262933; " +
             "-fx-border-color: #363A45; " +
-            "-fx-border-radius: 14px; " +
-            "-fx-background-radius: 14px; " +
+            "-fx-border-radius: 12px; " +
+            "-fx-background-radius: 12px; " +
             "-fx-border-width: 1px; " +
             "-fx-text-fill: #D0D2DC; " +
-            "-fx-font-size: 12px; " +
-            "-fx-padding: 4 12; " +
+            "-fx-font-size: 11.5px; " +
+            "-fx-padding: 3 10; " +
             "-fx-cursor: hand;"
         );
-        btnCancelMulti.setMinWidth(Region.USE_PREF_SIZE);
+        btnCancelMulti.setMinWidth(Region.USE_COMPUTED_SIZE);
         btnCancelMulti.setOnAction(e -> setMultiSelectMode(false));
         JavaFXTheme.applyTactileButton(btnCancelMulti);
 
@@ -687,30 +738,17 @@ public class ChatConversationView extends BorderPane {
 
         toolbarRow.getChildren().addAll(btnEmoji, btnPhoto, btnFile, btnReminder, btnAiQuick);
 
-        // Khung Capsule tích hợp toàn bộ các nút bên trong
+        // Khung Capsule nhập tin nhắn (Chuẩn Telegram / Zalo, không lặp lại icon từ thanh công cụ)
         inputCapsule.setAlignment(Pos.CENTER_LEFT);
-        inputCapsule.setSpacing(6);
-        inputCapsule.setPadding(new Insets(4, 6, 4, 10));
+        inputCapsule.setSpacing(8);
+        inputCapsule.setPadding(new Insets(4, 8, 4, 14));
         inputCapsule.setStyle(
-            "-fx-background-color: #0F1013; " +
-            "-fx-border-color: #2A2D35; " +
+            "-fx-background-color: -bg-input; " +
+            "-fx-border-color: -border-subtle; " +
             "-fx-border-radius: 20px; " +
             "-fx-background-radius: 20px; " +
             "-fx-border-width: 1px;"
         );
-
-        // Nút Đính kèm (📎)
-        btnAttach.getStyleClass().add("btn-icon-subtle");
-        btnAttach.setStyle("-fx-background-color: transparent; -fx-font-size: 14px; -fx-text-fill: -text-muted; -fx-padding: 4 6; -fx-cursor: hand;");
-        Tooltip.install(btnAttach, new Tooltip("Đính kèm tệp tin / hình ảnh"));
-        JavaFXTheme.applyIconButton(btnAttach);
-
-        // Nút AI Toggle (✨): Kích hoạt / Ẩn dải gợi ý thông minh
-        btnAiToggle.getStyleClass().add("btn-icon-subtle");
-        btnAiToggle.setStyle("-fx-background-color: transparent; -fx-font-size: 13px; -fx-text-fill: #A78BFA; -fx-padding: 4 6; -fx-cursor: hand;");
-        Tooltip.install(btnAiToggle, new Tooltip("Gợi ý AI & Lệnh phản hồi nhanh (/ai)"));
-        btnAiToggle.setOnAction(e -> toggleAiSmartReplies());
-        JavaFXTheme.applyIconButton(btnAiToggle);
 
         // Ô soạn thảo mở rộng trong suốt
         txtMessageInput.setPromptText("Nhập tin nhắn vào hội thoại... (Gõ /ai để kích hoạt Trợ lý AI)");
@@ -719,8 +757,8 @@ public class ChatConversationView extends BorderPane {
             "-fx-border-color: transparent; " +
             "-fx-text-fill: -text-normal; " +
             "-fx-prompt-text-fill: -text-muted; " +
-            "-fx-font-size: 13.5px; " +
-            "-fx-padding: 6px 8px;"
+            "-fx-font-size: 13px; " +
+            "-fx-padding: 6px 4px;"
         );
         HBox.setHgrow(txtMessageInput, Priority.ALWAYS);
         txtMessageInput.setOnAction(e -> handleSendMessage());
@@ -741,7 +779,7 @@ public class ChatConversationView extends BorderPane {
                 smartRepliesBar.setVisible(true);
                 smartRepliesBar.setManaged(true);
                 inputCapsule.setStyle(
-                    "-fx-background-color: #0F1013; " +
+                    "-fx-background-color: -bg-input; " +
                     "-fx-border-color: #8B5CF6; " +
                     "-fx-border-radius: 20px; " +
                     "-fx-background-radius: 20px; " +
@@ -754,8 +792,8 @@ public class ChatConversationView extends BorderPane {
                 }
                 boolean focused = txtMessageInput.isFocused();
                 inputCapsule.setStyle(
-                    "-fx-background-color: #0F1013; " +
-                    "-fx-border-color: " + (focused ? "#4E6BF2" : "#2A2D35") + "; " +
+                    "-fx-background-color: -bg-input; " +
+                    "-fx-border-color: " + (focused ? "-accent-primary" : "-border-subtle") + "; " +
                     "-fx-border-radius: 20px; " +
                     "-fx-background-radius: 20px; " +
                     "-fx-border-width: 1px;"
@@ -768,8 +806,8 @@ public class ChatConversationView extends BorderPane {
             boolean isAi = text != null && (text.trim().startsWith("/ai") || text.trim().startsWith("@ai"));
             if (!isAi) {
                 inputCapsule.setStyle(
-                    "-fx-background-color: #0F1013; " +
-                    "-fx-border-color: " + (focused ? "#4E6BF2" : "#2A2D35") + "; " +
+                    "-fx-background-color: -bg-input; " +
+                    "-fx-border-color: " + (focused ? "-accent-primary" : "-border-subtle") + "; " +
                     "-fx-border-radius: 20px; " +
                     "-fx-background-radius: 20px; " +
                     "-fx-border-width: 1px;"
@@ -777,7 +815,7 @@ public class ChatConversationView extends BorderPane {
             }
         });
 
-        inputCapsule.getChildren().addAll(btnAttach, btnAiToggle, txtMessageInput, btnSend);
+        inputCapsule.getChildren().addAll(txtMessageInput, btnSend);
         bottomBar.getChildren().addAll(smartRepliesBar, toolbarRow, inputCapsule);
     }
 
@@ -882,13 +920,38 @@ public class ChatConversationView extends BorderPane {
             now,
             msg,
             true,  // isOutgoing
-            false  // isAi
+            false, // isAi
+            MessageDeliveryStatus.SENT // Bắt đầu ở trạng thái ĐÃ GỬI (vòng tròn viền mảnh có tick)
         );
         userMsg.selectedProperty().addListener((o, ov, nv) -> updateSelectedMessagesCount());
         messagesList.add(userMsg);
         txtMessageInput.clear();
 
         Platform.runLater(() -> messageListView.scrollTo(messagesList.size() - 1));
+
+        // Chu trình trạng thái giao nhận chuẩn Messenger:
+        // 1. Sau 600ms -> DELIVERED (Đã nhận: vòng tròn đặc có tick trắng)
+        PauseTransition deliverPause = new PauseTransition(Duration.millis(600));
+        deliverPause.setOnFinished(e -> userMsg.setDeliveryStatus(MessageDeliveryStatus.DELIVERED));
+        deliverPause.play();
+
+        // 2. Sau 1600ms -> SEEN (Đã xem: avatar mini 14px của thành viên trong nhóm)
+        PauseTransition seenPause = new PauseTransition(Duration.millis(1600));
+        seenPause.setOnFinished(e -> {
+            userMsg.getReaders().clear();
+            if ("group_project".equals(currentChatId)) {
+                userMsg.getReaders().add(new ReaderInfo("Lưu Chí Hải", "CH", "#23A55A", now));
+                userMsg.getReaders().add(new ReaderInfo("Nguyễn Lan Anh", "LA", "#E91E63", now));
+            } else if ("user_chihai".equals(currentChatId)) {
+                userMsg.getReaders().add(new ReaderInfo("Lưu Chí Hải", "CH", "#23A55A", now));
+            } else if ("user_lananh".equals(currentChatId)) {
+                userMsg.getReaders().add(new ReaderInfo("Nguyễn Lan Anh", "LA", "#E91E63", now));
+            } else {
+                userMsg.getReaders().add(new ReaderInfo("Bạn chat", "BC", "#4E6BF2", now));
+            }
+            userMsg.setDeliveryStatus(MessageDeliveryStatus.SEEN);
+        });
+        seenPause.play();
 
         // Nếu người dùng kích hoạt lệnh /ai, sinh phản hồi mô phỏng từ AI Bot sau 600ms
         if (msg.startsWith("/ai") || msg.toLowerCase().contains("ai bot")) {
@@ -966,14 +1029,17 @@ public class ChatConversationView extends BorderPane {
             e2eeBannerContainer.setManaged(meta.isEncrypted());
 
             for (MessageItem msg : meta.getMessages()) {
-                addMessageInternal(new MessageItem(
+                MessageItem copy = new MessageItem(
                     msg.getId(),
                     msg.getSenderName(),
                     msg.getTimestamp(),
                     msg.getContent(),
                     msg.isOutgoing(),
-                    msg.isAi()
-                ));
+                    msg.isAi(),
+                    msg.getDeliveryStatus()
+                );
+                copy.getReaders().addAll(msg.getReaders());
+                addMessageInternal(copy);
             }
         } else {
             lblChatTitle.setText("💬 Cuộc trò chuyện");
@@ -1054,12 +1120,14 @@ public class ChatConversationView extends BorderPane {
         private final Label lblSenderName = new Label();
         private final Label lblAiTag = new Label("[AI BOT]");
         private final Label lblContent = new Label();
-        private final HBox timeRow = new HBox(3);
+        private final HBox timeRow = new HBox(4);
         private final Label lblTime = new Label();
-        private final Label lblStatusTicks = new Label("✓✓");
+        private final HBox statusContainer = new HBox(2);
 
         private ChangeListener<Number> highlightListener;
         private ChangeListener<Boolean> selectedListener;
+        private ChangeListener<MessageDeliveryStatus> deliveryListener;
+        private ListChangeListener<ReaderInfo> readerListener;
 
         public MessageListCell() {
             setContentDisplay(ContentDisplay.GRAPHIC_ONLY);
@@ -1069,10 +1137,18 @@ public class ChatConversationView extends BorderPane {
             chkSelect.managedProperty().bind(multiSelectMode);
             chkSelect.setStyle("-fx-cursor: hand;");
 
+            avatarPane.setPrefSize(32, 32);
+            avatarPane.setMinSize(32, 32);
+            avatarPane.setMaxSize(32, 32);
+            avatarPane.setAlignment(Pos.CENTER);
+
             avatarCircle.setFill(Color.web("#252830"));
             lblAvatarText.setStyle("-fx-font-size: 11px; -fx-font-weight: bold; -fx-text-fill: #FFFFFF;");
+            lblAvatarText.setAlignment(Pos.CENTER);
+            lblAvatarText.setTextAlignment(javafx.scene.text.TextAlignment.CENTER);
+            StackPane.setAlignment(avatarCircle, Pos.CENTER);
+            StackPane.setAlignment(lblAvatarText, Pos.CENTER);
             avatarPane.getChildren().addAll(avatarCircle, lblAvatarText);
-            avatarPane.setAlignment(Pos.TOP_CENTER);
 
             lblAiTag.setStyle(
                 "-fx-font-size: 10px; " +
@@ -1139,6 +1215,14 @@ public class ChatConversationView extends BorderPane {
                 getItem().selectedProperty().removeListener(selectedListener);
                 selectedListener = null;
             }
+            if (deliveryListener != null && getItem() != null) {
+                getItem().deliveryStatusProperty().removeListener(deliveryListener);
+                deliveryListener = null;
+            }
+            if (readerListener != null && getItem() != null) {
+                getItem().getReaders().removeListener(readerListener);
+                readerListener = null;
+            }
 
             if (empty || item == null) {
                 setText(null);
@@ -1160,31 +1244,49 @@ public class ChatConversationView extends BorderPane {
             rootBox.getChildren().clear();
 
             bubble.setMaxWidth(520);
-            bubble.setFillWidth(true);
+            bubble.setFillWidth(false);
+            rootBox.setMaxWidth(Double.MAX_VALUE);
+
+            boolean isShort = item.getContent() != null && item.getContent().length() <= 28 && !item.getContent().contains("\n");
 
             if (item.isOutgoing()) {
-                // 1. TIN NHẮN GỬI ĐI (Outgoing) — Căn phải, màu sapphire #4E6BF2, timestamp nằm gọn góc dưới phải
+                // 1. TIN NHẮN GỬI ĐI (Outgoing) — Căn phải, màu sapphire #4E6BF2
                 rootBox.setAlignment(Pos.CENTER_RIGHT);
 
                 bubble.setAlignment(Pos.BOTTOM_RIGHT);
                 bubble.setStyle(
                     "-fx-background-color: #4E6BF2; " +
                     "-fx-background-radius: 14px 14px 3px 14px; " +
-                    "-fx-padding: 7px 12px 6px 12px;"
-                );
-
-                lblContent.setStyle(
-                    "-fx-text-fill: #FFFFFF; " +
-                    "-fx-font-size: 13.5px; " +
-                    "-fx-line-spacing: 2px;"
+                    "-fx-padding: 6px 10px 5px 12px;"
                 );
 
                 timeRow.setAlignment(Pos.BOTTOM_RIGHT);
-                lblTime.setStyle("-fx-font-size: 10px; -fx-text-fill: rgba(255, 255, 255, 0.65);");
-                lblStatusTicks.setStyle("-fx-font-size: 9px; -fx-text-fill: rgba(255, 255, 255, 0.65);");
-                timeRow.getChildren().addAll(lblTime, lblStatusTicks);
+                timeRow.setSpacing(4);
+                lblTime.setStyle("-fx-font-size: 10px; -fx-text-fill: rgba(255, 255, 255, 0.70);");
+                
+                buildMessengerStatusBox(item);
+                timeRow.getChildren().addAll(lblTime, statusContainer);
 
-                bubble.getChildren().addAll(lblContent, timeRow);
+                // Lắng nghe thay đổi trạng thái giao nhận và người xem kiểu Messenger
+                deliveryListener = (o, ov, nv) -> buildMessengerStatusBox(item);
+                item.deliveryStatusProperty().addListener(deliveryListener);
+                readerListener = c -> buildMessengerStatusBox(item);
+                item.getReaders().addListener(readerListener);
+
+                if (isShort) {
+                    lblContent.setStyle("-fx-text-fill: #FFFFFF; -fx-font-size: 13px;");
+                    HBox singleRow = new HBox(8);
+                    singleRow.setAlignment(Pos.BOTTOM_RIGHT);
+                    singleRow.getChildren().addAll(lblContent, timeRow);
+                    bubble.getChildren().add(singleRow);
+                } else {
+                    lblContent.setStyle(
+                        "-fx-text-fill: #FFFFFF; " +
+                        "-fx-font-size: 13px; " +
+                        "-fx-line-spacing: 2px;"
+                    );
+                    bubble.getChildren().addAll(lblContent, timeRow);
+                }
                 rootBox.getChildren().addAll(chkSelect, bubble);
 
             } else if (item.isAi()) {
@@ -1203,7 +1305,7 @@ public class ChatConversationView extends BorderPane {
                     "-fx-border-width: 0 0 0 3px; " +
                     "-fx-border-radius: 12px; " +
                     "-fx-background-radius: 12px 12px 12px 3px; " +
-                    "-fx-padding: 8px 14px 6px 14px;"
+                    "-fx-padding: 7px 12px 5px 12px;"
                 );
 
                 HBox aiHeader = new HBox(6);
@@ -1212,17 +1314,24 @@ public class ChatConversationView extends BorderPane {
                 lblSenderName.setStyle("-fx-font-size: 12px; -fx-font-weight: bold; -fx-text-fill: #D8B4FE;");
                 aiHeader.getChildren().addAll(lblSenderName, lblAiTag);
 
-                lblContent.setStyle(
-                    "-fx-text-fill: #EDEDED; " +
-                    "-fx-font-size: 13.5px; " +
-                    "-fx-line-spacing: 2px;"
-                );
-
                 timeRow.setAlignment(Pos.BOTTOM_RIGHT);
                 lblTime.setStyle("-fx-font-size: 10px; -fx-text-fill: #A78BFA;");
                 timeRow.getChildren().add(lblTime);
 
-                bubble.getChildren().addAll(aiHeader, lblContent, timeRow);
+                if (isShort) {
+                    lblContent.setStyle("-fx-text-fill: #EDEDED; -fx-font-size: 13px;");
+                    HBox singleRow = new HBox(8);
+                    singleRow.setAlignment(Pos.BOTTOM_LEFT);
+                    singleRow.getChildren().addAll(lblContent, timeRow);
+                    bubble.getChildren().addAll(aiHeader, singleRow);
+                } else {
+                    lblContent.setStyle(
+                        "-fx-text-fill: #EDEDED; " +
+                        "-fx-font-size: 13px; " +
+                        "-fx-line-spacing: 2px;"
+                    );
+                    bubble.getChildren().addAll(aiHeader, lblContent, timeRow);
+                }
                 rootBox.getChildren().addAll(chkSelect, avatarPane, bubble);
 
             } else {
@@ -1253,7 +1362,7 @@ public class ChatConversationView extends BorderPane {
                     "-fx-border-color: #2A2D35; " +
                     "-fx-border-radius: 14px; " +
                     "-fx-background-radius: 14px 14px 14px 3px; " +
-                    "-fx-padding: 7px 12px 6px 12px;"
+                    "-fx-padding: 6px 12px 5px 12px;"
                 );
 
                 lblSenderName.setText(item.getSenderName());
@@ -1269,17 +1378,24 @@ public class ChatConversationView extends BorderPane {
                     );
                 });
 
-                lblContent.setStyle(
-                    "-fx-text-fill: #EDEDED; " +
-                    "-fx-font-size: 13.5px; " +
-                    "-fx-line-spacing: 2px;"
-                );
-
                 timeRow.setAlignment(Pos.BOTTOM_RIGHT);
                 lblTime.setStyle("-fx-font-size: 10px; -fx-text-fill: #8E929B;");
                 timeRow.getChildren().add(lblTime);
 
-                bubble.getChildren().addAll(lblSenderName, lblContent, timeRow);
+                if (isShort) {
+                    lblContent.setStyle("-fx-text-fill: #EDEDED; -fx-font-size: 13px;");
+                    HBox singleRow = new HBox(8);
+                    singleRow.setAlignment(Pos.BOTTOM_LEFT);
+                    singleRow.getChildren().addAll(lblContent, timeRow);
+                    bubble.getChildren().addAll(lblSenderName, singleRow);
+                } else {
+                    lblContent.setStyle(
+                        "-fx-text-fill: #EDEDED; " +
+                        "-fx-font-size: 13px; " +
+                        "-fx-line-spacing: 2px;"
+                    );
+                    bubble.getChildren().addAll(lblSenderName, lblContent, timeRow);
+                }
                 rootBox.getChildren().addAll(chkSelect, avatarPane, bubble);
             }
 
@@ -1290,6 +1406,81 @@ public class ChatConversationView extends BorderPane {
 
             setText(null);
             setGraphic(rootBox);
+        }
+
+        private void buildMessengerStatusBox(MessageItem item) {
+            statusContainer.getChildren().clear();
+            statusContainer.setAlignment(Pos.CENTER_RIGHT);
+            MessageDeliveryStatus status = item.getDeliveryStatus();
+
+            if (status == MessageDeliveryStatus.SEEN && !item.getReaders().isEmpty()) {
+                // Hiển thị cụm Avatar người đã xem kiểu Facebook Messenger (14x14px circle)
+                for (ReaderInfo reader : item.getReaders()) {
+                    StackPane miniAvatar = new StackPane();
+                    miniAvatar.setPrefSize(14, 14);
+                    miniAvatar.setMinSize(14, 14);
+                    miniAvatar.setMaxSize(14, 14);
+                    miniAvatar.setAlignment(Pos.CENTER);
+
+                    Circle c = new Circle(7, Color.web(reader.getAvatarColor()));
+                    c.setStroke(Color.web("#4E6BF2")); // Viền tệp màu nền bong bóng outgoing
+                    c.setStrokeWidth(1.0);
+
+                    Label lblI = new Label(reader.getInitials());
+                    lblI.setStyle("-fx-font-size: 7px; -fx-font-weight: bold; -fx-text-fill: #FFFFFF;");
+                    lblI.setAlignment(Pos.CENTER);
+                    lblI.setTextAlignment(javafx.scene.text.TextAlignment.CENTER);
+                    StackPane.setAlignment(c, Pos.CENTER);
+                    StackPane.setAlignment(lblI, Pos.CENTER);
+
+                    miniAvatar.getChildren().addAll(c, lblI);
+                    Tooltip.install(miniAvatar, new Tooltip("Đã xem bởi " + reader.getName() + " lúc " + reader.getSeenTime()));
+                    statusContainer.getChildren().add(miniAvatar);
+                }
+            } else if (status == MessageDeliveryStatus.DELIVERED) {
+                // Đã nhận (Delivered): Vòng tròn trắng đục có tick xanh sapphire kiểu Messenger
+                StackPane deliveredBox = new StackPane();
+                deliveredBox.setPrefSize(12, 12);
+                deliveredBox.setMinSize(12, 12);
+                deliveredBox.setMaxSize(12, 12);
+                deliveredBox.setAlignment(Pos.CENTER);
+
+                Circle c = new Circle(6.0, Color.web("rgba(255, 255, 255, 0.85)"));
+                Label tick = new Label("✓");
+                tick.setStyle("-fx-font-size: 8px; -fx-font-weight: bold; -fx-text-fill: #4E6BF2;");
+                tick.setAlignment(Pos.CENTER);
+                deliveredBox.getChildren().addAll(c, tick);
+                Tooltip.install(deliveredBox, new Tooltip("Đã nhận (Delivered)"));
+                statusContainer.getChildren().add(deliveredBox);
+            } else if (status == MessageDeliveryStatus.SENT) {
+                // Đã gửi (Sent): Vòng tròn viền mảnh có tick trắng kiểu Messenger
+                StackPane sentBox = new StackPane();
+                sentBox.setPrefSize(12, 12);
+                sentBox.setMinSize(12, 12);
+                sentBox.setMaxSize(12, 12);
+                sentBox.setAlignment(Pos.CENTER);
+
+                Circle c = new Circle(5.5, Color.TRANSPARENT);
+                c.setStroke(Color.web("rgba(255, 255, 255, 0.75)"));
+                c.setStrokeWidth(1.1);
+                Label tick = new Label("✓");
+                tick.setStyle("-fx-font-size: 8px; -fx-text-fill: rgba(255, 255, 255, 0.85);");
+                tick.setAlignment(Pos.CENTER);
+                sentBox.getChildren().addAll(c, tick);
+                Tooltip.install(sentBox, new Tooltip("Đã gửi (Sent)"));
+                statusContainer.getChildren().add(sentBox);
+            } else {
+                // SENDING: Nét đứt đang gửi
+                StackPane sendingBox = new StackPane();
+                sendingBox.setPrefSize(12, 12);
+                Circle c = new Circle(5.0, Color.TRANSPARENT);
+                c.setStroke(Color.web("rgba(255, 255, 255, 0.45)"));
+                c.setStrokeWidth(1.0);
+                c.getStrokeDashArray().addAll(2.5, 2.5);
+                sendingBox.getChildren().add(c);
+                Tooltip.install(sendingBox, new Tooltip("Đang gửi..."));
+                statusContainer.getChildren().add(sendingBox);
+            }
         }
 
         private void applyHighlightIntensity(double intensity) {

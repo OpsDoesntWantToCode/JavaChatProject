@@ -10,6 +10,7 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
@@ -660,5 +661,73 @@ public final class JavaFXTheme {
             popup.show(anchor.getScene().getWindow(), posX, posY);
             applyModalEntrance(card);
         }
+    }
+
+    private static int currentThemeIndex = 0;
+    private static double currentFontSize = 13.0;
+
+    public static int getCurrentThemeIndex() { return currentThemeIndex; }
+    public static double getCurrentFontSize() { return currentFontSize; }
+
+    /**
+     * Chuyển đổi và áp dụng Theme toàn diện cho ứng dụng ngay lập tức (Real-time Dynamic Theming)
+     * Thay đổi các biến CSS Design Tokens trên root của Scene:
+     * - 0: Obsidian Dark (Mặc định)
+     * - 1: Midnight Blue (Sắc xanh đêm)
+     * - 2: Deep Emerald (Sắc rêu ngọc)
+     */
+    public static void applyThemeToScene(Scene scene, int themeIndex, double fontSize) {
+        if (scene == null || scene.getRoot() == null) return;
+        currentThemeIndex = themeIndex;
+        if (fontSize > 0) currentFontSize = fontSize;
+
+        String themeVariables;
+        switch (themeIndex) {
+            case 1: // Midnight Blue
+                themeVariables =
+                    "-bg-canvas: #090E17; " +
+                    "-bg-card: #121A29; " +
+                    "-bg-input: #0B111D; " +
+                    "-bg-nav-rail: #080D16; " +
+                    "-accent-primary: #38BDF8; " +
+                    "-accent-hover: #0EA5E9; " +
+                    "-accent-active: #0284C7; " +
+                    "-border-subtle: #1E2D44; " +
+                    "-text-normal: #F1F5F9; " +
+                    "-text-muted: #94A3B8; " +
+                    "-text-link: #38BDF8;";
+                break;
+            case 2: // Deep Emerald
+                themeVariables =
+                    "-bg-canvas: #07120D; " +
+                    "-bg-card: #0F231B; " +
+                    "-bg-input: #091712; " +
+                    "-bg-nav-rail: #06110D; " +
+                    "-accent-primary: #10B981; " +
+                    "-accent-hover: #059669; " +
+                    "-accent-active: #047857; " +
+                    "-border-subtle: #1B3D30; " +
+                    "-text-normal: #ECFDF5; " +
+                    "-text-muted: #86EFAC; " +
+                    "-text-link: #10B981;";
+                break;
+            default: // 0: Obsidian Dark
+                themeVariables =
+                    "-bg-canvas: #141619; " +
+                    "-bg-card: #1B1D22; " +
+                    "-bg-input: #0F1013; " +
+                    "-bg-nav-rail: #0F1013; " +
+                    "-accent-primary: #4E6BF2; " +
+                    "-accent-hover: #3D5AE0; " +
+                    "-accent-active: #2E48C7; " +
+                    "-border-subtle: #2A2D35; " +
+                    "-text-normal: #EDEDED; " +
+                    "-text-muted: #8E929B; " +
+                    "-text-link: #4E6BF2;";
+                break;
+        }
+
+        String fontRule = fontSize > 0 ? " -fx-font-size: " + String.format(java.util.Locale.US, "%.1f", fontSize) + "px;" : "";
+        scene.getRoot().setStyle(themeVariables + fontRule);
     }
 }

@@ -220,7 +220,7 @@ public class UserMainWorkspace extends BorderPane {
             btnOpenGlobalDialog.setManaged(true);
             pillFilterBar.setVisible(true);
             pillFilterBar.setManaged(true);
-            txtSearch.setPromptText("🔍 Tìm kiếm cuộc trò chuyện / tin nhắn...");
+            txtSearch.setPromptText("Tìm kiếm cuộc trò chuyện hoặc tin nhắn...");
 
             buildConversationList();
             conversationScrollPane.setContent(conversationListBox);
@@ -244,7 +244,7 @@ public class UserMainWorkspace extends BorderPane {
             btnOpenGlobalDialog.setManaged(false);
             pillFilterBar.setVisible(false);
             pillFilterBar.setManaged(false);
-            txtSearch.setPromptText("🔍 Tìm bạn bè theo tên...");
+            txtSearch.setPromptText("Tìm bạn bè theo tên...");
 
             buildFriendsSidebarList();
             conversationScrollPane.setContent(friendsCategoryBox);
@@ -287,7 +287,7 @@ public class UserMainWorkspace extends BorderPane {
 
         HBox topBox = new HBox(8);
         topBox.setAlignment(Pos.CENTER_LEFT);
-        lblSidebarTitle.setStyle("-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: -text-normal;");
+        lblSidebarTitle.setStyle("-fx-font-size: 15px; -fx-font-weight: bold; -fx-text-fill: -text-normal;");
         Region sp = new Region();
         HBox.setHgrow(sp, Priority.ALWAYS);
 
@@ -325,7 +325,10 @@ public class UserMainWorkspace extends BorderPane {
         MenuItem mSecretChat = new MenuItem("🔒 Trò chuyện mã hóa E2EE (Mục 12.g)");
         mSecretChat.setOnAction(e -> loadConversation("group_project"));
 
-        popover.getItems().addAll(mNewGroup, mAddFriend, new javafx.scene.control.SeparatorMenuItem(), mSecretChat);
+        MenuItem mGlobalSearch = new MenuItem("🔍 Tìm kiếm tin nhắn toàn cục (Mục 11.g)");
+        mGlobalSearch.setOnAction(e -> openGlobalSearchDialog(txtSearch.getText()));
+
+        popover.getItems().addAll(mNewGroup, mAddFriend, new javafx.scene.control.SeparatorMenuItem(), mSecretChat, mGlobalSearch);
 
         btnNewGroup.setOnAction(e -> {
             popover.show(btnNewGroup, javafx.geometry.Side.BOTTOM, 0, 4);
@@ -333,17 +336,35 @@ public class UserMainWorkspace extends BorderPane {
 
         topBox.getChildren().addAll(lblSidebarTitle, sp, btnNewGroup);
 
-        // Thanh Tìm kiếm Hội thoại & Tin nhắn Toàn cục (Mục 11.g)
+        // Thanh Tìm kiếm Hội thoại tinh gọn chuẩn Messenger/Telegram
         HBox searchContainer = new HBox(6);
         searchContainer.setAlignment(Pos.CENTER_LEFT);
-        searchContainer.getStyleClass().add("sidebar-search-field");
+        searchContainer.setStyle("-fx-background-color: -bg-input; -fx-border-color: -border-subtle; -fx-border-radius: 8px; -fx-background-radius: 8px; -fx-padding: 6px 10px;");
 
         Label lblSearchIcon = new Label("🔍");
         lblSearchIcon.setStyle("-fx-font-size: 12px; -fx-text-fill: -text-muted;");
 
         txtSearch.setPromptText("Tìm kiếm cuộc trò chuyện / tin nhắn...");
-        txtSearch.setStyle("-fx-background-color: transparent; -fx-text-fill: -text-normal; -fx-padding: 0;");
+        txtSearch.setStyle(
+            "-fx-background-color: transparent; " +
+            "-fx-background-insets: 0; " +
+            "-fx-border-color: transparent; " +
+            "-fx-border-width: 0; " +
+            "-fx-focus-color: transparent; " +
+            "-fx-faint-focus-color: transparent; " +
+            "-fx-text-fill: -text-normal; " +
+            "-fx-font-size: 12.5px; " +
+            "-fx-padding: 0;"
+        );
         HBox.setHgrow(txtSearch, Priority.ALWAYS);
+
+        txtSearch.focusedProperty().addListener((obs, ov, focused) -> {
+            if (focused) {
+                searchContainer.setStyle("-fx-background-color: -bg-input; -fx-border-color: -accent-primary; -fx-border-radius: 8px; -fx-background-radius: 8px; -fx-padding: 6px 10px;");
+            } else {
+                searchContainer.setStyle("-fx-background-color: -bg-input; -fx-border-color: -border-subtle; -fx-border-radius: 8px; -fx-background-radius: 8px; -fx-padding: 6px 10px;");
+            }
+        });
 
         btnClearSearch.getStyleClass().add("btn-icon-subtle");
         btnClearSearch.setStyle("-fx-font-size: 11px; -fx-padding: 2 4;");
@@ -353,12 +374,7 @@ public class UserMainWorkspace extends BorderPane {
             txtSearch.requestFocus();
         });
 
-        btnOpenGlobalDialog.getStyleClass().add("btn-icon-subtle");
-        btnOpenGlobalDialog.setStyle("-fx-font-size: 11px; -fx-padding: 2 4;");
-        Tooltip.install(btnOpenGlobalDialog, new Tooltip("Mở cửa sổ tìm kiếm toàn cục nâng cao (Mục 11.g - Ctrl+Shift+F)"));
-        btnOpenGlobalDialog.setOnAction(e -> openGlobalSearchDialog(txtSearch.getText()));
-
-        searchContainer.getChildren().addAll(lblSearchIcon, txtSearch, btnClearSearch, btnOpenGlobalDialog);
+        searchContainer.getChildren().addAll(lblSearchIcon, txtSearch, btnClearSearch);
 
         txtSearch.textProperty().addListener((obs, oldV, newV) -> {
             boolean hasText = newV != null && !newV.trim().isEmpty();
@@ -591,11 +607,19 @@ public class UserMainWorkspace extends BorderPane {
             item.getStyleClass().add("conversation-item-selected");
         }
 
-        // Avatar Box (42px tiêu chuẩn)
+        // Avatar Box (42px tiêu chuẩn căn chính giữa tuyệt đối)
         StackPane avtBox = new StackPane();
+        avtBox.setPrefSize(42, 42);
+        avtBox.setMinSize(42, 42);
+        avtBox.setMaxSize(42, 42);
+        avtBox.setAlignment(Pos.CENTER);
         Circle c = new Circle(21, Color.web(avatarColor));
         Label lblI = new Label(initials);
         lblI.setStyle("-fx-font-size: 13px; -fx-font-weight: bold; -fx-text-fill: #FFFFFF;");
+        lblI.setAlignment(Pos.CENTER);
+        lblI.setTextAlignment(javafx.scene.text.TextAlignment.CENTER);
+        StackPane.setAlignment(c, Pos.CENTER);
+        StackPane.setAlignment(lblI, Pos.CENTER);
         avtBox.getChildren().addAll(c, lblI);
 
         if (isOnline) {

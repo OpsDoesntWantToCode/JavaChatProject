@@ -53,11 +53,11 @@ public class UserSettingsDialog extends Stage {
     private final Label lblSecurityStatus = new Label();
 
     // Các trường Tab 3: Giao diện & Chủ đề
-    private int selectedThemeIndex = 0; // 0: Obsidian Dark, 1: Midnight Blue, 2: Deep Emerald
+    private int selectedThemeIndex = JavaFXTheme.getCurrentThemeIndex(); // 0: Obsidian Dark, 1: Midnight Blue, 2: Deep Emerald
     private final VBox[] themeCards = new VBox[3];
     private final Label[] themeBadges = new Label[3];
-    private final Slider sliderFontSize = new Slider(12.0, 16.0, 13.5);
-    private final Label lblFontSizeValue = new Label("13.5px");
+    private final Slider sliderFontSize = new Slider(12.0, 16.0, JavaFXTheme.getCurrentFontSize());
+    private final Label lblFontSizeValue = new Label(String.format(java.util.Locale.US, "%.1fpx", JavaFXTheme.getCurrentFontSize()));
     private final Label lblChatPreview = new Label("Xem trước: Giao diện Obsidian Dark sang trọng, tin nhắn mẫu hiển thị rõ ràng và sắc nét.");
     private final CheckBox chkTactile = new CheckBox("Hiệu ứng xúc giác & chuyển động vật lý 60fps (Fluent 2 Micro-interactions)");
     private final CheckBox chkSoftBubbles = new CheckBox("Bong bóng chat bo góc mềm mại chuẩn Telegram Desktop");
@@ -442,7 +442,7 @@ public class UserSettingsDialog extends Stage {
             HBox.setHgrow(card, Priority.ALWAYS);
         }
         themeCardsBox.getChildren().addAll(themeCards);
-        updateThemeSelection(0);
+        updateThemeSelection(selectedThemeIndex);
 
         secTheme.getChildren().addAll(lblThemeTitle, themeCardsBox);
 
@@ -488,6 +488,7 @@ public class UserSettingsDialog extends Stage {
             double size = newV.doubleValue();
             lblFontSizeValue.setText(String.format("%.1fpx", size));
             lblChatPreview.setStyle("-fx-font-size: " + String.format("%.1f", size) + "px; -fx-text-fill: #D0D2DC;");
+            applyActiveThemeLive();
         });
 
         secFontSize.getChildren().addAll(fontHeader, sliderRow, previewBox);
@@ -523,7 +524,9 @@ public class UserSettingsDialog extends Stage {
         Button btnSaveAppearance = new Button("Áp dụng giao diện");
         btnSaveAppearance.getStyleClass().add("btn-primary");
         btnSaveAppearance.setOnAction(e -> {
-            lblAppearanceStatus.setText("✓ Đã lưu cài đặt giao diện và áp dụng mượt mà!");
+            applyActiveThemeLive();
+            String[] names = { "Obsidian Dark", "Midnight Blue", "Deep Emerald" };
+            lblAppearanceStatus.setText("✓ Đã áp dụng chủ đề " + names[selectedThemeIndex] + " thành công!");
             lblAppearanceStatus.getStyleClass().setAll("status-message", "status-success");
         });
         JavaFXTheme.applyTactileButton(btnSaveAppearance);
@@ -531,6 +534,15 @@ public class UserSettingsDialog extends Stage {
         actionRow.getChildren().addAll(lblAppearanceStatus, btnCancel, btnSaveAppearance);
 
         tabAppearanceContent.getChildren().addAll(secTheme, secFontSize, secOptions, actionRow);
+    }
+
+    private void applyActiveThemeLive() {
+        if (getOwner() != null && getOwner().getScene() != null) {
+            JavaFXTheme.applyThemeToScene(getOwner().getScene(), selectedThemeIndex, sliderFontSize.getValue());
+        }
+        if (getScene() != null) {
+            JavaFXTheme.applyThemeToScene(getScene(), selectedThemeIndex, sliderFontSize.getValue());
+        }
     }
 
     private VBox createThemeCard(int index, String name, String subtitle, String bgCol, String cardCol, String accentCol) {
@@ -591,6 +603,7 @@ public class UserSettingsDialog extends Stage {
 
     private void updateThemeSelection(int index) {
         selectedThemeIndex = index;
+        applyActiveThemeLive();
         for (int i = 0; i < 3; i++) {
             if (themeCards[i] == null) continue;
             if (i == index) {

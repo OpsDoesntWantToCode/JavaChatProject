@@ -116,7 +116,7 @@ public class GroupManagementDrawer extends VBox {
 
         topRow.getChildren().addAll(lblTitle, spacer, btnClose);
 
-        // 2. Avatar nhóm & Tên có nút sửa ✏️ (Mục 12.b)
+        // 2. Avatar nhóm & Tên có tính năng sửa trực tiếp Inline (Mục 12.b)
         VBox profileCard = new VBox(8);
         profileCard.setAlignment(Pos.CENTER);
         profileCard.setPadding(new Insets(8, 0, 8, 0));
@@ -126,23 +126,110 @@ public class GroupManagementDrawer extends VBox {
         lblAvtText.setStyle("-fx-font-size: 24px;");
         StackPane avtBox = new StackPane(groupAvatar, lblAvtText);
 
-        HBox nameRow = new HBox(6);
-        nameRow.setAlignment(Pos.CENTER);
-        lblGroupName.setStyle("-fx-font-size: 14.5px; -fx-font-weight: bold; -fx-text-fill: -text-normal;");
+        // Container đổi tên nhóm trực tiếp (Inline Edit - Không dùng pop-up)
+        HBox displayBox = new HBox(6);
+        displayBox.setAlignment(Pos.CENTER);
+        lblGroupName.setStyle("-fx-font-size: 14.5px; -fx-font-weight: bold; -fx-text-fill: -text-normal; -fx-cursor: hand;");
+        Tooltip.install(lblGroupName, new Tooltip("Nhấp đúp hoặc bấm bút chì để sửa tên trực tiếp"));
 
         Button btnEditName = new Button();
         btnEditName.setGraphic(JavaFXTheme.createSvgIcon(JavaFXTheme.SVG_EDIT, 0.70));
         btnEditName.getStyleClass().add("btn-icon-subtle");
-        btnEditName.setTooltip(new Tooltip("Đổi tên nhóm (Mục 12.b)"));
-        btnEditName.setOnAction(e -> handleRenameGroup());
+        btnEditName.setTooltip(new Tooltip("Đổi tên nhóm trực tiếp (Mục 12.b)"));
         JavaFXTheme.applyIconButton(btnEditName);
+        displayBox.getChildren().addAll(lblGroupName, btnEditName);
 
-        nameRow.getChildren().addAll(lblGroupName, btnEditName);
+        HBox editBox = new HBox(4);
+        editBox.setAlignment(Pos.CENTER);
+        editBox.setVisible(false);
+        editBox.setManaged(false);
+
+        TextField txtInlineEdit = new TextField();
+        txtInlineEdit.setStyle(
+            "-fx-background-color: #0F1013; " +
+            "-fx-border-color: #4E6BF2; " +
+            "-fx-border-radius: 6px; " +
+            "-fx-background-radius: 6px; " +
+            "-fx-text-fill: -text-normal; " +
+            "-fx-font-size: 13px; " +
+            "-fx-padding: 3 8; " +
+            "-fx-pref-width: 175px;"
+        );
+
+        Button btnSaveName = new Button("✓");
+        btnSaveName.setStyle(
+            "-fx-background-color: #23A55A; " +
+            "-fx-text-fill: #FFFFFF; " +
+            "-fx-font-size: 11px; " +
+            "-fx-font-weight: bold; " +
+            "-fx-background-radius: 6px; " +
+            "-fx-padding: 3 7; " +
+            "-fx-cursor: hand;"
+        );
+        Tooltip.install(btnSaveName, new Tooltip("Lưu tên mới (Enter)"));
+        JavaFXTheme.applyTactileButton(btnSaveName);
+
+        Button btnCancelName = new Button("✕");
+        btnCancelName.setStyle(
+            "-fx-background-color: #2E323D; " +
+            "-fx-text-fill: #D0D2DC; " +
+            "-fx-font-size: 11px; " +
+            "-fx-background-radius: 6px; " +
+            "-fx-padding: 3 7; " +
+            "-fx-cursor: hand;"
+        );
+        Tooltip.install(btnCancelName, new Tooltip("Hủy bỏ (Esc)"));
+        JavaFXTheme.applyTactileButton(btnCancelName);
+
+        editBox.getChildren().addAll(txtInlineEdit, btnSaveName, btnCancelName);
+
+        Runnable enterEditMode = () -> {
+            txtInlineEdit.setText(this.groupName);
+            displayBox.setVisible(false);
+            displayBox.setManaged(false);
+            editBox.setVisible(true);
+            editBox.setManaged(true);
+            txtInlineEdit.selectAll();
+            txtInlineEdit.requestFocus();
+        };
+
+        Runnable exitEditMode = () -> {
+            editBox.setVisible(false);
+            editBox.setManaged(false);
+            displayBox.setVisible(true);
+            displayBox.setManaged(true);
+        };
+
+        Runnable commitEdit = () -> {
+            String trimmed = txtInlineEdit.getText().trim();
+            if (!trimmed.isEmpty()) {
+                this.groupName = trimmed;
+                lblGroupName.setText(trimmed);
+                if (onRename != null) onRename.accept(trimmed);
+            }
+            exitEditMode.run();
+        };
+
+        btnEditName.setOnAction(e -> enterEditMode.run());
+        lblGroupName.setOnMouseClicked(e -> {
+            if (e.getClickCount() == 2) enterEditMode.run();
+        });
+
+        btnSaveName.setOnAction(e -> commitEdit.run());
+        btnCancelName.setOnAction(e -> exitEditMode.run());
+        txtInlineEdit.setOnAction(e -> commitEdit.run());
+        txtInlineEdit.setOnKeyPressed(e -> {
+            if (e.getCode() == javafx.scene.input.KeyCode.ESCAPE) {
+                exitEditMode.run();
+            }
+        });
+
+        StackPane nameRowStack = new StackPane(displayBox, editBox);
 
         Label lblCreatedDate = new Label("Khởi tạo ngày 23/10/2026 • 3 thành viên");
         lblCreatedDate.setStyle("-fx-font-size: 11.5px; -fx-text-fill: -text-muted;");
 
-        profileCard.getChildren().addAll(avtBox, nameRow, lblCreatedDate);
+        profileCard.getChildren().addAll(avtBox, nameRowStack, lblCreatedDate);
 
         // Hàng nút tác vụ nhanh (Quick Actions Row) kiểu Zalo / Telegram
         HBox quickActionsRow = new HBox(8);
@@ -363,9 +450,18 @@ public class GroupManagementDrawer extends VBox {
 
             // Avatar tròn 32px kèm chấm xanh Online ở góc dưới
             StackPane avtPane = new StackPane();
+            avtPane.setPrefSize(32, 32);
+            avtPane.setMinSize(32, 32);
+            avtPane.setMaxSize(32, 32);
+            avtPane.setAlignment(Pos.CENTER);
+
             Circle avtCircle = new Circle(16, Color.web(getMemberColor(m.getName())));
             Label lblInitials = new Label(getMemberInitials(m.getName()));
             lblInitials.setStyle("-fx-font-size: 11px; -fx-font-weight: bold; -fx-text-fill: #FFFFFF;");
+            lblInitials.setAlignment(Pos.CENTER);
+            lblInitials.setTextAlignment(javafx.scene.text.TextAlignment.CENTER);
+            StackPane.setAlignment(avtCircle, Pos.CENTER);
+            StackPane.setAlignment(lblInitials, Pos.CENTER);
             avtPane.getChildren().addAll(avtCircle, lblInitials);
 
             Circle onlineDot = new Circle(3.5, Color.web("#23A55A"));

@@ -124,14 +124,18 @@ public class ChatMockRepository {
             false,
             false
         ));
-        c1.addMessage(new ChatConversationView.MessageItem(
+        ChatConversationView.MessageItem m3 = new ChatConversationView.MessageItem(
             "msg_3",
             "Trần Nguyễn Tuấn Minh",
             "10:18",
             "Giao diện User JavaFX 21 + theme.css đã hoàn thành toàn bộ form Đăng nhập, Đăng ký 7 trường và khung chat rồi.",
             true,
-            false
-        ));
+            false,
+            ChatConversationView.MessageDeliveryStatus.SEEN
+        );
+        m3.getReaders().add(new ChatConversationView.ReaderInfo("Lưu Chí Hải", "CH", "#23A55A", "10:19"));
+        m3.getReaders().add(new ChatConversationView.ReaderInfo("Nguyễn Lan Anh", "LA", "#E91E63", "10:19"));
+        c1.addMessage(m3);
         c1.addMessage(new ChatConversationView.MessageItem(
             "msg_4",
             "Trợ lý AI",
@@ -156,14 +160,17 @@ public class ChatMockRepository {
             "CH",
             false
         );
-        c2.addMessage(new ChatConversationView.MessageItem(
+        ChatConversationView.MessageItem m5 = new ChatConversationView.MessageItem(
             "msg_5",
             "Trần Nguyễn Tuấn Minh",
             "14:00",
             "Hải ơi, cậu kiểm tra giúp mình nhánh feat/user-ui xem các icon vector trắng đã tương phản rõ chưa nhé.",
             true,
-            false
-        ));
+            false,
+            ChatConversationView.MessageDeliveryStatus.SEEN
+        );
+        m5.getReaders().add(new ChatConversationView.ReaderInfo("Lưu Chí Hải", "CH", "#23A55A", "14:02"));
+        c2.addMessage(m5);
         c2.addMessage(new ChatConversationView.MessageItem(
             "msg_6",
             "Lưu Chí Hải",
@@ -196,14 +203,17 @@ public class ChatMockRepository {
             false,
             false
         ));
-        c3.addMessage(new ChatConversationView.MessageItem(
+        ChatConversationView.MessageItem m8 = new ChatConversationView.MessageItem(
             "msg_8",
             "Trần Nguyễn Tuấn Minh",
             "10:12",
             "Có nhé Lan Anh, cần sơ đồ ERD 13 bảng của Hải và cấu trúc package JavaFX của mình.",
             true,
-            false
-        ));
+            false,
+            ChatConversationView.MessageDeliveryStatus.SEEN
+        );
+        m8.getReaders().add(new ChatConversationView.ReaderInfo("Nguyễn Lan Anh", "LA", "#E91E63", "10:13"));
+        c3.addMessage(m8);
         c3.addMessage(new ChatConversationView.MessageItem(
             "msg_9",
             "Nguyễn Lan Anh",
