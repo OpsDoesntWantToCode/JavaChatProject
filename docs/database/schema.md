@@ -494,6 +494,16 @@ psql -X -w -v ON_ERROR_STOP=1 -d java_chat_email_test_0123456789ab -f script/tes
 
 **Minh chứng ngày 02/11/2026:** áp dụng toàn bộ `database.sql` trên database kiểm thử mới bằng PostgreSQL 18.6; **25 kiểm tra SQL PASS**, dữ liệu kiểm thử rollback và database kiểm thử đã được dọn. Bộ `src/admin/check-users.ps1` **45 PASS**, Maven compile thành công. Đây là kết quả kiểm tra ràng buộc SQL và store mẫu, chưa phải kiểm thử đăng ký/quên mật khẩu qua Server; không áp dụng DDL vào database ứng dụng hiện có.
 
+**Kiểm chứng lại ngày 16/11/2026 (T19):** dùng PostgreSQL **16.12** trong container tạm riêng, không mạng/không publish cổng, giới hạn RAM 256 MiB và lưu dữ liệu bằng tmpfs. Xác nhận public có 0 bảng trước khi áp dụng nguyên DDL hiện hành; DDL COMMIT thành công và bộ email/schema đạt **25 PASS mới**. Chạy lại DDL bị từ chối đúng vì public đã có schema; lỗi không làm thay đổi schema đã tạo.
+
+[`script/tests/schema-smoke.sql`](../../script/tests/schema-smoke.sql) bổ sung **8 PASS** về rollback, trigger chế độ nhóm/IV/sender và bảo vệ chủ thể lịch sử bằng FK. Chạy sau DDL và bộ email trên cùng database dùng riêng:
+
+```powershell
+psql -X -w -v ON_ERROR_STOP=1 -d java_chat_email_test_0123456789ab -f script/tests/schema-smoke.sql
+```
+
+Bộ smoke dùng marker thử nghiệm, không kiểm chứng mật khẩu, khóa hoặc mã hóa thực tế. Sau ROLLBACK đã kiểm tra users/group_messages rỗng và public còn đủ 13 bảng; container cùng dữ liệu tmpfs đã được dọn sau khi xác minh đích. Mã SHA-256 của DDL được kiểm chứng: `a2da33dacff35f967ec0987ac70168a1f6024f41748d07d3151fe09fd6a0ff68`. Đây là kiểm thử SQL/ràng buộc, chưa kiểm thử role runtime, concurrency, JDBC/Server, SMTP hoặc E2EE. Cấu hình trust của container không có mạng chỉ phục vụ kiểm thử này, không dùng làm cấu hình triển khai.
+
 ## 5. Tính năng Có thể Phát triển trong Tương lai
 
 Các mục dưới đây không phải chức năng bắt buộc trong PDF và chưa được triển khai thành luồng hoàn chỉnh:

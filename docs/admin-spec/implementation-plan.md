@@ -37,7 +37,7 @@ T10 đã có `AdminStatistics`: kết quả là snapshot bất biến, lấy h�
 - Chuyển khoảng ngày UI sang đầu ngày bắt đầu và đầu ngày sau ngày kết thúc theo `Asia/Ho_Chi_Minh`; dùng khoảng đóng/mở để bao trọn ngày cuối.
 - Logic thống kê nhận thời gian/nguồn dữ liệu làm đầu vào để kiểm tra độc lập với giao diện; dùng `Clock` cố định trong kiểm tra khi cần.
 - Chuẩn bị dữ liệu qua hai năm, thời điểm biên, tháng rỗng, nhiều lượt OPEN_APP cùng user/tháng, nhiều tin tới cùng đối tượng và đồ thị bạn bè có vòng/đường trùng.
-- T02 giữ nguyên 10 hồ sơ gốc tạo trong 2026 nên lịch sử ban đầu chỉ có 2026. Dữ liệu năm thứ hai cần được bổ sung hợp lệ khi làm A10/A11; không đặt sự kiện trước ngày đăng ký hoặc tự đổi ngày tạo của 10 hồ sơ hiện có.
+- T02 giữ nguyên 10 hồ sơ gốc tạo trong 2026 nên phiên demo chuẩn chỉ có 2026. T17 dùng bộ mẫu kiểm tra với Clock 2027, hồ sơ mới và sự kiện sau ngày đăng ký để kiểm chứng hai năm. Bộ mẫu báo cáo hai năm cần chuẩn bị nhất quán tại T20 nếu sử dụng; không đặt sự kiện trước đăng ký hoặc tự đổi ngày tạo của 10 hồ sơ gốc.
 - Ghi trước kết quả mong đợi của một số trường hợp, không tính kỳ vọng bằng chính hàm đang kiểm tra.
 - Hải đã chốt ngày 16/11/2026: năm hiện tại là lựa chọn ban đầu; danh sách gồm năm hiện tại và các năm có dữ liệu, không cố định năm mặc định trong code.
 

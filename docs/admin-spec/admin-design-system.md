@@ -90,7 +90,7 @@ Không ép toàn bộ hướng dẫn font 16 hoặc kích thước chạm của 
 | Lỗi nhập | `.validation-message` | Hiện ngay trong dialog, xuống dòng; khi lưu không hợp lệ chuyển focus đến thông báo lỗi; giữ dữ liệu vừa nhập và cửa sổ mở |
 | Thao tác bị cấm | Disabled + dòng gợi ý dưới bảng | Giữ nguyên bảo vệ Admin cuối cùng và tài khoản đã xóa; giải thích bằng chữ, không chỉ dựa tooltip của nút disabled |
 | Phản hồi mẫu | `.demo-note` | Thông báo kết quả trong trang, phân biệt dữ liệu trong bộ nhớ với thay đổi trên hệ thống |
-| Biểu đồ tương lai | JavaFX `BarChart` | Dùng bảng màu chung, trục/đơn vị rõ ràng, có cách đọc số liệu bằng chữ; chưa triển khai trong lượt chuẩn hóa A1/A2 |
+| Biểu đồ A10/A11 | JavaFX `BarChart`, `.monthly-statistics` | Dùng màu Admin chung cho cột/nền/lưới/trục; đủ 12 tháng, Y từ 0 với bước nguyên, tooltip và 12 số liệu bằng chữ. Có ô chọn/nhập năm, lỗi rõ và giải thích năm rỗng. Kiểm chứng tại T15–T17. |
 
 Không thay toàn bộ bảng bằng các thẻ. Thanh thao tác dùng `FlowPane` để tự xuống hàng khi cần; `TableView` nhận phần chiều cao còn lại và cuộn nội dung. Dữ liệu dài không được mất khả năng xem toàn bộ vì bị cắt ở ô bảng.
 

@@ -7,6 +7,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
+import java.time.Year;
+import java.time.ZoneId;
+import java.util.TreeSet;
+import java.util.stream.IntStream;
 
 /** Tính số liệu từ dữ liệu mẫu hiện tại; không cache kết quả hoặc truy cập DB/Server. */
 final class AdminStatistics
@@ -18,6 +22,12 @@ final class AdminStatistics
     record ActivityStats(UserRow user, long openAppCount, int chatPartners, int chatGroups)
     {
     }
+
+    record MonthCount(int month, long count)
+    {
+    }
+
+    private static final ZoneId ZONE = ZoneId.of("Asia/Ho_Chi_Minh");
 
     private final AdminDemoData data;
 
@@ -93,6 +103,55 @@ final class AdminStatistics
                     ActivityCount count = counts.get(user.id());
                     return new ActivityStats(user, count.opens, count.partners.size(), count.groups.size());
                 }).toList();
+    }
+
+    /** Đủ 12 tháng, giữ lịch sử đăng ký của mọi trạng thái. */
+    List<MonthCount> registrationsByMonth(int year)
+    {
+        Year.of(year);
+        long[] counts = new long[12];
+        for (UserRow user : data.userStore().users())
+        {
+            var date = user.createdAt().atZoneSameInstant(ZONE);
+            if (date.getYear() == year)
+            {
+                counts[date.getMonthValue() - 1]++;
+            }
+        }
+        return IntStream.range(0, 12).mapToObj(month -> new MonthCount(month + 1, counts[month])).toList();
+    }
+
+    /** Mỗi user có OPEN_APP chỉ tính một lần trong từng tháng, không đếm tin nhắn. */
+    List<MonthCount> activeUsersByMonth(int year)
+    {
+        Year.of(year);
+        Map<Integer, Set<Long>> users = new HashMap<>();
+        for (AdminDemoData.ActivityEvent event : data.records().activities())
+        {
+            var date = event.occurredAt().atZoneSameInstant(ZONE);
+            if (event.kind() == AdminDemoData.ActivityKind.OPEN_APP && date.getYear() == year)
+            {
+                users.computeIfAbsent(date.getMonthValue(), ignored -> new HashSet<>()).add(event.userId());
+            }
+        }
+        return IntStream.rangeClosed(1, 12)
+                .mapToObj(month -> new MonthCount(month, users.getOrDefault(month, Set.of()).size())).toList();
+    }
+
+    List<Integer> chartYears(boolean registrations, int currentYear)
+    {
+        TreeSet<Integer> years = new TreeSet<>(Comparator.reverseOrder());
+        years.add(currentYear);
+        if (registrations)
+        {
+            data.userStore().users().forEach(user -> years.add(user.createdAt().atZoneSameInstant(ZONE).getYear()));
+        }
+        else
+        {
+            data.records().activities().stream().filter(event -> event.kind() == AdminDemoData.ActivityKind.OPEN_APP)
+                    .forEach(event -> years.add(event.occurredAt().atZoneSameInstant(ZONE).getYear()));
+        }
+        return List.copyOf(years);
     }
 
     private static final class ActivityCount

@@ -104,6 +104,8 @@ public final class AdminMainView extends BorderPane {
             case NEW_USERS -> new NewUsersView(demoData);
             case FRIEND_STATISTICS -> new FriendStatisticsView(demoData);
             case ACTIVE_USERS -> new ActiveUsersView(demoData);
+            case REGISTRATION_CHART -> new MonthlyStatisticsView(demoData, true);
+            case ACTIVITY_CHART -> new MonthlyStatisticsView(demoData, false);
             default -> createPreview(selected);
         }));
     }

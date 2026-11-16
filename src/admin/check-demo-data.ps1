@@ -1047,6 +1047,178 @@ public final class AdminDemoDataCheck
         }
     }
 
+    @SuppressWarnings("unchecked")
+    private static List<Long> chartCounts(javafx.scene.chart.BarChart<String, Number> chart)
+    {
+        return chart.getData().getFirst().getData().stream().map(point -> point.getYValue().longValue()).toList();
+    }
+
+    @SuppressWarnings("unchecked")
+    private static void chartChecks(boolean dark)
+    {
+        AdminUserStore store = new AdminUserStore(Clock.fixed(Instant.parse("2027-01-01T03:00:00Z"), ZoneOffset.UTC));
+        AdminDemoData.Records original = new AdminDemoData(store).records();
+        UserRow added = store.add(draft("chart.fixture", "Chart fixture", "chart@example.test"));
+        List<AdminDemoData.ActivityEvent> events = new ArrayList<>(original.activities());
+        events.add(new AdminDemoData.ActivityEvent(200, added.id(), AdminDemoData.ActivityKind.OPEN_APP, null,
+                OffsetDateTime.parse("2027-01-01T10:00:00+07:00")));
+        events.add(new AdminDemoData.ActivityEvent(201, added.id(), AdminDemoData.ActivityKind.OPEN_APP, null,
+                OffsetDateTime.parse("2027-01-01T10:01:00+07:00")));
+        events.add(new AdminDemoData.ActivityEvent(202, added.id(), AdminDemoData.ActivityKind.OPEN_APP, null,
+                OffsetDateTime.parse("2027-02-01T10:00:00+07:00")));
+        AdminDemoData data = new AdminDemoData(store, new AdminDemoData.Records(original.logins(), original.friendships(), original.groups(),
+                original.memberships(), original.reports(), events, original.onlineUserIds()));
+        AdminMainView root = new AdminMainView(() ->
+        {
+        }, data);
+        Scene scene = new Scene(root, 1000, 700);
+        scene.getStylesheets().add(Objects.requireNonNull(AdminMainView.class.getResource("/admin/admin.css")).toExternalForm());
+        if (dark)
+        {
+            root.getStyleClass().add("theme-dark");
+        }
+        for (boolean registrations : List.of(true, false))
+        {
+            String id = registrations ? "registration-chart" : "activity-chart";
+            String nav = registrations ? "registration_chart" : "activity_chart";
+            ((ToggleButton) root.lookup("#nav-" + nav)).fire();
+            root.applyCss();
+            root.layout();
+            Node cached = root.lookup("#" + id);
+            ComboBox<String> year = (ComboBox<String>) cached.lookup("#" + id + "-year");
+            javafx.scene.chart.BarChart<String, Number> chart = (javafx.scene.chart.BarChart<String, Number>) cached.lookup("#" + id + "-plot");
+            Label error = (Label) cached.lookup("#" + id + "-error");
+            javafx.scene.layout.FlowPane values = (javafx.scene.layout.FlowPane) cached.lookup("#" + id + "-values");
+            check(year.getEditor().getText().equals(Integer.toString(Year.now(ZoneId.of("Asia/Ho_Chi_Minh")).getValue())),
+                    "chart default is actual current Vietnam year: " + id);
+            check(year.getItems().containsAll(List.of("2026", "2027")), "two-year chart choices: " + id);
+            year.getEditor().setText("2026");
+            List<Long> expected = registrations ? List.of(2L, 1L, 0L, 0L, 1L, 0L, 0L, 0L, 1L, 3L, 2L, 0L)
+                    : List.of(0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 1L, 4L, 0L);
+            check(chartCounts(chart).equals(expected), "chart matches manual monthly counts: " + id);
+            check(chart.getData().getFirst().getData().stream().map(point -> point.getXValue()).toList()
+                    .equals(java.util.stream.IntStream.rangeClosed(1, 12).mapToObj(Integer::toString).toList()), "all months in calendar order: " + id);
+            check(values.getChildren().size() == 12 && ((Label) values.getChildren().get(10)).getText().endsWith(registrations ? ": 2" : ": 4"),
+                    "readable exact numeric values: " + id);
+            year.getEditor().setText("2025");
+            check(chartCounts(chart).size() == 12 && chartCounts(chart).stream().allMatch(count -> count == 0)
+                    && ((Label) cached.lookup("#" + id + "-summary")).getText().contains("2025"), "empty year keeps twelve zeros: " + id);
+            for (String invalid : List.of("", "-1", "0", "1.5", "abcd", "10000"))
+            {
+                year.getEditor().setText(invalid);
+                check(error.isVisible() && chart.getData().isEmpty() && values.getChildren().isEmpty(), "invalid chart year: " + id + " " + invalid);
+            }
+            check(year.getValue().equals("10000"), "typed invalid year is synchronized before dropdown recovery: " + id);
+            year.getSelectionModel().select("2026");
+            check(year.getEditor().getText().equals("2026") && !error.isVisible() && chartCounts(chart).equals(expected),
+                    "reselecting original year after typing invalid input restores chart: " + id);
+            year.setValue("2027");
+            check(!error.isVisible() && chartCounts(chart).getFirst() == 1
+                    && chartCounts(chart).get(1) == (registrations ? 0 : 1), "year selection recovers and deduplicates repeated opens: " + id);
+            ((ToggleButton) root.lookup("#nav-users")).fire();
+            store.changeStatus(added.id(), registrations ? UserRow.Status.LOCKED : UserRow.Status.DELETED);
+            ((ToggleButton) root.lookup("#nav-" + nav)).fire();
+            check(root.lookup("#" + id) == cached && year.getEditor().getText().equals("2027")
+                    && chartCounts(chart).getFirst() == 1, "cached chart preserves selected year and history after status change: " + id);
+            ((MonthlyStatisticsView) cached).close();
+        }
+        MonthlyStatisticsView future = new MonthlyStatisticsView(data, true,
+                Clock.fixed(Instant.parse("2050-01-01T00:00:00Z"), ZoneOffset.UTC));
+        ComboBox<String> futureYear = (ComboBox<String>) future.lookup("#registration-chart-year");
+        check(futureYear.getEditor().getText().equals("2050") && futureYear.getItems().containsAll(List.of("2050", "2027", "2026")),
+                "injected current year without hardcoding or discarding data years");
+        future.close();
+    }
+
+    @SuppressWarnings("unchecked")
+    private static void acceptanceChecks(boolean dark)
+    {
+        AdminDemoData data = new AdminDemoData(store());
+        AdminMainView root = new AdminMainView(() ->
+        {
+        }, data);
+        Scene scene = new Scene(root, 1000, 700);
+        scene.getStylesheets().add(Objects.requireNonNull(AdminMainView.class.getResource("/admin/admin.css")).toExternalForm());
+        if (dark)
+        {
+            ((ToggleButton) root.lookup("#theme-toggle")).fire();
+        }
+        String[] ids = {"user-management", "login-history", "group-management", "spam-reports", "new-users",
+                "registration-chart", "friend-statistics", "active-users", "activity-chart"};
+        Map<AdminNavigation.Page, Node> pages = new EnumMap<>(AdminNavigation.Page.class);
+        for (int width : List.of(1000, 1920))
+        {
+            root.resize(width, width == 1000 ? 700 : 1032);
+            for (AdminNavigation.Page page : AdminNavigation.Page.values())
+            {
+                ((ToggleButton) root.lookup("#nav-" + page.name().toLowerCase(Locale.ROOT))).fire();
+                root.applyCss();
+                root.layout();
+                Node content = root.lookup("#" + ids[page.ordinal()]);
+                check(content != null && ((Label) root.lookup("#page-title")).getText().equals(page.title()),
+                        "T18 real page and title: " + page + " at " + width);
+                check(root.lookup(".preview-card") == null && root.getStyleClass().contains("theme-dark") == dark,
+                        "T18 implemented route and consistent theme: " + page);
+                Node previous = pages.putIfAbsent(page, content);
+                check(previous == null || previous == content, "T18 navigation preserves page instance: " + page);
+                for (Node node : root.lookupAll(".demo-note"))
+                {
+                    Label note = (Label) node;
+                    check(note.getHeight() + 1 >= note.prefHeight(note.getWidth()), "T18 complete note height: " + page + " at " + width);
+                }
+            }
+        }
+        TableView<UserRow> users = (TableView<UserRow>) pages.get(AdminNavigation.Page.USERS).lookup("#users-table");
+        TableView<UserRow> registrations = (TableView<UserRow>) pages.get(AdminNavigation.Page.NEW_USERS).lookup("#new-users-table");
+        TableView<AdminStatistics.FriendStats> friends = (TableView<AdminStatistics.FriendStats>) pages.get(AdminNavigation.Page.FRIEND_STATISTICS).lookup("#friend-statistics-table");
+        TableView<AdminStatistics.ActivityStats> activity = (TableView<AdminStatistics.ActivityStats>) pages.get(AdminNavigation.Page.ACTIVE_USERS).lookup("#active-users-table");
+        javafx.scene.chart.BarChart<String, Number> registrationChart = (javafx.scene.chart.BarChart<String, Number>) pages.get(AdminNavigation.Page.REGISTRATION_CHART).lookup("#registration-chart-plot");
+        javafx.scene.chart.BarChart<String, Number> activityChart = (javafx.scene.chart.BarChart<String, Number>) pages.get(AdminNavigation.Page.ACTIVITY_CHART).lookup("#activity-chart-plot");
+        for (AdminNavigation.Page page : List.of(AdminNavigation.Page.REGISTRATION_CHART, AdminNavigation.Page.ACTIVITY_CHART))
+        {
+            String prefix = page == AdminNavigation.Page.REGISTRATION_CHART ? "registration-chart" : "activity-chart";
+            ((ComboBox<String>) pages.get(page).lookup("#" + prefix + "-year")).getEditor().setText("2026");
+        }
+        UserRow added = data.userStore().add(draft("acceptance.new", "Acceptance new", "acceptance@example.test"));
+        check(users.getItems().contains(added) && registrations.getItems().contains(added)
+                && chartCounts(registrationChart).get(10) == 3, "T18 adding profile updates A2, A7 and A10 while hidden");
+        check(friends.getItems().stream().anyMatch(row -> row.user().id() == added.id() && row.directFriends() == 0)
+                && activity.getItems().size() == 5 && chartCounts(activityChart).get(10) == 4,
+                "T18 new user has no invented friendships or activity");
+        UserRow renamed = data.userStore().update(2, draft("minh.acceptance", "Acceptance Minh", "minh.acceptance@example.test"));
+        TableView<AdminDemoData.LoginEvent> logins = (TableView<AdminDemoData.LoginEvent>) pages.get(AdminNavigation.Page.LOGIN_HISTORY).lookup("#login-history-table");
+        TableView<AdminDemoData.ChatGroup> groups = (TableView<AdminDemoData.ChatGroup>) pages.get(AdminNavigation.Page.GROUPS).lookup("#groups-table");
+        check(users.getItems().contains(renamed) && registrations.getItems().contains(renamed)
+                && friends.getItems().stream().anyMatch(row -> row.user() == renamed)
+                && activity.getItems().stream().anyMatch(row -> row.user() == renamed), "T18 all user snapshots refresh together");
+        int loginIndex = java.util.stream.IntStream.range(0, logins.getItems().size()).filter(i -> logins.getItems().get(i).userId() == 2).findFirst().orElseThrow();
+        int groupIndex = java.util.stream.IntStream.range(0, groups.getItems().size()).filter(i -> groups.getItems().get(i).creatorId() == 2).findFirst().orElseThrow();
+        check(logins.getColumns().get(1).getCellObservableValue(loginIndex).getValue().equals("minh.acceptance")
+                && groups.getColumns().get(1).getCellObservableValue(groupIndex).getValue().equals("minh.acceptance"),
+                "T18 cached login and group creator resolve same renamed ID");
+        data.userStore().changeStatus(2, UserRow.Status.DELETED);
+        check(registrations.getItems().size() == 11 && chartCounts(registrationChart).stream().mapToLong(Long::longValue).sum() == 11
+                && activity.getItems().size() == 5 && chartCounts(activityChart).get(10) == 4,
+                "T18 soft deletion preserves both historical pages and charts");
+        check(friends.getItems().size() == 9 && friends.getItems().stream().noneMatch(row -> row.user().id() == 2)
+                && data.records().friendships().size() == 9 && data.records().activities().size() == 15,
+                "T18 current graph changes without erasing original records");
+        for (Node page : pages.values())
+        {
+            if (page instanceof AutoCloseable view)
+            {
+                try
+                {
+                    view.close();
+                }
+                catch (Exception exception)
+                {
+                    throw new AssertionError("T18 cleanup failed", exception);
+                }
+            }
+        }
+    }
+
     public static void main(String[] args) throws Exception
     {
         dataChecks();
@@ -1056,6 +1228,8 @@ public final class AdminDemoDataCheck
         AtomicReference<Throwable> failure = new AtomicReference<>();
         Platform.startup(() ->
         {
+            Platform.setImplicitExit(false);
+            Thread.currentThread().setUncaughtExceptionHandler((thread, error) -> failure.compareAndSet(null, error));
             try
             {
                 viewChecks(false);
@@ -1089,6 +1263,14 @@ public final class AdminDemoDataCheck
                 statisticsIntegrationChecks(false);
                 statisticsIntegrationChecks(true);
                 System.out.println("PASS: " + (passed - beforeStatisticsIntegration) + " T14 cross-page JavaFX checks across light/dark.");
+                int beforeCharts = passed;
+                chartChecks(false);
+                chartChecks(true);
+                System.out.println("PASS: " + (passed - beforeCharts) + " A10/A11 chart JavaFX checks across light/dark.");
+                int beforeAcceptance = passed;
+                acceptanceChecks(false);
+                acceptanceChecks(true);
+                System.out.println("PASS: " + (passed - beforeAcceptance) + " T18 whole-Admin integration/layout checks across light/dark.");
             }
             catch (Throwable error)
             {

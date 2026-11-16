@@ -1,4 +1,22 @@
 /* JavaFX 21 looked-up colors; see docs/admin-spec/admin-design-system.md. */
+.monthly-statistics .chart-plot-background
+{
+    -fx-background-color: -admin-surface;
+}
+.monthly-statistics .chart-bar
+{
+    -fx-bar-fill: -admin-accent;
+    -fx-background-radius: 3 3 0 0;
+}
+.monthly-statistics .axis
+{
+    -fx-tick-label-fill: -admin-text;
+}
+.monthly-statistics .chart-horizontal-grid-lines,
+.monthly-statistics .chart-vertical-grid-lines
+{
+    -fx-stroke: -admin-border;
+}
 .admin-root, .admin-dialog {
     -fx-font-family: "Segoe UI";
     -fx-font-size: 13px;

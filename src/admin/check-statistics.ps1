@@ -1,4 +1,4 @@
-# Kiem tra logic T10; khong khoi tao Toolkit, khong mo UI va khong ket noi DB/Server.
+# Kiem tra logic thong ke Admin; khong khoi tao Toolkit, khong mo UI va khong ket noi DB/Server.
 [CmdletBinding()]
 param([string]$MavenCommand = 'mvn.cmd')
 
@@ -95,6 +95,44 @@ public final class AdminStatisticsCheck
         AdminDemoData.Records original = data.records();
         AdminStatistics stats = new AdminStatistics(data);
         AdminDateRange all = range(null, null);
+        long[] expectedRegistrations = {2, 1, 0, 0, 1, 0, 0, 0, 1, 3, 2, 0};
+        long[] expectedActivity = {0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 4, 0};
+        check(stats.registrationsByMonth(2026).size() == 12 && stats.activeUsersByMonth(2026).size() == 12,
+                "both charts return all twelve months");
+        for (int month = 1; month <= 12; month++)
+        {
+            check(stats.registrationsByMonth(2026).get(month - 1).equals(new AdminStatistics.MonthCount(month, expectedRegistrations[month - 1])),
+                    "manual registration total for month " + month);
+            check(stats.activeUsersByMonth(2026).get(month - 1).equals(new AdminStatistics.MonthCount(month, expectedActivity[month - 1])),
+                    "manual distinct OPEN_APP users for month " + month);
+        }
+        check(stats.registrationsByMonth(2025).stream().allMatch(month -> month.count() == 0)
+                && stats.activeUsersByMonth(2025).stream().allMatch(month -> month.count() == 0), "empty year keeps twelve zeros");
+        check(stats.chartYears(true, 2050).equals(List.of(2050, 2026))
+                && stats.chartYears(false, 2050).equals(List.of(2050, 2026)), "current year included without invented history");
+        immutable(() -> stats.registrationsByMonth(2026).clear());
+        immutable(() -> stats.activeUsersByMonth(2026).clear());
+        AdminUserStore secondYearStore = new AdminUserStore(Clock.fixed(Instant.parse("2026-12-31T17:00:00Z"), ZoneOffset.UTC));
+        UserRow nextYear = secondYearStore.add(new AdminUserStore.UserDraft("year.new", "Year test", null, null, null, "year@example.test"));
+        List<AdminDemoData.ActivityEvent> yearEvents = new ArrayList<>(original.activities());
+        yearEvents.add(new AdminDemoData.ActivityEvent(200, nextYear.id(), AdminDemoData.ActivityKind.OPEN_APP, null,
+                OffsetDateTime.parse("2026-12-31T17:00:00Z")));
+        yearEvents.add(new AdminDemoData.ActivityEvent(201, nextYear.id(), AdminDemoData.ActivityKind.OPEN_APP, null,
+                OffsetDateTime.parse("2027-01-01T00:00:01+07:00")));
+        yearEvents.add(new AdminDemoData.ActivityEvent(202, nextYear.id(), AdminDemoData.ActivityKind.OPEN_APP, null,
+                OffsetDateTime.parse("2027-02-01T00:00:00+07:00")));
+        AdminStatistics twoYearStats = new AdminStatistics(new AdminDemoData(secondYearStore,
+                new AdminDemoData.Records(original.logins(), original.friendships(), original.groups(), original.memberships(),
+                        original.reports(), yearEvents, original.onlineUserIds())));
+        check(twoYearStats.registrationsByMonth(2026).stream().mapToLong(AdminStatistics.MonthCount::count).sum() == 10
+                && twoYearStats.registrationsByMonth(2027).getFirst().count() == 1, "registration UTC year boundary converted to Vietnam");
+        check(twoYearStats.activeUsersByMonth(2027).getFirst().count() == 1
+                && twoYearStats.activeUsersByMonth(2027).get(1).count() == 1, "repeat opens deduplicated per month, same user counts in each month");
+        check(twoYearStats.chartYears(true, 2050).equals(List.of(2050, 2027, 2026))
+                && twoYearStats.chartYears(false, 2050).equals(List.of(2050, 2027, 2026)), "two-year sources produce real year choices");
+        secondYearStore.changeStatus(nextYear.id(), UserRow.Status.DELETED);
+        check(twoYearStats.registrationsByMonth(2027).getFirst().count() == 1
+                && twoYearStats.activeUsersByMonth(2027).getFirst().count() == 1, "deleted user retained in both monthly histories");
 
         check(stats.registrations(all).size() == 10, "all registrations including deleted profiles");
         check(ids(stats.registrations(range("2026-10-31", "2026-11-01"))).equals(List.of(10L, 9L, 8L)),
@@ -162,6 +200,8 @@ public final class AdminStatisticsCheck
         activityEquals(stats, all, 2, 3, 2, 2);
         store.changeStatus(2, UserRow.Status.DELETED);
         check(stats.friendStatistics().size() == 8, "new deleted user excluded from graph");
+        check(stats.registrationsByMonth(2026).getFirst().count() == 2
+                && stats.activeUsersByMonth(2026).get(10).count() == 4, "soft delete does not change past monthly totals");
         check(friends(stats, 1).directFriends() == 1 && friends(stats, 1).friendsOfFriends() == 1,
                 "deleting intermediate changes both degrees without deleting raw edges");
         check(friends(stats, 7).directFriends() == 0, "locked user's deleted friend no longer counted");
