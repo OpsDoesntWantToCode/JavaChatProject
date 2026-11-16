@@ -147,8 +147,9 @@ Mọi tệp tin, thư mục và thành phần mã nguồn trong dự án BẮT B
 - PHẢI áp dụng các quy chuẩn bên dưới cho `src/user/`; TUYỆT ĐỐI KHÔNG tự áp đặt bảng màu, kích thước hoặc bố cục User lên Admin khi chưa có thống nhất mới.
 
 1. **Chuẩn Công nghệ & Nguồn Chân lý Duy nhất (Single Source of Truth for UI):**
-   - BẮT BUỘC sử dụng các thành phần bố cục chuẩn của **JavaFX 21** (`BorderPane`, `HBox`, `VBox`, `StackPane`, `GridPane`) và CSS (`src/user/theme.css`).
-   - Mọi quy chuẩn về Design Tokens, Khoảng cách (8-point grid), Ma trận bo góc chọn lọc, Quy tắc chống AI Slop, Quy tắc đường viền không trùng lặp (Single Border Source) và Vòng lặp nguyên tử BẮT BUỘC tuân thủ tài liệu gốc: `docs/ui-spec/base-ui-spec.md`.
+   - Tối đa hóa việc sử dụng các Layout Pane chuẩn của **JavaFX 21** (`BorderPane`, `HBox`, `VBox`, `StackPane`, `GridPane`).
+   - **Phân hệ User (`src/user/`):** Mọi quy chuẩn về Design Tokens, Khoảng cách (8-point grid), Ma trận bo góc chọn lọc, Quy tắc chống AI Slop, Quy tắc đường viền không trùng lặp (Single Border Source) và Vòng lặp nguyên tử BẮT BUỘC tuân thủ tài liệu gốc: `docs/ui-spec/base-ui-spec.md` và stylesheet `src/user/theme.css`.
+   - **Phân hệ Admin (`src/admin/`):** BẮT BUỘC tuân thủ tài liệu [chuẩn thiết kế Admin](docs/admin-spec/admin-design-system.md) và stylesheet `src/admin/admin.css`. Cùng giữ JavaFX 21 và độc lập namespace CSS.
 
 2. **Tham chiếu & Áp dụng Mẫu Thiết kế Chuẩn (UI/UX Benchmarking & Design Patterns):**
    - Lấy chuẩn thiết kế từ các ứng dụng chat desktop hiện đại hàng đầu (**Discord, Telegram, Zalo**).

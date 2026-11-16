@@ -1,0 +1,92 @@
+﻿[
+    {
+        "file":  "u10-message-multiselect.png",
+        "bytes":  29527,
+        "sha256":  "042aeed152ff956ca1c130b8993d6513419d07d6488c0faa0047daba11663357"
+    },
+    {
+        "file":  "u11-smart-replies.png",
+        "bytes":  29786,
+        "sha256":  "9ca26e1180c7967866a95a7ce4a063400ec7e369e83650e4032ac4f9a5ed8073"
+    },
+    {
+        "file":  "u12-group-create.png",
+        "bytes":  21039,
+        "sha256":  "79ba0197d65d13c272b9ad9df1127242fb7bba30030a8b55586e24c69d2adf47"
+    },
+    {
+        "file":  "u12-member-add.png",
+        "bytes":  8626,
+        "sha256":  "d634396ec962374661003ab33e32d681668ce20590ad60e2f2192fb9429113aa"
+    },
+    {
+        "file":  "u13-spam-report.png",
+        "bytes":  19757,
+        "sha256":  "5c0757b7b7c7f3c19e745b8ca4f156b0de841fab5a9d45490d3533e9a9ffd3db"
+    },
+    {
+        "file":  "u1-login.png",
+        "bytes":  38031,
+        "sha256":  "e09f46db7199d39cd6bc19a62e52fec0cdb6db0f00e437e2fa52fa8c153f7f1b"
+    },
+    {
+        "file":  "u1-register.png",
+        "bytes":  33668,
+        "sha256":  "714a575016f4b02ed7b5d3f2041c1a918693d0e81ab595b741fc0f60194ec385"
+    },
+    {
+        "file":  "u2-forgot-password.png",
+        "bytes":  16021,
+        "sha256":  "b8b4f8fee59631be58615db298b0140b6f825b33dd194878b1f8315384267002"
+    },
+    {
+        "file":  "u2-profile-settings.png",
+        "bytes":  18066,
+        "sha256":  "6fe8257cb5a2def461d6d9523ef0af157581179a9735c1ddad4277cf1a98e1f6"
+    },
+    {
+        "file":  "u2-security-password.png",
+        "bytes":  15804,
+        "sha256":  "b6a30ef629b95bffccc230d29a1c9c2a673818efccf4611f81ef5986d97e5d3d"
+    },
+    {
+        "file":  "u3-workspace-direct.png",
+        "bytes":  79572,
+        "sha256":  "0058bcbb3dffe3b9753108cc03a48940256d7035328626e0ab7fd898f48bb876"
+    },
+    {
+        "file":  "u3-workspace-group.png",
+        "bytes":  95672,
+        "sha256":  "1b7b52d845cb6cf28590040d2109a3199e2ebcd04c0a0917807b0d95ad1859e0"
+    },
+    {
+        "file":  "u4-friends-all.png",
+        "bytes":  68140,
+        "sha256":  "e1c012825b1209f30164c68acc42cf62f0d09afc1f3c872cd91bbd2b2d8aafa2"
+    },
+    {
+        "file":  "u5-friends-pending.png",
+        "bytes":  31925,
+        "sha256":  "4fe7f23e3e9613bb2856f8e00e2837229dd4f90a7b081d0d9b4894064bbecb17"
+    },
+    {
+        "file":  "u6-friends-online.png",
+        "bytes":  46375,
+        "sha256":  "9f99a157193b9ec7a099093d9545b271f11d5f81c429efe26d3283cdb1970a82"
+    },
+    {
+        "file":  "u7-friends-search.png",
+        "bytes":  51855,
+        "sha256":  "bc60eafeb7673296510204ddff37e2428ae31906bc3ac716c879e5cb1d67f9d1"
+    },
+    {
+        "file":  "u8-direct-chat-details.png",
+        "bytes":  23407,
+        "sha256":  "2088463093afb1204090569bcc6ab251a0a2868f66c3e8874c350c561dd3f09d"
+    },
+    {
+        "file":  "u9-global-search.png",
+        "bytes":  19508,
+        "sha256":  "8c7d3631616eb4af583e4c19ad2f80658bd68903a73598e4bf1f12ef312b7607"
+    }
+]

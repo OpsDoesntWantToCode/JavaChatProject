@@ -4,6 +4,7 @@ import java.util.List;
 
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.Label;
@@ -41,18 +42,18 @@ public class UserMainWorkspace extends BorderPane {
 
     // Cột 1: Navigation Rail
     private final VBox navRail = new VBox(16);
-    private final Button btnNavChat = new Button("💬");
-    private final Button btnNavFriends = new Button("👥");
-    private final Button btnNavSettings = new Button("⚙");
-    private final Button btnNavLogout = new Button("🚪");
+    private final Button btnNavChat = new Button();
+    private final Button btnNavFriends = new Button();
+    private final Button btnNavSettings = new Button();
+    private final Button btnNavLogout = new Button();
     private boolean isChatMode = true;
 
     // Cột 2: Sub-Sidebar
     private final VBox subSidebar = new VBox(12);
     private final Label lblSidebarTitle = new Label("Đoạn chat");
     private final TextField txtSearch = new TextField();
-    private final Button btnClearSearch = new Button("✕");
-    private final Button btnNewGroup = new Button("➕");
+    private final Button btnClearSearch = new Button();
+    private final Button btnNewGroup = new Button();
     private final VBox conversationListBox = new VBox(4);
     private final VBox friendsCategoryBox = new VBox(4);
     private final ScrollPane conversationScrollPane = new ScrollPane();
@@ -68,9 +69,12 @@ public class UserMainWorkspace extends BorderPane {
     private ChatConversationView chatConversationView;
     private EmptyChatWelcomeView emptyWelcomeView;
 
+    private boolean isSidebarOpen = true;
+
     // Cột 4: Right Drawer
     private final VBox rightDrawer = new VBox();
     private GroupManagementDrawer groupManagementDrawer;
+    private UserDirectDrawer directUserDrawer;
     private boolean isDrawerOpen = true;
 
     // View Quản lý Bạn bè chuyên dụng (Task U4, U5, U6, U7)
@@ -112,7 +116,7 @@ public class UserMainWorkspace extends BorderPane {
         // Nạp dữ liệu hội thoại mặc định (Nhóm Đồ Án Java 2026 có mã hóa)
         loadConversation("group_project");
 
-        // Lắng nghe phím tắt toàn cục Ctrl+Shift+F hoặc Ctrl+K (Mục 11.g)
+        // Lắng nghe phím tắt toàn cục Ctrl+Shift+F, Ctrl+K hoặc Ctrl+B (Mục 11.g)
         sceneProperty().addListener((obs, oldScene, newScene) -> {
             if (newScene != null) {
                 newScene.setOnKeyPressed(e -> {
@@ -120,6 +124,8 @@ public class UserMainWorkspace extends BorderPane {
                         openGlobalSearchDialog(txtSearch.getText());
                     } else if (e.isControlDown() && e.getCode() == KeyCode.K) {
                         openGlobalSearchDialog(txtSearch.getText());
+                    } else if (e.isControlDown() && e.getCode() == KeyCode.B) {
+                        toggleSidebar();
                     } else if (e.isControlDown() && e.getCode() == KeyCode.F) {
                         txtSearch.requestFocus();
                         txtSearch.selectAll();
@@ -160,10 +166,15 @@ public class UserMainWorkspace extends BorderPane {
         Tooltip.install(avatarBox, new Tooltip("Hồ sơ & Cài đặt (tuanminh_2026)"));
 
         // Nút chuyển chế độ
+        btnNavChat.setGraphic(JavaFXTheme.createSvgIcon(JavaFXTheme.SVG_MESSAGE, 0.9, "#8E929B"));
+        btnNavFriends.setGraphic(JavaFXTheme.createSvgIcon(JavaFXTheme.SVG_USERS, 0.9, "#8E929B"));
+        btnNavSettings.setGraphic(JavaFXTheme.createSvgIcon(JavaFXTheme.SVG_SETTINGS, 0.9, "#8E929B"));
+        btnNavLogout.setGraphic(JavaFXTheme.createSvgIcon(JavaFXTheme.SVG_LOGOUT, 0.9, "#FA777C"));
+
         btnNavChat.getStyleClass().addAll("nav-item-btn", "nav-item-btn-active");
         btnNavFriends.getStyleClass().add("nav-item-btn");
         btnNavSettings.getStyleClass().add("nav-item-btn");
-        btnNavLogout.getStyleClass().add("nav-item-btn");
+        btnNavLogout.getStyleClass().addAll("nav-item-btn", "nav-item-btn-danger");
 
         JavaFXTheme.applyIconButton(btnNavChat);
         JavaFXTheme.applyIconButton(btnNavFriends);
@@ -179,7 +190,14 @@ public class UserMainWorkspace extends BorderPane {
         btnNavFriends.setOnAction(e -> switchMode(false));
         btnNavSettings.setOnAction(e -> openSettingsDialog());
         btnNavLogout.setOnAction(e -> {
-            if (onLogout != null) {
+            boolean ok = JavaFXTheme.showDestructiveConfirmDialog(
+                primaryStage,
+                "Xác nhận đăng xuất",
+                "Đăng xuất khỏi tài khoản?",
+                "Bạn sẽ được đưa về màn hình Đăng nhập. Các phiên làm việc hiện tại sẽ được lưu an toàn.",
+                "Đăng xuất"
+            );
+            if (ok && onLogout != null) {
                 onLogout.run();
             }
         });
@@ -283,6 +301,7 @@ public class UserMainWorkspace extends BorderPane {
         Region sp = new Region();
         HBox.setHgrow(sp, Priority.ALWAYS);
 
+        btnNewGroup.setGraphic(JavaFXTheme.createSvgIcon(JavaFXTheme.SVG_PLUS, 0.8, "#8E929B"));
         btnNewGroup.getStyleClass().add("btn-icon-subtle");
         Tooltip.install(btnNewGroup, new Tooltip("Tạo nhóm trò chuyện mới (Mục 12.a)"));
         JavaFXTheme.applyIconButton(btnNewGroup);
@@ -297,17 +316,29 @@ public class UserMainWorkspace extends BorderPane {
             }).show();
         });
 
-        topBox.getChildren().addAll(lblSidebarTitle, sp, btnNewGroup);
+        Button btnCollapseSidebar = new Button();
+        btnCollapseSidebar.setGraphic(JavaFXTheme.createSvgIcon(JavaFXTheme.SVG_CHEVRON_LEFT, 0.75));
+        btnCollapseSidebar.getStyleClass().add("btn-icon-subtle");
+        btnCollapseSidebar.setPrefSize(28, 28);
+        btnCollapseSidebar.setMinSize(28, 28);
+        btnCollapseSidebar.setMaxSize(28, 28);
+        Tooltip.install(btnCollapseSidebar, new Tooltip("Thu gọn danh sách đoạn chat (Ctrl+B)"));
+        JavaFXTheme.applyIconButton(btnCollapseSidebar);
+        btnCollapseSidebar.setOnAction(e -> toggleSidebar());
 
-        // Thanh Tìm kiếm Hội thoại tinh gọn chuẩn Messenger/Telegram
+        topBox.getChildren().addAll(lblSidebarTitle, sp, btnNewGroup, btnCollapseSidebar);
+
+        // Thanh Tìm kiếm Hội thoại thu nhỏ tinh gọn chuẩn Messenger/Telegram
         HBox searchContainer = new HBox(6);
         searchContainer.setAlignment(Pos.CENTER_LEFT);
-        searchContainer.setStyle("-fx-background-color: -bg-input; -fx-border-color: -border-subtle; -fx-border-radius: 8px; -fx-background-radius: 8px; -fx-padding: 6px 10px;");
+        searchContainer.setMinHeight(28);
+        searchContainer.setPrefHeight(28);
+        searchContainer.setMaxHeight(28);
+        searchContainer.setStyle("-fx-background-color: -bg-input; -fx-border-color: -border-subtle; -fx-border-radius: 6px; -fx-background-radius: 6px; -fx-padding: 2px 8px;");
 
-        Label lblSearchIcon = new Label("🔍");
-        lblSearchIcon.setStyle("-fx-font-size: 12px; -fx-text-fill: -text-muted;");
+        javafx.scene.shape.SVGPath lblSearchIcon = JavaFXTheme.createSvgIcon(JavaFXTheme.SVG_SEARCH, 0.7, "#8E929B");
 
-        txtSearch.setPromptText("Tìm kiếm cuộc trò chuyện / tin nhắn...");
+        txtSearch.setPromptText("Tìm kiếm cuộc trò chuyện...");
         txtSearch.setStyle(
             "-fx-background-color: transparent; " +
             "-fx-background-insets: 0; " +
@@ -316,20 +347,22 @@ public class UserMainWorkspace extends BorderPane {
             "-fx-focus-color: transparent; " +
             "-fx-faint-focus-color: transparent; " +
             "-fx-text-fill: -text-normal; " +
-            "-fx-font-size: 13px; " +
+            "-fx-font-size: 11.5px; " +
             "-fx-padding: 0;"
         );
         HBox.setHgrow(txtSearch, Priority.ALWAYS);
 
         txtSearch.focusedProperty().addListener((obs, ov, focused) -> {
             if (focused) {
-                searchContainer.setStyle("-fx-background-color: -bg-input; -fx-border-color: -accent-primary; -fx-border-radius: 8px; -fx-background-radius: 8px; -fx-padding: 6px 10px;");
+                searchContainer.setStyle("-fx-background-color: -bg-input; -fx-border-color: -accent-primary; -fx-border-radius: 6px; -fx-background-radius: 6px; -fx-padding: 2px 8px;");
             } else {
-                searchContainer.setStyle("-fx-background-color: -bg-input; -fx-border-color: -border-subtle; -fx-border-radius: 8px; -fx-background-radius: 8px; -fx-padding: 6px 10px;");
+                searchContainer.setStyle("-fx-background-color: -bg-input; -fx-border-color: -border-subtle; -fx-border-radius: 6px; -fx-background-radius: 6px; -fx-padding: 2px 8px;");
             }
         });
 
-        btnClearSearch.getStyleClass().add("btn-icon-subtle");
+        btnClearSearch.setGraphic(JavaFXTheme.createSvgIcon(JavaFXTheme.SVG_CLOSE, 0.65, "#8E929B"));
+        btnClearSearch.getStyleClass().add("dialog-close-btn");
+        JavaFXTheme.applyCloseButton(btnClearSearch);
         btnClearSearch.setStyle("-fx-font-size: 11px; -fx-padding: 2 4;");
         btnClearSearch.setVisible(false);
         btnClearSearch.setOnAction(e -> {
@@ -650,15 +683,15 @@ public class UserMainWorkspace extends BorderPane {
         friendsCategoryBox.getChildren().clear();
 
         friendsCategoryBox.getChildren().addAll(
-            createFriendsCategoryItem("all", "👥 Tất cả bạn bè", 5),
-            createFriendsCategoryItem("online", "🟢 Đang trực tuyến", 3),
-            createFriendsCategoryItem("pending", "📩 Lời mời kết bạn", 2),
-            createFriendsCategoryItem("blocked", "⛔ Đã chặn", 1),
-            createFriendsCategoryItem("add", "➕ Thêm bạn / Tìm kiếm", 0)
+            createFriendsCategoryItem("all", "Tất cả bạn bè", 5, JavaFXTheme.SVG_USERS, "#8E929B"),
+            createFriendsCategoryItem("online", "Đang trực tuyến", 3, JavaFXTheme.SVG_CHECK, "#23A55A"),
+            createFriendsCategoryItem("pending", "Lời mời kết bạn", 2, JavaFXTheme.SVG_USER_PLUS, "#4E6BF2"),
+            createFriendsCategoryItem("blocked", "Đã chặn", 1, JavaFXTheme.SVG_BAN, "#FA777C"),
+            createFriendsCategoryItem("add", "Thêm bạn / Tìm kiếm", 0, JavaFXTheme.SVG_SEARCH, "#8E929B")
         );
     }
 
-    private HBox createFriendsCategoryItem(String catId, String title, int count) {
+    private HBox createFriendsCategoryItem(String catId, String title, int count, String svgPath, String iconColor) {
         HBox item = new HBox(10);
         item.setAlignment(Pos.CENTER_LEFT);
         item.getStyleClass().add("conversation-item");
@@ -666,11 +699,13 @@ public class UserMainWorkspace extends BorderPane {
             item.getStyleClass().add("conversation-item-selected");
         }
 
+        javafx.scene.shape.SVGPath icon = JavaFXTheme.createSvgIcon(svgPath, 0.75, iconColor);
+
         Label lbl = new Label(title);
         lbl.getStyleClass().add("conversation-item-title");
         HBox.setHgrow(lbl, Priority.ALWAYS);
 
-        item.getChildren().add(lbl);
+        item.getChildren().addAll(icon, lbl);
 
         if (count > 0) {
             Label cnt = new Label(String.valueOf(count));
@@ -693,7 +728,7 @@ public class UserMainWorkspace extends BorderPane {
        ========================================================================== */
     private void buildMainView() {
         emptyWelcomeView = new EmptyChatWelcomeView(() -> loadConversation("group_project"));
-        chatConversationView = new ChatConversationView(primaryStage, this::handleReportSpam, this::toggleRightDrawer);
+        chatConversationView = new ChatConversationView(primaryStage, this::handleReportSpam, this::toggleRightDrawer, this::toggleSidebar);
         chatConversationView.setOnTriggerGlobalSearch(this::openGlobalSearchDialog);
         mainViewPane.setCenter(chatConversationView);
     }
@@ -768,11 +803,57 @@ public class UserMainWorkspace extends BorderPane {
             );
         }
 
-        if (currentChatId != null && currentChatId.startsWith("group")) {
-            groupManagementDrawer.setGroupName("group_project".equals(currentChatId) ? "Nhóm Đồ Án Java 2026" : "Nhóm Thể Thao Cuối Tuần");
+        if (directUserDrawer == null) {
+            directUserDrawer = new UserDirectDrawer(
+                primaryStage,
+                this::toggleRightDrawer,
+                this::handleReportSpam,
+                () -> {
+                    if (chatConversationView != null) {
+                        chatConversationView.clearHistory();
+                    }
+                },
+                () -> {
+                    Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                    JavaFXTheme.applyDialogTheme(alert);
+                    alert.setTitle("Đã chặn");
+                    alert.setHeaderText(null);
+                    alert.setContentText("Đã đưa người dùng vào danh sách chặn thành công (Mục 8.d).");
+                    alert.showAndWait();
+                    loadConversation("group_project");
+                }
+            );
         }
 
-        rightDrawer.getChildren().setAll(groupManagementDrawer);
+        if (currentChatId != null && currentChatId.startsWith("group")) {
+            groupManagementDrawer.setGroupName("group_project".equals(currentChatId) ? "Nhóm Đồ Án Java 2026" : "Nhóm Thể Thao Cuối Tuần");
+            rightDrawer.getChildren().setAll(groupManagementDrawer);
+        } else if (currentChatId != null && currentChatId.startsWith("user")) {
+            if ("user_chihai".equals(currentChatId)) {
+                directUserDrawer.setUser("Lưu Chí Hải", "@chihai_2026", "chihai@student.fit.hcmus.edu.vn", "Thành viên A (Admin DB)", true, "#10B981", "CH");
+            } else if ("user_lananh".equals(currentChatId)) {
+                directUserDrawer.setUser("Nguyễn Lan Anh", "@lananh_it", "lananh@student.fit.hcmus.edu.vn", "Thành viên đồ án", false, "#EC4899", "LA");
+            } else if ("user_hoangnam".equals(currentChatId)) {
+                directUserDrawer.setUser("Lê Hoàng Nam", "@hoangnam_coder", "hoangnam@student.fit.hcmus.edu.vn", "Thành viên đồ án", true, "#8B5CF6", "HN");
+            } else {
+                directUserDrawer.setUser("Phạm Đức Huy", "@duchuy_dev", "duchuy@student.fit.hcmus.edu.vn", "Thành viên đồ án", true, "#F59E0B", "DH");
+            }
+            rightDrawer.getChildren().setAll(directUserDrawer);
+        } else {
+            rightDrawer.getChildren().setAll(groupManagementDrawer);
+        }
+    }
+
+    public void toggleSidebar() {
+        isSidebarOpen = !isSidebarOpen;
+        if (isSidebarOpen) {
+            JavaFXTheme.animateLeftDrawerOpen(subSidebar, 300);
+        } else {
+            JavaFXTheme.animateLeftDrawerClose(subSidebar, 300, () -> {
+                subSidebar.setVisible(false);
+                subSidebar.setManaged(false);
+            });
+        }
     }
 
     private void toggleRightDrawer() {

@@ -44,14 +44,38 @@ public final class JavaFXTheme {
     public static final String SVG_REPORT = "M1 21h22L12 2 1 21zm12-3h-2v-2h2v2zm0-4h-2v-4h2v4z";
     public static final String SVG_INFO = "M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z";
     public static final String SVG_EDIT = "M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z";
+    public static final String SVG_SIDEBAR_TOGGLE = "M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2zm5 14V6H4v12h5zm11 0V6h-9v12h9z";
+    public static final String SVG_CHEVRON_LEFT = "M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z";
+    public static final String SVG_CHEVRON_RIGHT = "M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z";
+    public static final String SVG_CLOSE = "M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z";
+    public static final String SVG_TRASH = "M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z";
+    public static final String SVG_BAN = "M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.42 0-8-3.58-8-8 0-1.85.63-3.55 1.69-4.9L16.9 18.31C15.55 19.37 13.85 20 12 20zm6.31-3.1L7.1 5.69C8.45 4.63 10.15 4 12 4c4.42 0 8 3.58 8 8 0 1.85-.63 3.55-1.69 4.9z";
+    public static final String SVG_USER_PLUS = "M15 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm-9-2V7H4v3H1v2h3v3h2v-3h3v-2H6zm9 4c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z";
+    public static final String SVG_MESSAGE = "M20 2H4c-1.1 0-1.99.9-1.99 2L2 22l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-2 12H6v-2h12v2zm0-3H6V9h12v2zm0-3H6V6h12v2z";
+    public static final String SVG_USERS = "M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5s-3 1.34-3 3 1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z";
+    public static final String SVG_MORE_HORIZONTAL = "M6 10c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm12 0c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm-6 0c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z";
+    public static final String SVG_CHECK = "M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z";
+    public static final String SVG_LOCK = "M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-6 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm3.1-9H8.9V6c0-1.71 1.39-3.1 3.1-3.1 1.71 0 3.1 1.39 3.1 3.1v2z";
+    public static final String SVG_SHIELD = "M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4z";
+    public static final String SVG_PALETTE = "M12 3c-4.97 0-9 4.03-9 9 0 2.12.74 4.07 1.97 5.61L4.35 19.4c-.39.39-.39 1.02 0 1.41.39.39 1.02.39 1.41 0l2.08-2.08C9.28 19.46 10.59 20 12 20c4.97 0 9-4.03 9-9s-4.03-9-9-9zm-5.5 9c-.83 0-1.5-.67-1.5-1.5S5.67 9 6.5 9 8 9.67 8 10.5 7.33 12 6.5 12zm3-4C8.67 8 8 7.33 8 6.5S8.67 5 9.5 5s1.5.67 1.5 1.5S10.33 8 9.5 8zm5 0c-.83 0-1.5-.67-1.5-1.5S13.67 5 14.5 5s1.5.67 1.5 1.5S15.33 8 14.5 8zm3 4c-.83 0-1.5-.67-1.5-1.5S16.67 9 17.5 9s1.5.67 1.5 1.5-.67 1.5-1.5 1.5z";
+    public static final String SVG_SETTINGS = "M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.07-.94l2.03-1.58c.18-.14.23-.41.12-.61l-1.92-3.32c-.12-.22-.37-.29-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54c-.04-.24-.24-.41-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96c-.22-.08-.47 0-.59.22L2.74 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.05.3-.09.63-.09.94s.02.64.07.94l-2.03 1.58c-.18.14-.23.41-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.01-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6z";
+    public static final String SVG_LOGOUT = "M17 7l-1.41 1.41L18.17 11H8v2h10.17l-2.58 2.58L17 17l5-5zM4 5h8V3H4c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h8v-2H4V5z";
+    public static final String SVG_PLUS = "M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z";
 
     /**
      * Tạo đối tượng SVGPath chuẩn sắc thái -text-muted (#8E929B) tương thích hoàn hảo với JavaFX CSS
      */
     public static SVGPath createSvgIcon(String pathData, double scale) {
+        return createSvgIcon(pathData, scale, "#8E929B");
+    }
+
+    /**
+     * Tạo đối tượng SVGPath với màu sắc tùy biến
+     */
+    public static SVGPath createSvgIcon(String pathData, double scale, String colorHex) {
         SVGPath svg = new SVGPath();
         svg.setContent(pathData);
-        svg.setFill(Color.web("#8E929B"));
+        svg.setFill(Color.web(colorHex));
         svg.getStyleClass().add("header-svg-icon");
         if (scale != 1.0) {
             svg.setScaleX(scale);
@@ -242,40 +266,55 @@ public final class JavaFXTheme {
     }
 
     /**
-     * Hiệu ứng nảy xúc giác (Tactile Micro-press) cho các nút CTA chính:
-     * - Khi nhấn (Pressed): Co nhẹ xuống 0.975x trong 70ms với Fluent 2 Decelerate.
-     * - Khi nhả (Released): Phục hồi 1.0x trong 80ms.
-     * - Khi chuột rời khỏi vùng bấm khi đang nhấn: Tự động khôi phục 1.0x.
+     * Hiệu ứng nảy xúc giác cao cấp (Tactile Micro-press & Hover Elevation):
+     * - Khi di chuột (Hover): Nâng nhẹ lên 1.025x trong 110ms với Fluent 2 Decelerate.
+     * - Khi nhấn (Pressed): Co lún 0.965x trong 65ms mang lại cảm giác phản hồi cơ học rõ rệt.
+     * - Khi nhả (Released): Đàn hồi phục hồi về 1.025x trong 85ms.
+     * - Khi rời chuột (Exited): Trở về kích thước chuẩn 1.0x trong 100ms.
      */
     public static void applyTactileButton(Button button) {
         if (button == null) return;
 
-        ScaleTransition pressAnim = new ScaleTransition(Duration.millis(70), button);
-        pressAnim.setToX(0.975);
-        pressAnim.setToY(0.975);
+        ScaleTransition hoverAnim = new ScaleTransition(Duration.millis(110), button);
+        hoverAnim.setInterpolator(FLUENT_DECELERATE);
+
+        ScaleTransition pressAnim = new ScaleTransition(Duration.millis(65), button);
         pressAnim.setInterpolator(FLUENT_DECELERATE);
 
-        ScaleTransition releaseAnim = new ScaleTransition(Duration.millis(80), button);
-        releaseAnim.setToX(1.0);
-        releaseAnim.setToY(1.0);
-        releaseAnim.setInterpolator(FLUENT_DECELERATE);
+        button.addEventHandler(MouseEvent.MOUSE_ENTERED, e -> {
+            if (!button.isDisabled()) {
+                hoverAnim.stop();
+                hoverAnim.setToX(1.025);
+                hoverAnim.setToY(1.025);
+                hoverAnim.playFromStart();
+            }
+        });
+
+        button.addEventHandler(MouseEvent.MOUSE_EXITED, e -> {
+            hoverAnim.stop();
+            pressAnim.stop();
+            hoverAnim.setToX(1.0);
+            hoverAnim.setToY(1.0);
+            hoverAnim.playFromStart();
+        });
 
         button.addEventHandler(MouseEvent.MOUSE_PRESSED, e -> {
             if (!button.isDisabled()) {
-                releaseAnim.stop();
+                hoverAnim.stop();
+                pressAnim.stop();
+                pressAnim.setToX(0.965);
+                pressAnim.setToY(0.965);
                 pressAnim.playFromStart();
             }
         });
 
         button.addEventHandler(MouseEvent.MOUSE_RELEASED, e -> {
-            pressAnim.stop();
-            releaseAnim.playFromStart();
-        });
-
-        button.addEventHandler(MouseEvent.MOUSE_EXITED, e -> {
-            pressAnim.stop();
-            if (button.getScaleX() != 1.0 || button.getScaleY() != 1.0) {
-                releaseAnim.playFromStart();
+            if (!button.isDisabled()) {
+                pressAnim.stop();
+                hoverAnim.stop();
+                hoverAnim.setToX(1.025);
+                hoverAnim.setToY(1.025);
+                hoverAnim.playFromStart();
             }
         });
     }
@@ -326,6 +365,65 @@ public final class JavaFXTheme {
             hoverAnim.stop();
             hoverAnim.setToX(1.08);
             hoverAnim.setToY(1.08);
+            hoverAnim.playFromStart();
+        });
+    }
+
+    /**
+     * Hiệu ứng cho nút Đóng / Thoát ✕ với sắc đỏ cảnh báo (Destructive Red Hover):
+     * - Khi hover: Đổi màu icon sang đỏ rực #FA777C và phóng nhẹ 1.1x.
+     * - Khi nhấn (Pressed): Co nhẹ 0.92x.
+     * - Khi thoát: Trở về màu muted #8E929B và tỉ lệ 1.0x.
+     */
+    public static void applyCloseButton(Button button) {
+        if (button == null) return;
+        if (!button.getStyleClass().contains("dialog-close-btn")) {
+            button.getStyleClass().add("dialog-close-btn");
+        }
+
+        ScaleTransition hoverAnim = new ScaleTransition(Duration.millis(100), button);
+        hoverAnim.setInterpolator(FLUENT_DECELERATE);
+
+        ScaleTransition clickAnim = new ScaleTransition(Duration.millis(60), button);
+        clickAnim.setInterpolator(FLUENT_DECELERATE);
+
+        button.addEventHandler(MouseEvent.MOUSE_ENTERED, e -> {
+            if (!button.isDisabled()) {
+                hoverAnim.stop();
+                hoverAnim.setToX(1.1);
+                hoverAnim.setToY(1.1);
+                hoverAnim.playFromStart();
+                if (button.getGraphic() instanceof javafx.scene.shape.SVGPath) {
+                    ((javafx.scene.shape.SVGPath) button.getGraphic()).setFill(Color.web("#FA777C"));
+                }
+            }
+        });
+
+        button.addEventHandler(MouseEvent.MOUSE_EXITED, e -> {
+            hoverAnim.stop();
+            clickAnim.stop();
+            hoverAnim.setToX(1.0);
+            hoverAnim.setToY(1.0);
+            hoverAnim.playFromStart();
+            if (button.getGraphic() instanceof javafx.scene.shape.SVGPath) {
+                ((javafx.scene.shape.SVGPath) button.getGraphic()).setFill(Color.web("#8E929B"));
+            }
+        });
+
+        button.addEventHandler(MouseEvent.MOUSE_PRESSED, e -> {
+            if (!button.isDisabled()) {
+                clickAnim.stop();
+                clickAnim.setToX(0.92);
+                clickAnim.setToY(0.92);
+                clickAnim.playFromStart();
+            }
+        });
+
+        button.addEventHandler(MouseEvent.MOUSE_RELEASED, e -> {
+            clickAnim.stop();
+            hoverAnim.stop();
+            hoverAnim.setToX(1.1);
+            hoverAnim.setToY(1.1);
             hoverAnim.playFromStart();
         });
     }
@@ -450,6 +548,53 @@ public final class JavaFXTheme {
     }
 
     /**
+     * Hiệu ứng trượt mở Drawer cạnh trái (Fluent 2 Decelerate 220ms, TranslateX -width -> 0)
+     */
+    public static void animateLeftDrawerOpen(Region drawer, double width) {
+        if (drawer == null) return;
+        drawer.setVisible(true);
+        drawer.setManaged(true);
+        drawer.setOpacity(0.0);
+        drawer.setTranslateX(-width);
+
+        TranslateTransition tt = new TranslateTransition(Duration.millis(220), drawer);
+        tt.setToX(0);
+        tt.setInterpolator(FLUENT_DECELERATE);
+
+        FadeTransition ft = new FadeTransition(Duration.millis(220), drawer);
+        ft.setToValue(1.0);
+        ft.setInterpolator(FLUENT_DECELERATE);
+
+        new ParallelTransition(tt, ft).play();
+    }
+
+    /**
+     * Hiệu ứng trượt đóng Drawer cạnh trái (Fluent 2 Accelerate 160ms, TranslateX 0 -> -width)
+     */
+    public static void animateLeftDrawerClose(Region drawer, double width, Runnable onComplete) {
+        if (drawer == null) return;
+
+        TranslateTransition tt = new TranslateTransition(Duration.millis(160), drawer);
+        tt.setToX(-width);
+        tt.setInterpolator(FLUENT_ACCELERATE);
+
+        FadeTransition ft = new FadeTransition(Duration.millis(160), drawer);
+        ft.setToValue(0.0);
+        ft.setInterpolator(FLUENT_ACCELERATE);
+
+        ParallelTransition pt = new ParallelTransition(tt, ft);
+        pt.setOnFinished(e -> {
+            drawer.setVisible(false);
+            drawer.setManaged(false);
+            drawer.setTranslateX(0);
+            if (onComplete != null) {
+                onComplete.run();
+            }
+        });
+        pt.play();
+    }
+
+    /**
      * Gắn stylesheet Obsidian Dark và cấu hình hiển thị chuẩn cho ContextMenu
      */
     public static void applyContextMenuTheme(ContextMenu cm) {
@@ -537,8 +682,65 @@ public final class JavaFXTheme {
         alert.setHeaderText(header);
         alert.setContentText(content);
         applyDialogTheme(alert);
+
+        DialogPane pane = alert.getDialogPane();
+        Button okBtn = (Button) pane.lookupButton(ButtonType.OK);
+        if (okBtn != null) {
+            okBtn.getStyleClass().add("btn-primary");
+            applyTactileButton(okBtn);
+        }
+        Button cancelBtn = (Button) pane.lookupButton(ButtonType.CANCEL);
+        if (cancelBtn != null) {
+            cancelBtn.getStyleClass().add("btn-secondary");
+            applyTactileButton(cancelBtn);
+        }
+
         Optional<ButtonType> res = alert.showAndWait();
         return res.isPresent() && res.get() == ButtonType.OK;
+    }
+
+    /**
+     * Hộp thoại cảnh báo & xác nhận thao tác nguy hiểm / hủy bỏ / xóa dữ liệu (Destructive Confirmation):
+     * - Nút Xác nhận mang sắc đỏ cảnh báo (#ED4245 / .btn-danger), có tactile feedback.
+     * - Nút Hủy bỏ mang sắc thứ cấp (.btn-secondary) an toàn.
+     */
+    public static boolean showDestructiveConfirmDialog(Window owner, String title, String header, String content, String confirmText) {
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+        if (owner != null) alert.initOwner(owner);
+        alert.setTitle(title);
+        alert.setHeaderText(header);
+        alert.setContentText(content);
+        applyDialogTheme(alert);
+
+        ButtonType btnConfirm = new ButtonType(confirmText != null ? confirmText : "Xác nhận xóa", ButtonBar.ButtonData.OK_DONE);
+        ButtonType btnCancel = new ButtonType("Hủy bỏ", ButtonBar.ButtonData.CANCEL_CLOSE);
+        alert.getButtonTypes().setAll(btnConfirm, btnCancel);
+
+        DialogPane pane = alert.getDialogPane();
+        pane.setStyle(pane.getStyle() + "; -fx-border-color: rgba(237, 66, 69, 0.4);");
+
+        Button okBtn = (Button) pane.lookupButton(btnConfirm);
+        if (okBtn != null) {
+            okBtn.setStyle(
+                "-fx-background-color: #ED4245; " +
+                "-fx-text-fill: #FFFFFF; " +
+                "-fx-font-weight: bold; " +
+                "-fx-font-size: 13px; " +
+                "-fx-padding: 8px 16px; " +
+                "-fx-background-radius: 8px; " +
+                "-fx-cursor: hand;"
+            );
+            applyTactileButton(okBtn);
+        }
+
+        Button cancelBtn = (Button) pane.lookupButton(btnCancel);
+        if (cancelBtn != null) {
+            cancelBtn.getStyleClass().add("btn-secondary");
+            applyTactileButton(cancelBtn);
+        }
+
+        Optional<ButtonType> res = alert.showAndWait();
+        return res.isPresent() && res.get() == btnConfirm;
     }
 
     /**
@@ -620,7 +822,9 @@ public final class JavaFXTheme {
         // Action Buttons
         VBox actions = new VBox(6);
 
-        Button btnDm = new Button("💬 Nhắn tin trực tiếp");
+        Button btnDm = new Button("Nhắn tin trực tiếp");
+        btnDm.setGraphic(createSvgIcon(SVG_MESSAGE, 0.8, "#739AFE"));
+        btnDm.setGraphicTextGap(6);
         btnDm.setMaxWidth(Double.MAX_VALUE);
         btnDm.setStyle(
             "-fx-background-color: #242A3E; " +
@@ -639,7 +843,9 @@ public final class JavaFXTheme {
         });
         applyTactileButton(btnDm);
 
-        Button btnBlock = new Button("🚫 Chặn người dùng này (Mục 6.d)");
+        Button btnBlock = new Button("Chặn người dùng (Mục 6.d)");
+        btnBlock.setGraphic(createSvgIcon(SVG_BAN, 0.8, "#FA777C"));
+        btnBlock.setGraphicTextGap(6);
         btnBlock.setMaxWidth(Double.MAX_VALUE);
         btnBlock.setStyle(
             "-fx-background-color: rgba(250, 119, 124, 0.08); " +
@@ -653,7 +859,13 @@ public final class JavaFXTheme {
         );
         btnBlock.setOnAction(e -> {
             popup.hide();
-            boolean ok = showConfirmDialog(anchor.getScene().getWindow(), "Xác nhận chặn", "Chặn người dùng (Mục 6.d)", "Bạn có chắc chắn muốn chặn " + fullName + " (" + username + ") không? Người này sẽ không thể gửi tin nhắn cho bạn.");
+            boolean ok = showDestructiveConfirmDialog(
+                anchor.getScene().getWindow(),
+                "Xác nhận chặn",
+                "Chặn người dùng (Mục 6.d)",
+                "Bạn có chắc chắn muốn chặn " + fullName + " (" + username + ") không? Người này sẽ không thể gửi tin nhắn cho bạn.",
+                "Chặn người dùng"
+            );
             if (ok) {
                 showInfoAlert(anchor.getScene().getWindow(), "Đã chặn", "Thao tác thành công", "Đã thêm " + fullName + " vào danh sách chặn.");
             }

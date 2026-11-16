@@ -77,16 +77,19 @@ public class GlobalSearchDialog {
         HBox headerBox = new HBox(12);
         headerBox.setAlignment(Pos.CENTER_LEFT);
 
-        Label lblTitle = new Label("🔍 Tìm kiếm tin nhắn toàn cục (Mục 11.g)");
+        Label lblTitle = new Label("Tìm kiếm tin nhắn toàn cục (Mục 11.g)");
+        lblTitle.setGraphic(JavaFXTheme.createSvgIcon(JavaFXTheme.SVG_SEARCH, 0.85, "#4E6BF2"));
+        lblTitle.setGraphicTextGap(8);
         lblTitle.setStyle("-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: -text-normal;");
 
         Region spacerH = new Region();
         HBox.setHgrow(spacerH, Priority.ALWAYS);
 
-        Button btnClose = new Button("✕");
-        btnClose.getStyleClass().add("btn-icon-subtle");
-        btnClose.setOnAction(e -> dialogStage.close());
-        JavaFXTheme.applyIconButton(btnClose);
+        Button btnClose = new Button();
+        btnClose.setGraphic(JavaFXTheme.createSvgIcon(JavaFXTheme.SVG_CLOSE, 0.75, "#8E929B"));
+        btnClose.getStyleClass().add("dialog-close-btn");
+        btnClose.setOnAction(e -> JavaFXTheme.closeModalWithAnimation(dialogStage, root));
+        JavaFXTheme.applyCloseButton(btnClose);
 
         headerBox.getChildren().addAll(lblTitle, spacerH, btnClose);
 
@@ -112,14 +115,16 @@ public class GlobalSearchDialog {
             "-fx-padding: 6 12;"
         );
 
-        Label lblSearchIcon = new Label("🔎");
-        lblSearchIcon.setStyle("-fx-font-size: 14px; -fx-text-fill: -text-muted;");
+        javafx.scene.shape.SVGPath lblSearchIcon = JavaFXTheme.createSvgIcon(JavaFXTheme.SVG_SEARCH, 0.8, "#8E929B");
 
         txtSearchInput.setPromptText("Nhập từ khóa tìm kiếm (ví dụ: database, báo cáo, icon, họp nhóm)...");
         txtSearchInput.setStyle("-fx-background-color: transparent; -fx-text-fill: #FFFFFF; -fx-font-size: 14px; -fx-prompt-text-fill: #6E7382;");
         HBox.setHgrow(txtSearchInput, Priority.ALWAYS);
 
-        btnClear.getStyleClass().add("btn-icon-subtle");
+        btnClear.setText("");
+        btnClear.setGraphic(JavaFXTheme.createSvgIcon(JavaFXTheme.SVG_CLOSE, 0.7, "#8E929B"));
+        btnClear.getStyleClass().add("dialog-close-btn");
+        JavaFXTheme.applyCloseButton(btnClear);
         btnClear.setVisible(false);
         btnClear.setOnAction(e -> {
             txtSearchInput.clear();
@@ -173,7 +178,7 @@ public class GlobalSearchDialog {
         scene.getStylesheets().add(getClass().getResource("theme.css").toExternalForm());
         scene.setOnKeyPressed(e -> {
             if (e.getCode() == KeyCode.ESCAPE) {
-                dialogStage.close();
+                JavaFXTheme.closeModalWithAnimation(dialogStage, root);
             }
         });
 
@@ -229,6 +234,7 @@ public class GlobalSearchDialog {
             Button btnSample = new Button(sample);
             btnSample.getStyleClass().add("smart-reply-chip");
             btnSample.setOnAction(e -> txtSearchInput.setText(sample));
+            JavaFXTheme.applyTactileButton(btnSample);
             sampleChips.getChildren().add(btnSample);
         }
 

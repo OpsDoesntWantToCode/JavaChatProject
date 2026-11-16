@@ -30,9 +30,9 @@ public class UserSettingsDialog extends Stage {
     private final VBox tabProfileContent = new VBox(14);
     private final VBox tabSecurityContent = new VBox(14);
     private final VBox tabAppearanceContent = new VBox(14);
-    private final Button btnTabProfile = new Button("👤 Hồ sơ cá nhân");
-    private final Button btnTabSecurity = new Button("🔒 Bảo mật & Đổi mật khẩu");
-    private final Button btnTabAppearance = new Button("🎨 Giao diện & Chủ đề");
+    private final Button btnTabProfile = new Button("Hồ sơ cá nhân");
+    private final Button btnTabSecurity = new Button("Bảo mật & Đổi mật khẩu");
+    private final Button btnTabAppearance = new Button("Giao diện & Chủ đề");
 
     private int currentTab = 0;
 
@@ -135,10 +135,11 @@ public class UserSettingsDialog extends Stage {
         titleBox.getChildren().addAll(lblTitle, lblSub);
         HBox.setHgrow(titleBox, Priority.ALWAYS);
 
-        Button btnClose = new Button("✕");
+        Button btnClose = new Button();
+        btnClose.setGraphic(JavaFXTheme.createSvgIcon(JavaFXTheme.SVG_CLOSE, 0.75, "#8E929B"));
         btnClose.getStyleClass().add("dialog-close-btn");
         btnClose.setOnAction(e -> JavaFXTheme.closeModalWithAnimation(this, rootNode));
-        JavaFXTheme.applyIconButton(btnClose);
+        JavaFXTheme.applyCloseButton(btnClose);
 
         header.getChildren().addAll(titleBox, btnClose);
 
@@ -160,6 +161,15 @@ public class UserSettingsDialog extends Stage {
         HBox bar = new HBox(6);
         bar.setAlignment(Pos.CENTER_LEFT);
         bar.getStyleClass().add("settings-tab-bar");
+
+        btnTabProfile.setGraphic(JavaFXTheme.createSvgIcon(JavaFXTheme.SVG_USER_PLUS, 0.8, "#8E929B"));
+        btnTabProfile.setGraphicTextGap(6);
+
+        btnTabSecurity.setGraphic(JavaFXTheme.createSvgIcon(JavaFXTheme.SVG_LOCK, 0.8, "#8E929B"));
+        btnTabSecurity.setGraphicTextGap(6);
+
+        btnTabAppearance.setGraphic(JavaFXTheme.createSvgIcon(JavaFXTheme.SVG_PALETTE, 0.8, "#8E929B"));
+        btnTabAppearance.setGraphicTextGap(6);
 
         btnTabProfile.getStyleClass().add("settings-tab-btn");
         btnTabSecurity.getStyleClass().add("settings-tab-btn");

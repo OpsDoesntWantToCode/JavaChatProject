@@ -4,6 +4,7 @@ import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
@@ -60,7 +61,18 @@ public class GroupManagementDrawer extends VBox {
     private final BooleanProperty isCurrentUserAdmin = new SimpleBooleanProperty(true);
 
     private String groupName = "Nhóm Đồ Án Java 2026";
+    private final Label lblTitle = new Label("Thông tin nhóm");
+    private final Circle groupAvatar = new Circle(32, Color.web("#4E6BF2"));
+    private final Label lblAvtText = new Label("👥");
     private final Label lblGroupName = new Label(groupName);
+    private final Label lblCreatedDate = new Label("Khởi tạo ngày 23/10/2026 • 3 thành viên");
+    private final Button btnEditName = new Button();
+    private final VBox membersSection = new VBox(8);
+    private final Separator sepMembers = new Separator();
+    private HBox rowClear;
+    private HBox rowLeave;
+    private HBox rowReportSpam;
+    private HBox rowBlockUser;
     private final VBox membersListBox = new VBox(8);
     private final List<MemberItem> members = new ArrayList<>();
 
@@ -101,18 +113,17 @@ public class GroupManagementDrawer extends VBox {
         HBox topRow = new HBox(8);
         topRow.setAlignment(Pos.CENTER_LEFT);
 
-        Label lblTitle = new Label("Thông tin nhóm");
         lblTitle.setStyle("-fx-font-size: 14.5px; -fx-font-weight: bold; -fx-text-fill: -text-normal;");
 
         Region spacer = new Region();
         HBox.setHgrow(spacer, Priority.ALWAYS);
 
-        Button btnClose = new Button("✕");
-        btnClose.getStyleClass().add("dialog-close-btn");
+        Button btnClose = new Button();
+        btnClose.setGraphic(JavaFXTheme.createSvgIcon(JavaFXTheme.SVG_CLOSE, 0.75, "#8E929B"));
         btnClose.setOnAction(e -> {
             if (onClose != null) onClose.run();
         });
-        JavaFXTheme.applyIconButton(btnClose);
+        JavaFXTheme.applyCloseButton(btnClose);
 
         topRow.getChildren().addAll(lblTitle, spacer, btnClose);
 
@@ -121,8 +132,6 @@ public class GroupManagementDrawer extends VBox {
         profileCard.setAlignment(Pos.CENTER);
         profileCard.setPadding(new Insets(8, 0, 8, 0));
 
-        Circle groupAvatar = new Circle(32, Color.web("#4E6BF2"));
-        Label lblAvtText = new Label("👥");
         lblAvtText.setStyle("-fx-font-size: 24px;");
         StackPane avtBox = new StackPane(groupAvatar, lblAvtText);
 
@@ -132,7 +141,6 @@ public class GroupManagementDrawer extends VBox {
         lblGroupName.setStyle("-fx-font-size: 14.5px; -fx-font-weight: bold; -fx-text-fill: -text-normal; -fx-cursor: hand;");
         Tooltip.install(lblGroupName, new Tooltip("Nhấp đúp hoặc bấm bút chì để sửa tên trực tiếp"));
 
-        Button btnEditName = new Button();
         btnEditName.setGraphic(JavaFXTheme.createSvgIcon(JavaFXTheme.SVG_EDIT, 0.70));
         btnEditName.getStyleClass().add("btn-icon-subtle");
         btnEditName.setTooltip(new Tooltip("Đổi tên nhóm trực tiếp (Mục 12.b)"));
@@ -226,13 +234,12 @@ public class GroupManagementDrawer extends VBox {
 
         StackPane nameRowStack = new StackPane(displayBox, editBox);
 
-        Label lblCreatedDate = new Label("Khởi tạo ngày 23/10/2026 • 3 thành viên");
         lblCreatedDate.setStyle("-fx-font-size: 11.5px; -fx-text-fill: -text-muted;");
 
         profileCard.getChildren().addAll(avtBox, nameRowStack, lblCreatedDate);
 
         // 3. Phân đoạn Thành viên & Nút Thêm Thành viên (Mục 12.c, 12.d, 12.e)
-        VBox membersSection = new VBox(8);
+        membersSection.getChildren().clear();
         HBox membersHeaderRow = new HBox(8);
         membersHeaderRow.setAlignment(Pos.CENTER_LEFT);
 
@@ -259,27 +266,52 @@ public class GroupManagementDrawer extends VBox {
         VBox dangerSection = new VBox(2);
         dangerSection.setPadding(new Insets(4, 0, 0, 0));
 
-        HBox rowClear = createDangerListRow("🗑", "Xóa lịch sử trò chuyện", () -> {
-            boolean ok = JavaFXTheme.showConfirmDialog(
-                primaryStage,
-                "Xác nhận xóa lịch sử",
-                "Xóa lịch sử tin nhắn phía bạn (Mục 11.d)",
-                "Tin nhắn sẽ được ẩn ở phía bạn bằng cơ chế Watermark theo CSDL. Bạn có chắc chắn?"
-            );
-            if (ok && onClearHistory != null) {
-                onClearHistory.run();
+        rowClear = createDangerListRow(
+            JavaFXTheme.createSvgIcon(JavaFXTheme.SVG_TRASH, 0.75, "#FA777C"),
+            "Xóa lịch sử trò chuyện (Mục 11.d)",
+            () -> {
+                boolean ok = JavaFXTheme.showDestructiveConfirmDialog(
+                    primaryStage,
+                    "Xác nhận xóa lịch sử",
+                    "Xóa lịch sử tin nhắn phía bạn (Mục 11.d)",
+                    "Tin nhắn sẽ được ẩn ở phía bạn bằng cơ chế Watermark theo CSDL. Bạn có chắc chắn muốn xóa?",
+                    "Xóa lịch sử"
+                );
+                if (ok && onClearHistory != null) {
+                    onClearHistory.run();
+                }
             }
-        });
+        );
 
-        HBox rowLeave = createDangerListRow("🚪", "Rời khỏi nhóm trò chuyện", this::handleLeaveGroup);
+        rowReportSpam = createDangerListRow(
+            JavaFXTheme.createSvgIcon(JavaFXTheme.SVG_REPORT, 0.75, "#F59E0B"),
+            "Báo cáo vi phạm / Spam (Mục 10)",
+            null
+        );
+        rowReportSpam.setVisible(false);
+        rowReportSpam.setManaged(false);
 
-        dangerSection.getChildren().addAll(rowClear, rowLeave);
+        rowBlockUser = createDangerListRow(
+            JavaFXTheme.createSvgIcon(JavaFXTheme.SVG_BAN, 0.75, "#FA777C"),
+            "Chặn người dùng này (Mục 8.b)",
+            null
+        );
+        rowBlockUser.setVisible(false);
+        rowBlockUser.setManaged(false);
+
+        rowLeave = createDangerListRow(
+            JavaFXTheme.createSvgIcon(JavaFXTheme.SVG_CLOSE, 0.75, "#FA777C"),
+            "Rời khỏi nhóm trò chuyện (Mục 12.f)",
+            this::handleLeaveGroup
+        );
+
+        dangerSection.getChildren().addAll(rowClear, rowReportSpam, rowBlockUser, rowLeave);
 
         content.getChildren().addAll(
             topRow,
             new Separator(),
             profileCard,
-            new Separator(),
+            sepMembers,
             membersSection,
             new Separator(),
             dangerSection
@@ -289,23 +321,39 @@ public class GroupManagementDrawer extends VBox {
         getChildren().setAll(scrollPane);
     }
 
-    private HBox createDangerListRow(String icon, String title, Runnable action) {
+    private HBox createDangerListRow(Node iconGraphic, String title, Runnable action) {
         HBox row = new HBox(10);
         row.setAlignment(Pos.CENTER_LEFT);
         row.setPadding(new Insets(8, 10, 8, 10));
         row.setStyle("-fx-background-color: transparent; -fx-background-radius: 8px; -fx-cursor: hand;");
 
-        Label lblIcon = new Label(icon);
-        lblIcon.setStyle("-fx-font-size: 13px; -fx-text-fill: #FA777C;");
-
         Label lblText = new Label(title);
         lblText.setStyle("-fx-font-size: 12.5px; -fx-font-weight: 500; -fx-text-fill: #FA777C;");
         HBox.setHgrow(lblText, Priority.ALWAYS);
 
-        row.getChildren().addAll(lblIcon, lblText);
+        if (iconGraphic != null) {
+            row.getChildren().add(iconGraphic);
+        }
+        row.getChildren().add(lblText);
 
-        row.setOnMouseEntered(e -> row.setStyle("-fx-background-color: rgba(250, 119, 124, 0.08); -fx-background-radius: 8px; -fx-cursor: hand;"));
-        row.setOnMouseExited(e -> row.setStyle("-fx-background-color: transparent; -fx-background-radius: 8px; -fx-cursor: hand;"));
+        row.setOnMouseEntered(e -> {
+            row.setStyle("-fx-background-color: rgba(250, 119, 124, 0.12); -fx-background-radius: 8px; -fx-cursor: hand;");
+            row.setScaleX(1.02);
+            row.setScaleY(1.02);
+        });
+        row.setOnMouseExited(e -> {
+            row.setStyle("-fx-background-color: transparent; -fx-background-radius: 8px; -fx-cursor: hand;");
+            row.setScaleX(1.0);
+            row.setScaleY(1.0);
+        });
+        row.setOnMousePressed(e -> {
+            row.setScaleX(0.975);
+            row.setScaleY(0.975);
+        });
+        row.setOnMouseReleased(e -> {
+            row.setScaleX(1.02);
+            row.setScaleY(1.02);
+        });
         row.setOnMouseClicked(e -> {
             if (action != null) action.run();
         });
@@ -409,13 +457,15 @@ public class GroupManagementDrawer extends VBox {
                     });
 
                     MenuItem miRemove = new MenuItem("Xóa khỏi nhóm (Kick - Mục 12.e)");
+                    miRemove.setGraphic(JavaFXTheme.createSvgIcon(JavaFXTheme.SVG_BAN, 0.75, "#FA777C"));
                     miRemove.setStyle("-fx-text-fill: -status-danger;");
                     miRemove.setOnAction(ev -> {
-                        boolean ok = JavaFXTheme.showConfirmDialog(
+                        boolean ok = JavaFXTheme.showDestructiveConfirmDialog(
                             primaryStage,
                             "Xác nhận loại bỏ thành viên",
                             "Xóa @" + m.getUsername() + " khỏi nhóm",
-                            "Bạn có chắc chắn muốn xóa thành viên " + m.getName() + " ra khỏi nhóm không?"
+                            "Bạn có chắc chắn muốn xóa thành viên " + m.getName() + " ra khỏi nhóm không?",
+                            "Loại bỏ khỏi nhóm"
                         );
                         if (ok) {
                             members.remove(m);
@@ -452,11 +502,12 @@ public class GroupManagementDrawer extends VBox {
     }
 
     private void handleLeaveGroup() {
-        boolean confirmed = JavaFXTheme.showConfirmDialog(
+        boolean confirmed = JavaFXTheme.showDestructiveConfirmDialog(
             primaryStage,
             "Rời khỏi nhóm",
-            "Xác nhận rời khỏi nhóm chat",
-            "Bạn sẽ không thể xem hoặc nhận tin nhắn mới trong nhóm này cho đến khi được thêm lại."
+            "Xác nhận rời khỏi nhóm chat (Mục 12.f)",
+            "Bạn sẽ không thể xem hoặc nhận tin nhắn mới trong nhóm này cho đến khi được thêm lại.",
+            "Rời nhóm"
         );
         if (confirmed) {
             JavaFXTheme.showInfoAlert(
@@ -471,6 +522,68 @@ public class GroupManagementDrawer extends VBox {
     public void addMember(String id, String name, String username) {
         members.add(new MemberItem(id, name, username, false, false));
         renderMembersList();
+    }
+
+    public void setConversation(ChatMockRepository.ConversationMeta meta, Runnable onReportSpam, Runnable onBlockUser) {
+        if (meta == null) return;
+        this.groupName = meta.getTitle();
+        this.lblGroupName.setText(meta.getTitle());
+
+        if (meta.isGroup()) {
+            lblTitle.setText("Thông tin nhóm");
+            groupAvatar.setFill(Color.web("#4E6BF2"));
+            lblAvtText.setText("👥");
+            lblCreatedDate.setText("Khởi tạo ngày 23/10/2026 • " + members.size() + " thành viên");
+            lblCreatedDate.setStyle("-fx-font-size: 11.5px; -fx-text-fill: -text-muted;");
+            btnEditName.setVisible(true);
+            btnEditName.setManaged(true);
+            membersSection.setVisible(true);
+            membersSection.setManaged(true);
+            sepMembers.setVisible(true);
+            sepMembers.setManaged(true);
+            if (rowLeave != null) {
+                rowLeave.setVisible(true);
+                rowLeave.setManaged(true);
+            }
+            if (rowReportSpam != null) {
+                rowReportSpam.setVisible(false);
+                rowReportSpam.setManaged(false);
+            }
+            if (rowBlockUser != null) {
+                rowBlockUser.setVisible(false);
+                rowBlockUser.setManaged(false);
+            }
+        } else {
+            lblTitle.setText("Thông tin người chat");
+            groupAvatar.setFill(Color.web(meta.getAvatarColor()));
+            lblAvtText.setText(meta.getInitials());
+            lblCreatedDate.setText(meta.isOnline() ? "● Đang hoạt động • Bạn bè" : "○ Không hoạt động • Bạn bè");
+            lblCreatedDate.setStyle("-fx-font-size: 11.5px; -fx-text-fill: " + (meta.isOnline() ? "#23A55A" : "-text-muted") + ";");
+            btnEditName.setVisible(false);
+            btnEditName.setManaged(false);
+            membersSection.setVisible(false);
+            membersSection.setManaged(false);
+            sepMembers.setVisible(false);
+            sepMembers.setManaged(false);
+            if (rowLeave != null) {
+                rowLeave.setVisible(false);
+                rowLeave.setManaged(false);
+            }
+            if (rowReportSpam != null) {
+                rowReportSpam.setVisible(true);
+                rowReportSpam.setManaged(true);
+                rowReportSpam.setOnMouseClicked(e -> {
+                    if (onReportSpam != null) onReportSpam.run();
+                });
+            }
+            if (rowBlockUser != null) {
+                rowBlockUser.setVisible(true);
+                rowBlockUser.setManaged(true);
+                rowBlockUser.setOnMouseClicked(e -> {
+                    if (onBlockUser != null) onBlockUser.run();
+                });
+            }
+        }
     }
 
     public void setGroupName(String name) {
