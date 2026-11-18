@@ -97,6 +97,7 @@ public class UserLoginApp extends Application {
 
     private void showLoginView() {
         if (scene.getRoot() != authShell) {
+            primaryStage.getProperties().put("custom_maximized", Boolean.FALSE);
             scene.setRoot(authShell);
             primaryStage.setTitle("Java Chat System — User Portal (JavaFX 21)");
             primaryStage.setMinWidth(520);
@@ -117,6 +118,7 @@ public class UserLoginApp extends Application {
      * Kích thước chuẩn 1000x700 responsive theo quy chuẩn đồ án
      */
     private void showMainWorkspace() {
+        primaryStage.getProperties().put("custom_maximized", Boolean.FALSE);
         mainWorkspace = new UserMainWorkspace(primaryStage, this::showLoginView);
         mainWorkspace.setOpacity(0.0);
 
@@ -153,7 +155,9 @@ public class UserLoginApp extends Application {
             formContainer.getChildren().setAll(newView);
 
             // Chỉ thay đổi kích thước stage nếu không ở chế độ Maximize hoặc Fullscreen
-            if (!primaryStage.isMaximized() && !primaryStage.isFullScreen()) {
+            Boolean customMax = (Boolean) primaryStage.getProperties().get("custom_maximized");
+            boolean isMax = (customMax != null && customMax) || primaryStage.isMaximized() || primaryStage.isFullScreen();
+            if (!isMax) {
                 primaryStage.setWidth(targetWidth);
                 primaryStage.setHeight(targetHeight);
             }
