@@ -604,9 +604,6 @@ public class ChatConversationView extends BorderPane {
         lblSelectedCount.setStyle("-fx-font-size: 12px; -fx-font-weight: bold; -fx-text-fill: -text-normal;");
         lblSelectedCount.setMinWidth(Region.USE_COMPUTED_SIZE);
 
-        Separator divider = new Separator(javafx.geometry.Orientation.VERTICAL);
-        divider.setStyle("-fx-background-color: #363A45; -fx-pref-height: 16px;");
-
         btnDeleteSelected.setText("🗑 Xóa (0)");
         btnDeleteSelected.setMinWidth(Region.USE_COMPUTED_SIZE);
         btnDeleteSelected.setOnAction(e -> handleDeleteSelectedMessages());
@@ -628,7 +625,7 @@ public class ChatConversationView extends BorderPane {
         btnCancelMulti.setOnAction(e -> setMultiSelectMode(false));
         JavaFXTheme.applyTactileButton(btnCancelMulti);
 
-        floatingActionBar.getChildren().addAll(lblSelectedCount, divider, btnDeleteSelected, btnCancelMulti);
+        floatingActionBar.getChildren().addAll(lblSelectedCount, btnDeleteSelected, btnCancelMulti);
 
         multiSelectMode.addListener((obs, oldVal, isMulti) -> {
             floatingActionBar.setVisible(isMulti);
@@ -851,7 +848,13 @@ public class ChatConversationView extends BorderPane {
         }
     }
 
-    private void toggleAiSmartReplies() {
+    public void setInputMessage(String text) {
+        txtMessageInput.setText(text);
+        txtMessageInput.requestFocus();
+        txtMessageInput.positionCaret(text != null ? text.length() : 0);
+    }
+
+    public void toggleAiSmartReplies() {
         isAiChipsManuallyOpened = !isAiChipsManuallyOpened;
         smartRepliesBar.setVisible(isAiChipsManuallyOpened);
         smartRepliesBar.setManaged(isAiChipsManuallyOpened);

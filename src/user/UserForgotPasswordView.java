@@ -9,14 +9,15 @@ import javafx.scene.layout.*;
 import javafx.util.Duration;
 
 /**
- * Giao diện Khởi tạo lại mật khẩu JavaFX — UserForgotPasswordView (Mục 3)
+ * Giao diện Khởi tạo lại mật khẩu JavaFX — UserForgotPasswordView (Mục 3 Đề bài)
+ * Quy định: Mật khẩu sẽ được random và gửi tới email của người dùng.
  * Form tối giản: Nhập Email/Tên đăng nhập, hiển thị loading ProgressBar indeterminate.
  */
 public class UserForgotPasswordView {
 
     private final StackPane root = new StackPane();
     private final TextField txtIdentity = new TextField("tuanminh@example.com");
-    private final Button btnSend = new Button("Gửi mật khẩu mới qua Email");
+    private final Button btnSend = new Button("Gửi mật khẩu ngẫu nhiên qua Email");
     private final ProgressBar progressBar = new ProgressBar();
     private final Label lblStatus = new Label();
     private final Runnable onNavigateToLogin;
@@ -47,7 +48,7 @@ public class UserForgotPasswordView {
         Label lblTitle = new Label("Khởi tạo lại mật khẩu");
         lblTitle.getStyleClass().add("header-title");
 
-        Label lblSub = new Label("Nhập email hoặc tên đăng nhập của bạn để nhận mật khẩu mới.");
+        Label lblSub = new Label("Nhập email hoặc tên đăng nhập. Hệ thống sẽ tạo mật khẩu ngẫu nhiên và gửi tới hộp thư của bạn.");
         lblSub.getStyleClass().add("header-subtitle");
         lblSub.setWrapText(true);
         lblSub.setAlignment(Pos.CENTER);
