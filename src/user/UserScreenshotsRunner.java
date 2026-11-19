@@ -398,11 +398,13 @@ public class UserScreenshotsRunner extends Application {
         lblHeader.setGraphicTextGap(8);
         lblHeader.setStyle("-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: -text-normal;");
 
-        // Banner thông báo đang chỉnh sửa
+        // Banner thông báo đang chỉnh sửa (sử dụng Vector SVG SVG_INFO thay cho emoji để tránh lỗi thiếu glyph)
         HBox banner = new HBox(8);
         banner.setAlignment(Pos.CENTER_LEFT);
         banner.setStyle("-fx-background-color: rgba(78, 107, 242, 0.15); -fx-border-color: #4E6BF2; -fx-border-radius: 8px; -fx-background-radius: 8px; -fx-padding: 8px 12px;");
-        javafx.scene.control.Label lblBanner = new javafx.scene.control.Label("ℹ️ Đang ở chế độ chỉnh sửa thông tin cá nhân. Nhập các thay đổi và bấm 'Lưu thay đổi hồ sơ'.");
+        javafx.scene.control.Label lblBanner = new javafx.scene.control.Label("Đang ở chế độ chỉnh sửa thông tin cá nhân. Nhập các thay đổi và bấm 'Lưu thay đổi hồ sơ'.");
+        lblBanner.setGraphic(JavaFXTheme.createSvgIcon(JavaFXTheme.SVG_INFO, 0.75, "#8BB2FE"));
+        lblBanner.setGraphicTextGap(8);
         lblBanner.setStyle("-fx-font-size: 12px; -fx-text-fill: #8BB2FE; -fx-font-weight: bold;");
         banner.getChildren().add(lblBanner);
 
