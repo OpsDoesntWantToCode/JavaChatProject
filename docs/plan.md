@@ -122,7 +122,7 @@
 ### 3.4 Tích hợp, Báo cáo & Đóng gói Nghiệm thu 20% (Làm chung)
 - [x] **Task C1 — Khung Báo cáo Đồ án (`BaoCao_Draft.docx` / LaTeX)** *(Hoàn thành: 03/11/2026)*: Minh dựng khung báo cáo đầy đủ 5 mục bắt buộc: (1) Thông tin nhóm, (2) Bảng phân công, (3) Bảng đóng góp tổng 100% theo thực tế (50-50), (4) Thiết kế CSDL (Hải viết và dán ERD), (5) Danh sách màn hình (chụp ảnh Admin và User).
 - [x] **Task C2 — Ghép mã nguồn & Kiểm thử biên dịch** *(Hoàn thành: 16/11/2026)*: Hợp nhất `feat/admin-db` và `feat/user-ui` vào nhánh làm việc. Kiểm tra biên dịch JavaFX 21 không có bất kỳ lỗi cú pháp nào.
-- [x] **Task C3 — Chụp minh chứng Git (`git/`) & Ảnh giao diện User** *(Hoàn thành: 16/11/2026)*: Lưu `git/commits_Hai.png`, xuất `git/commits_Minh.png` (1920x1080), và chụp đủ 18 ảnh màn hình User (phủ kín 100% các task U1 - U13) lưu vào `docs/ui-spec/evidence/` kèm manifest.json.
+- [x] **Task C3 — Chụp minh chứng Git (`git/`) & Ảnh giao diện User** *(Hoàn thành: 18/11/2026)*: Lưu `git/commits_Hai.png`, xuất `git/commits_Minh.png` (1920x1080), và chụp đủ 19 ảnh màn hình User (chuẩn hóa tiền tố u1..u12 ánh xạ chuẩn 1:1 theo 12 chức năng trong `final-project.pdf`, có đủ xem/sửa hồ sơ và action menu block bạn bè) lưu vào `docs/user-spec/evidence/` kèm `manifest.json`.
 - [ ] **Task C4 — Xuất Báo cáo PDF & Đóng gói ZIP** *(Hạn chót: 20/11/2026)*: Xuất file `BaoCao.pdf`, kiểm tra nén file zip gồm đúng 3 thư mục `src/`, `script/`, `git/` và `BaoCao.pdf`.
 
 ---

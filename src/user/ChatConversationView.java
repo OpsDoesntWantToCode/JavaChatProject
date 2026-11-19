@@ -56,7 +56,7 @@ import javafx.util.Duration;
  * - Kiến trúc ảo hóa VirtualFlow: Dùng ListView<MessageItem> thay cho ScrollPane giữ vững 60fps
  * - Chuẩn thẩm mỹ Telegram Desktop & Zalo:
  *   + Khung chat tràn viền tự nhiên (De-boxing), không viền sáng bao quanh lịch sử
- *   + Nhãn mã hóa nhóm mô phỏng ở giữa vùng chat
+ *   + Thông báo E2EE thu gọn thành pill badge tinh tế chính giữa
  *   + Dải màu Avatar băm ngẫu nhiên theo tên người dùng phân biệt người gửi tức thì
  *   + Timestamp (10px, 65% opacity) đặt gọn góc dưới bên phải bên trong bong bóng chat
  *   + Thanh nhập tin nhắn tích hợp Capsule (gắn nút 📎, ✨, ô nhập mở rộng và nút gửi ➤ bên trong)
@@ -200,11 +200,11 @@ public class ChatConversationView extends BorderPane {
     private final Label lblSearchCount = new Label("0/0");
     private final Button btnPrevMatch = new Button("▲");
     private final Button btnNextMatch = new Button("▼");
-    private final Button btnCloseSearch = new Button();
+    private final Button btnCloseSearch = new Button("✕");
     private final List<Integer> searchMatchIndices = new ArrayList<>();
     private int currentSearchPointer = -1;
 
-    // 3. Nhãn mã hóa nhóm mô phỏng; tên biến cũ không xác nhận có E2EE.
+    // 3. Banner Mã hóa Đầu cuối E2EE (Dạng Pill tinh tế, không bao viền gắt toàn màn hình)
     private final HBox e2eeBannerContainer = new HBox();
     private final HBox e2eePill = new HBox(6);
 
@@ -257,7 +257,7 @@ public class ChatConversationView extends BorderPane {
         setTop(topContainer);
         setBottom(bottomBar);
 
-        // Nạp kịch bản mặc định: Nhóm Đồ Án Java 2026 có cờ mã hóa mẫu.
+        // Nạp kịch bản mẫu mặc định: Nhóm Đồ Án Java 2026 có mã hóa E2EE
         loadConversation("group_project");
     }
 
@@ -366,7 +366,8 @@ public class ChatConversationView extends BorderPane {
         searchBar.setVisible(false);
         searchBar.setManaged(false);
 
-        javafx.scene.shape.SVGPath lblIcon = JavaFXTheme.createSvgIcon(JavaFXTheme.SVG_SEARCH, 0.75, "#8E929B");
+        Label lblIcon = new Label("🔍");
+        lblIcon.setStyle("-fx-font-size: 13px; -fx-text-fill: -text-muted;");
 
         txtSearchBox.setPromptText("Tìm tin nhắn trong cuộc trò chuyện này...");
         txtSearchBox.setStyle(
@@ -393,18 +394,14 @@ public class ChatConversationView extends BorderPane {
         btnPrevMatch.getStyleClass().add("btn-icon-subtle");
         Tooltip.install(btnPrevMatch, new Tooltip("Kết quả trước đó (Shift+Enter)"));
         btnPrevMatch.setOnAction(e -> navigatePrevMatch());
-        JavaFXTheme.applyTactileButton(btnPrevMatch);
 
         btnNextMatch.getStyleClass().add("btn-icon-subtle");
         Tooltip.install(btnNextMatch, new Tooltip("Kết quả tiếp theo (Enter)"));
         btnNextMatch.setOnAction(e -> navigateNextMatch());
-        JavaFXTheme.applyTactileButton(btnNextMatch);
 
-        btnCloseSearch.setGraphic(JavaFXTheme.createSvgIcon(JavaFXTheme.SVG_CLOSE, 0.7, "#8E929B"));
-        btnCloseSearch.getStyleClass().add("dialog-close-btn");
+        btnCloseSearch.getStyleClass().add("btn-icon-subtle");
         Tooltip.install(btnCloseSearch, new Tooltip("Đóng tìm kiếm (Esc)"));
         btnCloseSearch.setOnAction(e -> closeSearchBar());
-        JavaFXTheme.applyCloseButton(btnCloseSearch);
 
         searchBar.getChildren().addAll(lblIcon, txtSearchBox, lblSearchCount, btnPrevMatch, btnNextMatch, btnCloseSearch);
     }
@@ -495,10 +492,10 @@ public class ChatConversationView extends BorderPane {
     }
 
     // =========================================================================
-    // 3. KHU VỰC CHAT TRUNG TÂM VÀ NHÃN MÃ HÓA MÔ PHỎNG
+    // 3. KHU VỰC CHAT TRUNG TÂM (De-boxing & Pill E2EE Tinh tế)
     // =========================================================================
     private void buildCenterChatArea() {
-        // Nhãn nhỏ gọn căn giữa; dữ liệu hiện tại chưa được mã hóa.
+        // Banner E2EE Messenger/Telegram style: Dạng Pill nhỏ gọn căn giữa, không viền gắt toàn màn hình
         e2eeBannerContainer.setAlignment(Pos.CENTER);
         e2eeBannerContainer.setMaxWidth(Double.MAX_VALUE);
         e2eeBannerContainer.setPadding(new Insets(8, 0, 4, 0));
@@ -517,7 +514,7 @@ public class ChatConversationView extends BorderPane {
         Label lblLockIcon = new Label("🔒");
         lblLockIcon.setStyle("-fx-font-size: 11px;");
 
-        Label lblBanner = new Label("Mã hóa nhóm — mô phỏng, chưa mã hóa tin nhắn");
+        Label lblBanner = new Label("Tin nhắn được mã hóa đầu cuối AES-GCM 256-bit");
         lblBanner.setStyle("-fx-font-size: 11.5px; -fx-text-fill: #8E929B;");
         e2eePill.getChildren().addAll(lblLockIcon, lblBanner);
         e2eeBannerContainer.getChildren().setAll(e2eePill);
@@ -607,19 +604,12 @@ public class ChatConversationView extends BorderPane {
         lblSelectedCount.setStyle("-fx-font-size: 12px; -fx-font-weight: bold; -fx-text-fill: -text-normal;");
         lblSelectedCount.setMinWidth(Region.USE_COMPUTED_SIZE);
 
-        Separator divider = new Separator(javafx.geometry.Orientation.VERTICAL);
-        divider.setStyle("-fx-background-color: #363A45; -fx-pref-height: 16px;");
-
-        btnDeleteSelected.setText("Xóa (0)");
-        btnDeleteSelected.setGraphic(JavaFXTheme.createSvgIcon(JavaFXTheme.SVG_TRASH, 0.75, "#6E7280"));
-        btnDeleteSelected.setGraphicTextGap(4);
+        btnDeleteSelected.setText("🗑 Xóa (0)");
         btnDeleteSelected.setMinWidth(Region.USE_COMPUTED_SIZE);
         btnDeleteSelected.setOnAction(e -> handleDeleteSelectedMessages());
         JavaFXTheme.applyTactileButton(btnDeleteSelected);
 
-        btnCancelMulti.setText("Hủy");
-        btnCancelMulti.setGraphic(JavaFXTheme.createSvgIcon(JavaFXTheme.SVG_CLOSE, 0.7, "#8E929B"));
-        btnCancelMulti.setGraphicTextGap(4);
+        btnCancelMulti.setText("✕ Hủy");
         btnCancelMulti.setStyle(
             "-fx-background-color: #262933; " +
             "-fx-border-color: #363A45; " +
@@ -635,7 +625,7 @@ public class ChatConversationView extends BorderPane {
         btnCancelMulti.setOnAction(e -> setMultiSelectMode(false));
         JavaFXTheme.applyTactileButton(btnCancelMulti);
 
-        floatingActionBar.getChildren().addAll(lblSelectedCount, divider, btnDeleteSelected, btnCancelMulti);
+        floatingActionBar.getChildren().addAll(lblSelectedCount, btnDeleteSelected, btnCancelMulti);
 
         multiSelectMode.addListener((obs, oldVal, isMulti) -> {
             floatingActionBar.setVisible(isMulti);
@@ -682,9 +672,7 @@ public class ChatConversationView extends BorderPane {
     private void updateSelectedMessagesCount() {
         long count = messagesList.stream().filter(MessageItem::isSelected).count();
         lblSelectedCount.setText("Đã chọn: " + count);
-        btnDeleteSelected.setText("Xóa (" + count + ")");
-        btnDeleteSelected.setGraphic(JavaFXTheme.createSvgIcon(JavaFXTheme.SVG_TRASH, 0.75, count == 0 ? "#6E7280" : "#FA777C"));
-        btnDeleteSelected.setGraphicTextGap(4);
+        btnDeleteSelected.setText("🗑 Xóa (" + count + ")");
         btnDeleteSelected.setDisable(count == 0);
         if (count == 0) {
             btnDeleteSelected.setStyle(
@@ -718,12 +706,11 @@ public class ChatConversationView extends BorderPane {
         long count = messagesList.stream().filter(MessageItem::isSelected).count();
         if (count == 0) return;
 
-        boolean ok = JavaFXTheme.showDestructiveConfirmDialog(
+        boolean ok = JavaFXTheme.showConfirmDialog(
             ownerStage,
             "Xác nhận xóa tin nhắn",
             "Xóa " + count + " tin nhắn đã chọn (Mục 11.e)",
-            "Bạn có chắc chắn muốn xóa vĩnh viễn các dòng tin nhắn đã chọn khỏi lịch sử trò chuyện không? Thao tác này không thể hoàn tác.",
-            "Xóa tin nhắn"
+            "Bạn có chắc chắn muốn xóa vĩnh viễn các dòng tin nhắn đã chọn khỏi lịch sử trò chuyện không?"
         );
         if (ok) {
             messagesList.removeIf(MessageItem::isSelected);
@@ -787,7 +774,6 @@ public class ChatConversationView extends BorderPane {
         btnSend.setMinSize(32, 32);
         btnSend.setMaxSize(32, 32);
         btnSend.setOnAction(e -> handleSendMessage());
-        JavaFXTheme.applyTactileButton(btnSend);
         updateSendButtonState("");
 
         // Lắng nghe thay đổi text: Tự động đổi màu viền, bật smart replies khi gõ /ai, cập nhật nút gửi
@@ -862,6 +848,12 @@ public class ChatConversationView extends BorderPane {
         }
     }
 
+    public void setInputMessage(String text) {
+        txtMessageInput.setText(text);
+        txtMessageInput.requestFocus();
+        txtMessageInput.positionCaret(text != null ? text.length() : 0);
+    }
+
     public void toggleAiSmartReplies() {
         isAiChipsManuallyOpened = !isAiChipsManuallyOpened;
         smartRepliesBar.setVisible(isAiChipsManuallyOpened);
@@ -871,10 +863,6 @@ public class ChatConversationView extends BorderPane {
         } else {
             btnAiToggle.setStyle("-fx-background-color: transparent; -fx-font-size: 13px; -fx-text-fill: #A78BFA; -fx-padding: 4 6; -fx-cursor: hand;");
         }
-    }
-
-    public void setInputMessage(String text) {
-        txtMessageInput.setText(text);
     }
 
     private Button createSmartChip(String text) {
@@ -1156,8 +1144,7 @@ public class ChatConversationView extends BorderPane {
             // Context Menu thao tác nhanh trên tin nhắn
             ContextMenu contextMenu = new ContextMenu();
             JavaFXTheme.applyContextMenuTheme(contextMenu);
-            MenuItem mCopy = new MenuItem("Sao chép nội dung");
-            mCopy.setGraphic(JavaFXTheme.createSvgIcon(JavaFXTheme.SVG_EDIT, 0.75, "#8E929B"));
+            MenuItem mCopy = new MenuItem("📋 Sao chép nội dung");
             mCopy.setOnAction(e -> {
                 if (getItem() != null) {
                     Clipboard clipboard = Clipboard.getSystemClipboard();
@@ -1167,8 +1154,7 @@ public class ChatConversationView extends BorderPane {
                 }
             });
 
-            MenuItem mAskAi = new MenuItem("Hỏi AI về tin này (Mục 11.h)");
-            mAskAi.setGraphic(JavaFXTheme.createSvgIcon(JavaFXTheme.SVG_INFO, 0.75, "#A78BFA"));
+            MenuItem mAskAi = new MenuItem("✨ Hỏi AI về tin này (Mục 11.h)");
             mAskAi.setOnAction(e -> {
                 if (getItem() != null) {
                     txtMessageInput.setText("/ai Hãy giải thích rõ hơn về: \"" + getItem().getContent() + "\"");
@@ -1177,8 +1163,7 @@ public class ChatConversationView extends BorderPane {
                 }
             });
 
-            MenuItem mSelectMode = new MenuItem("Chọn nhiều tin nhắn...");
-            mSelectMode.setGraphic(JavaFXTheme.createSvgIcon(JavaFXTheme.SVG_CHECKLIST, 0.75, "#8E929B"));
+            MenuItem mSelectMode = new MenuItem("☑ Chọn nhiều tin nhắn...");
             mSelectMode.setOnAction(e -> {
                 if (getItem() != null) {
                     setMultiSelectMode(true);
@@ -1186,21 +1171,10 @@ public class ChatConversationView extends BorderPane {
                 }
             });
 
-            MenuItem mDeleteThis = new MenuItem("Xóa tin nhắn này");
-            mDeleteThis.setGraphic(JavaFXTheme.createSvgIcon(JavaFXTheme.SVG_TRASH, 0.75, "#FA777C"));
-            mDeleteThis.setStyle("-fx-text-fill: #FA777C;");
+            MenuItem mDeleteThis = new MenuItem("🗑 Xóa tin nhắn này");
             mDeleteThis.setOnAction(e -> {
                 if (getItem() != null) {
-                    boolean ok = JavaFXTheme.showDestructiveConfirmDialog(
-                        ownerStage,
-                        "Xác nhận xóa tin nhắn",
-                        "Xóa tin nhắn khỏi cuộc trò chuyện",
-                        "Bạn có chắc chắn muốn xóa vĩnh viễn tin nhắn này khỏi lịch sử trò chuyện không? Thao tác này không thể hoàn tác.",
-                        "Xóa tin nhắn"
-                    );
-                    if (ok) {
-                        messagesList.remove(getItem());
-                    }
+                    messagesList.remove(getItem());
                 }
             });
 

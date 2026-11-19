@@ -104,6 +104,15 @@ public class FriendsManagementView extends BorderPane {
         btnTabPending.getStyleClass().add("settings-tab-btn");
         btnTabAdd.getStyleClass().add("settings-tab-btn");
 
+        HBox.setHgrow(btnTabOnline, Priority.ALWAYS);
+        HBox.setHgrow(btnTabAll, Priority.ALWAYS);
+        HBox.setHgrow(btnTabPending, Priority.ALWAYS);
+        HBox.setHgrow(btnTabAdd, Priority.ALWAYS);
+        btnTabOnline.setMaxWidth(Double.MAX_VALUE);
+        btnTabAll.setMaxWidth(Double.MAX_VALUE);
+        btnTabPending.setMaxWidth(Double.MAX_VALUE);
+        btnTabAdd.setMaxWidth(Double.MAX_VALUE);
+
         btnTabOnline.setOnAction(e -> switchTab("online"));
         btnTabAll.setOnAction(e -> switchTab("all"));
         btnTabPending.setOnAction(e -> switchTab("pending"));
@@ -116,7 +125,7 @@ public class FriendsManagementView extends BorderPane {
         txtFilter.setPrefHeight(38);
         txtFilter.textProperty().addListener((obs, oldV, newV) -> renderCurrentTab());
 
-        topBox.getChildren().addAll(headerRow, tabsBar, txtFilter, new Separator());
+        topBox.getChildren().addAll(headerRow, tabsBar, txtFilter);
         setTop(topBox);
     }
 

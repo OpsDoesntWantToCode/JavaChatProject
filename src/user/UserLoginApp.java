@@ -9,7 +9,6 @@ import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
@@ -19,7 +18,10 @@ import javafx.util.Duration;
 
 /**
  * Ứng dụng JavaFX chính thức cho phân hệ User (Minh phụ trách)
- * Hỗ trợ chuyển cảnh mượt mà, tỷ lệ vàng và bố cục Split-Screen thông minh khi Fullscreen.
+ * Chuẩn thiết kế Centered Card sang trọng (như Telegram Desktop, Discord, Zalo):
+ * - Thẻ Đăng nhập / Đăng ký luôn căn giữa màn hình ở mọi kích thước.
+ * - Nền Ambient Canvas Obsidian tối giản với quầng sáng mềm (Subtle Glow).
+ * - 100% Vector & CSS: Không bể hạt, không răng cưa, sắc nét tuyệt đối trên mọi độ phân giải.
  */
 public class UserLoginApp extends Application {
 
@@ -28,8 +30,6 @@ public class UserLoginApp extends Application {
     private BorderPane authShell;
     private CustomTitleBar authTitleBar;
     private StackPane masterRoot;
-    private HBox splitBox;
-    private VBox heroSection;
     private StackPane formContainer;
 
     private UserLoginView loginView;
@@ -51,27 +51,16 @@ public class UserLoginApp extends Application {
         // Khởi tạo khung chứa chính (Master Shell)
         masterRoot = new StackPane();
         masterRoot.getStyleClass().add("ambient-canvas");
+        masterRoot.setAlignment(Pos.CENTER);
 
-        // Khung Split-Screen HBox (Bố cục 2 cột cân bằng: Hero Section 45% - Auth Card 55%)
-        splitBox = new HBox(40);
-        splitBox.setAlignment(Pos.CENTER);
-        splitBox.setPadding(new Insets(24, 48, 24, 48));
-
-        // Cột trái: Hero Branding Section
-        heroSection = UserHeroSection.createHeroSection();
-        heroSection.setVisible(false);
-        heroSection.setManaged(false);
-
-        // Cột phải: Form Container
+        // Form Container luôn căn giữa tuyệt đối
         formContainer = new StackPane();
         formContainer.setAlignment(Pos.CENTER);
-        HBox.setHgrow(formContainer, Priority.ALWAYS);
+        formContainer.setPadding(new Insets(24));
 
         // Đặt LoginView vào formContainer ban đầu
         formContainer.getChildren().add(loginView.getView());
-
-        splitBox.getChildren().addAll(heroSection, formContainer);
-        masterRoot.getChildren().add(splitBox);
+        masterRoot.getChildren().add(formContainer);
 
         // Shell chứa Custom Title Bar cho phân hệ Auth
         authTitleBar = new CustomTitleBar(stage, "Java Chat System — Cổng đăng nhập", null);
@@ -80,11 +69,8 @@ public class UserLoginApp extends Application {
         authShell.setTop(authTitleBar);
         authShell.setCenter(masterRoot);
 
-        // Khởi tạo Scene ban đầu chuẩn Discord Desktop (540 x 600)
+        // Khởi tạo Scene ban đầu chuẩn Telegram/Discord Desktop (540 x 600)
         scene = new Scene(authShell, 540, 600);
-
-        // Lắng nghe kích thước để tự động kích hoạt Split-Screen khi rộng >= 1080px (chế độ Fullscreen thực thụ)
-        scene.widthProperty().addListener((obs, oldW, newW) -> updateResponsiveLayout(newW.doubleValue()));
 
         // Nạp stylesheet CSS chính thức của hệ thống (theme.css)
         java.net.URL cssUrl = getClass().getResource("theme.css");
@@ -105,23 +91,13 @@ public class UserLoginApp extends Application {
         stage.show();
     }
 
-    private void updateResponsiveLayout(double windowWidth) {
-        boolean isWide = windowWidth >= 1080;
-        if (heroSection.isVisible() != isWide) {
-            heroSection.setVisible(isWide);
-            heroSection.setManaged(isWide);
-            if (isWide) {
-                HBox.setHgrow(heroSection, Priority.SOMETIMES);
-            }
-        }
-    }
-
     private void showRegisterView() {
-        switchViewSmooth(registerView.getView(), 820, 750);
+        switchViewSmooth(registerView.getView(), 760, 720);
     }
 
     private void showLoginView() {
         if (scene.getRoot() != authShell) {
+            primaryStage.getProperties().put("custom_maximized", Boolean.FALSE);
             scene.setRoot(authShell);
             primaryStage.setTitle("Java Chat System — User Portal (JavaFX 21)");
             primaryStage.setMinWidth(520);
@@ -142,6 +118,7 @@ public class UserLoginApp extends Application {
      * Kích thước chuẩn 1000x700 responsive theo quy chuẩn đồ án
      */
     private void showMainWorkspace() {
+        primaryStage.getProperties().put("custom_maximized", Boolean.FALSE);
         mainWorkspace = new UserMainWorkspace(primaryStage, this::showLoginView);
         mainWorkspace.setOpacity(0.0);
 
@@ -178,7 +155,9 @@ public class UserLoginApp extends Application {
             formContainer.getChildren().setAll(newView);
 
             // Chỉ thay đổi kích thước stage nếu không ở chế độ Maximize hoặc Fullscreen
-            if (!primaryStage.isMaximized() && !primaryStage.isFullScreen() && !heroSection.isVisible()) {
+            Boolean customMax = (Boolean) primaryStage.getProperties().get("custom_maximized");
+            boolean isMax = (customMax != null && customMax) || primaryStage.isMaximized() || primaryStage.isFullScreen();
+            if (!isMax) {
                 primaryStage.setWidth(targetWidth);
                 primaryStage.setHeight(targetHeight);
             }

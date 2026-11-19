@@ -10,6 +10,7 @@ import javafx.stage.Stage;
  * Trợ thủ thay đổi kích thước cửa sổ không viền (Undecorated Stage Resizing Helper)
  * Cho phép người dùng kéo giãn kích thước cửa sổ tại các mép viền và góc (8 hướng)
  * giống hệt như các ứng dụng desktop native hiện đại (VS Code, Discord, Spotify).
+ * Tự động vô hiệu hóa khi cửa sổ đang ở chế độ Maximize hoặc Fullscreen.
  */
 public class WindowResizeHelper {
 
@@ -21,6 +22,7 @@ public class WindowResizeHelper {
         scene.addEventHandler(MouseEvent.MOUSE_MOVED, listener);
         scene.addEventHandler(MouseEvent.MOUSE_PRESSED, listener);
         scene.addEventHandler(MouseEvent.MOUSE_DRAGGED, listener);
+        scene.addEventHandler(MouseEvent.MOUSE_RELEASED, listener);
         scene.addEventHandler(MouseEvent.MOUSE_EXITED, listener);
     }
 
@@ -38,9 +40,14 @@ public class WindowResizeHelper {
             this.stage = stage;
         }
 
+        private boolean isWindowMaximized() {
+            Boolean customMax = (Boolean) stage.getProperties().get("custom_maximized");
+            return (customMax != null && customMax) || stage.isMaximized() || stage.isFullScreen();
+        }
+
         @Override
         public void handle(MouseEvent mouseEvent) {
-            if (stage.isMaximized() || stage.isFullScreen()) {
+            if (isWindowMaximized()) {
                 if (cursorEvent != Cursor.DEFAULT) {
                     cursorEvent = Cursor.DEFAULT;
                     stage.getScene().setCursor(Cursor.DEFAULT);
@@ -81,9 +88,11 @@ public class WindowResizeHelper {
 
                 stage.getScene().setCursor(cursorEvent);
 
-            } else if (MouseEvent.MOUSE_EXITED.equals(mouseEvent.getEventType())) {
-                cursorEvent = Cursor.DEFAULT;
-                stage.getScene().setCursor(Cursor.DEFAULT);
+            } else if (MouseEvent.MOUSE_EXITED.equals(mouseEvent.getEventType()) || MouseEvent.MOUSE_RELEASED.equals(mouseEvent.getEventType())) {
+                if (MouseEvent.MOUSE_EXITED.equals(mouseEvent.getEventType())) {
+                    cursorEvent = Cursor.DEFAULT;
+                    stage.getScene().setCursor(Cursor.DEFAULT);
+                }
 
             } else if (MouseEvent.MOUSE_PRESSED.equals(mouseEvent.getEventType())) {
                 startX = mouseEvent.getScreenX();
